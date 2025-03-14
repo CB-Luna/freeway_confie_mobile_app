@@ -47,7 +47,7 @@ class DistanceCalculator {
   static Future<double> calculateDistanceFromCurrentLocation(double targetLat, double targetLon) async {
     try {
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         throw Exception('Los servicios de ubicación están desactivados');
       }
@@ -66,7 +66,7 @@ class DistanceCalculator {
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
 
       // Calcular la distancia
       return calculateDistanceInMiles(
@@ -121,7 +121,7 @@ class DistanceCalculator {
   ) async {
     try {
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         throw Exception('Los servicios de ubicación están desactivados');
       }
@@ -140,9 +140,9 @@ class DistanceCalculator {
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
       
-      List<Map<String, dynamic>> officesWithDistances = [];
+      final List<Map<String, dynamic>> officesWithDistances = [];
       
       // Calcular distancias para cada oficina
       for (final office in offices) {
@@ -165,7 +165,7 @@ class DistanceCalculator {
       
       // Ordenar por distancia (la más cercana primero)
       officesWithDistances.sort((a, b) => 
-        (a['distanceInMiles'] as double).compareTo(b['distanceInMiles'] as double)
+        (a['distanceInMiles'] as double).compareTo(b['distanceInMiles'] as double),
       );
       
       return officesWithDistances;
@@ -175,7 +175,7 @@ class DistanceCalculator {
       return offices.map((office) => {
         ...office,
         'distanceInMiles': -1.0, // Valor de error
-      }).toList();
+      },).toList();
     }
   }
 
@@ -190,7 +190,7 @@ class DistanceCalculator {
     try {
       debugPrint('Calculando distancias para ${offices.length} oficinas...');
       
-      List<Map<String, dynamic>> officesWithDistances = 
+      final List<Map<String, dynamic>> officesWithDistances = 
           await calculateDistancesFromCurrentLocation(offices);
       
       debugPrint('\nResultados de cálculo de distancias:');

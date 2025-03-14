@@ -6,10 +6,7 @@ class BillingInfoCard extends StatelessWidget {
   final String total;
 
   const BillingInfoCard({
-    super.key,
-    required this.name,
-    required this.address,
-    required this.total,
+    required this.name, required this.address, required this.total, super.key,
   });
 
   @override

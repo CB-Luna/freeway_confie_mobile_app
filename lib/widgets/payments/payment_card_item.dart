@@ -8,12 +8,7 @@ class PaymentCardItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const PaymentCardItem({
-    super.key,
-    required this.cardNumber,
-    required this.expiry,
-    required this.imagePath,
-    required this.isSelected,
-    required this.onTap,
+    required this.cardNumber, required this.expiry, required this.imagePath, required this.isSelected, required this.onTap, super.key,
   });
 
   @override

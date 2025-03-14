@@ -74,7 +74,8 @@ class HeaderSection extends StatelessWidget {
                     ),
                     onPressed: () {
                       debugPrint(
-                          'HeaderSection - Clic en icono de notificaciones');
+                        'HeaderSection - Clic en icono de notificaciones',
+                      );
                       // Llamar a la función de navegación si está disponible
                       if (onNotificationTap != null) {
                         onNotificationTap!();

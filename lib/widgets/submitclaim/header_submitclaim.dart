@@ -61,7 +61,8 @@ class SubmitClaimHeader extends StatelessWidget {
                 },
                 child: const CircleAvatar(
                   radius: 16,
-                  backgroundImage: AssetImage('assets/profile/human_avatar.png'),
+                  backgroundImage:
+                      AssetImage('assets/profile/human_avatar.png'),
                 ),
               ),
             ],

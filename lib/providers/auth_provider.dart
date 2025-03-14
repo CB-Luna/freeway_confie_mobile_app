@@ -21,7 +21,7 @@ class AuthProvider with ChangeNotifier {
     try {
       _errorMessage = null;
       debugPrint('AuthProvider - Iniciando login para usuario: $username');
-      
+
       final response = await _authService.login(username, password);
       debugPrint('AuthProvider - Respuesta de login: ${response.message}');
       debugPrint('AuthProvider - Customer ID: ${response.customerId}');
@@ -38,10 +38,11 @@ class AuthProvider with ChangeNotifier {
           email: '$username@example.com',
           phone: '+1 (555) 123-4567',
         );
-        
+
         debugPrint('AuthProvider - Usuario creado: ${_currentUser!.fullName}');
-        debugPrint('AuthProvider - Customer ID del usuario: ${_currentUser!.customerId}');
-        
+        debugPrint(
+            'AuthProvider - Customer ID del usuario: ${_currentUser!.customerId}',);
+
         _isAuthenticated = true;
         notifyListeners();
         return true;

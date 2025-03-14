@@ -9,9 +9,7 @@ class PolicyInactiveCard extends StatelessWidget {
   final Vehicle? vehicle;
 
   const PolicyInactiveCard({
-    super.key,
-    required this.user,
-    required this.policyNumber,
+    required this.user, required this.policyNumber, super.key,
     this.vehicle,
   });
 

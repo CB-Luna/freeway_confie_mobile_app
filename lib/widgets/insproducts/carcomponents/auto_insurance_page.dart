@@ -178,16 +178,16 @@ class _AutoInsurancePageState extends State<AutoInsurancePage> {
                                   hintText: 'Select',
                                   border: OutlineInputBorder(),
                                   contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                      horizontal: 16, vertical: 12,),
                                 ),
                                 items: const [
                                   DropdownMenuItem(
-                                      value: 'valid', child: Text('Valid')),
+                                      value: 'valid', child: Text('Valid'),),
                                   DropdownMenuItem(
-                                      value: 'expired', child: Text('Expired')),
+                                      value: 'expired', child: Text('Expired'),),
                                   DropdownMenuItem(
                                       value: 'suspended',
-                                      child: Text('Suspended')),
+                                      child: Text('Suspended'),),
                                 ],
                                 onChanged: (value) {
                                   setState(() {
@@ -218,13 +218,13 @@ class _AutoInsurancePageState extends State<AutoInsurancePage> {
                                   hintText: 'Select',
                                   border: OutlineInputBorder(),
                                   contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
+                                      horizontal: 16, vertical: 12,),
                                 ),
                                 items: List.generate(30, (index) {
                                   return DropdownMenuItem(
                                     value: (index + 1).toString(),
                                     child: Text(
-                                        '${index + 1} ${index == 0 ? 'year' : 'years'}'),
+                                        '${index + 1} ${index == 0 ? 'year' : 'years'}',),
                                   );
                                 }),
                                 onChanged: (value) {

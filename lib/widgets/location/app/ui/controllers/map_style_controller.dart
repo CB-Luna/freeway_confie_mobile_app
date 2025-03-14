@@ -1,31 +1,65 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import '../utils/map_style.dart';
 
-class MapStyleController {
-  int _currentStyleIndex = 0;
-  final List<String?> _styles = [
-    null, // Estilo por defecto de Google Maps
-    MapStyle.style1,
-    MapStyle.style2
-  ];
+import '../utils/map_style_manager.dart';
 
-  // Getter para obtener el estilo actual del mapa
-  // Este getter se usa directamente en la propiedad style del widget GoogleMap
-  String? get currentMapStyle => _styles[_currentStyleIndex];
+class MapStyleController extends ChangeNotifier {
+  late MapStyleManager _styleManager;
+  GoogleMapController? _mapController;
+  String? _customStyle;
+  MapType _mapType = MapType.normal;
+  bool _isLoadingStyle = false;
 
-  // Método para cambiar al siguiente estilo de mapa
-  void changeMapStyle() {
-    _currentStyleIndex = (_currentStyleIndex + 1) % _styles.length;
-    debugPrint(
-        '✅ Map style changed to style ${_currentStyleIndex == 0 ? "default" : _currentStyleIndex}');
+  MapType get currentMapType => _mapType;
+  String? get currentCustomStyle => _customStyle;
+  bool get isLoadingStyle => _isLoadingStyle;
+
+  MapStyleController() {
+    _styleManager = MapStyleManager(
+      onStyleLoadStarted: _handleStyleLoadStarted,
+      onStyleLoadComplete: _handleStyleLoadComplete,
+      onMapTypeChanged: _handleMapTypeChanged,
+    );
   }
 
-  // Este método se mantiene para compatibilidad con el código existente
-  // pero ya no utiliza el método obsoleto setMapStyle()
+  void _handleStyleLoadStarted() {
+    _isLoadingStyle = true;
+    notifyListeners();
+  }
+
+  void _handleStyleLoadComplete(bool success) {
+    _isLoadingStyle = false;
+    if (!success) {
+      debugPrint('❌ Error al cargar el estilo del mapa');
+    }
+    notifyListeners();
+  }
+
+  void _handleMapTypeChanged(MapType newType) {
+    _mapType = newType;
+    notifyListeners();
+  }
+
   void initMapController(GoogleMapController controller) {
-    // No hacemos nada con el controlador, ya que el estilo se aplica
-    // directamente a través de la propiedad style del widget GoogleMap
-    debugPrint('✅ Map controller initialized');
+    _mapController = controller;
+    _loadInitialStyle();
+  }
+
+  Future<void> _loadInitialStyle() async {
+    if (_mapController == null) return;
+    await _styleManager.loadMapStyle(_mapController!);
+  }
+
+  Future<void> changeMapStyle() async {
+    if (_mapController == null) return;
+    await _styleManager.changeMapType(_mapController!);
+    _customStyle = _styleManager.currentCustomStyle;
+    notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    _mapController = null;
+    super.dispose();
   }
 }

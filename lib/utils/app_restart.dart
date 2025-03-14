@@ -7,8 +7,7 @@ class AppRestart extends StatefulWidget {
   final Widget child;
 
   const AppRestart({
-    super.key,
-    required this.child,
+    required this.child, super.key,
   });
 
   /// Reinicia la aplicación

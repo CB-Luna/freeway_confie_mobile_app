@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 class SplashScreen extends StatefulWidget {
   final Widget nextScreen;
 
-  const SplashScreen({super.key, required this.nextScreen});
+  const SplashScreen({required this.nextScreen, super.key});
 
   @override
   State<SplashScreen> createState() => _SplashScreenState();

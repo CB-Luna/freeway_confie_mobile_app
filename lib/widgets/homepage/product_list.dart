@@ -28,11 +28,13 @@ class ProductList extends StatelessWidget {
       padding: const EdgeInsets.only(right: 16.0),
       child: Row(
         children: _products
-            .map((product) => Container(
-                  width: 160,
-                  margin: const EdgeInsets.only(right: 12.0),
-                  child: ProductCard(product: product),
-                ))
+            .map(
+              (product) => Container(
+                width: 160,
+                margin: const EdgeInsets.only(right: 12.0),
+                child: ProductCard(product: product),
+              ),
+            )
             .toList(),
       ),
     );
@@ -43,8 +45,8 @@ class ProductCard extends StatelessWidget {
   final ProductItem product;
 
   const ProductCard({
-    super.key,
     required this.product,
+    super.key,
   });
 
   @override

@@ -28,7 +28,7 @@ class LocationService extends ChangeNotifier {
     try {
       // Simulamos obtener la ubicación actual
       await Future.delayed(const Duration(seconds: 1));
-      
+
       await findNearbyOffices();
     } catch (e) {
       _status = LocationStatus.error;
@@ -44,10 +44,10 @@ class LocationService extends ChangeNotifier {
     try {
       // Simulamos una llamada a API
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // Datos de ejemplo
       _nearbyOffices = _getMockOffices();
-      
+
       if (_nearbyOffices.isEmpty) {
         _status = LocationStatus.noLocationsFound;
       } else {
@@ -57,7 +57,7 @@ class LocationService extends ChangeNotifier {
       _status = LocationStatus.error;
       _errorMessage = 'Error al buscar oficinas cercanas: $e';
     }
-    
+
     notifyListeners();
   }
 
@@ -73,10 +73,10 @@ class LocationService extends ChangeNotifier {
     try {
       // Simulamos una llamada a API
       await Future.delayed(const Duration(seconds: 1));
-      
+
       // Datos de ejemplo
       _nearbyOffices = _getMockOffices();
-      
+
       if (_nearbyOffices.isEmpty) {
         _status = LocationStatus.noLocationsFound;
       } else {
@@ -86,7 +86,7 @@ class LocationService extends ChangeNotifier {
       _status = LocationStatus.error;
       _errorMessage = 'Error al buscar por código postal: $e';
     }
-    
+
     notifyListeners();
   }
 

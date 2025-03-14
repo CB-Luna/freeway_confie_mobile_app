@@ -55,18 +55,12 @@ class Vehicle {
     required this.plate,
     required this.brand,
     required this.model,
-    this.vehicleTypeId,
+    required this.providerId, required this.providerImage, required this.policyTypeId, required this.policyType, required this.nextPaymentDate, required this.customerId, this.vehicleTypeId,
     this.vehicleType,
-    required this.providerId,
-    required this.providerImage,
-    required this.policyTypeId,
-    required this.policyType,
     this.transactionType,
     this.memberSince,
     this.serviceId,
     this.serviceName,
-    required this.nextPaymentDate,
-    required this.customerId,
   });
 
   factory Vehicle.fromJson(Map<String, dynamic> json) => 

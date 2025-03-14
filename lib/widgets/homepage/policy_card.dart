@@ -11,8 +11,8 @@ class PolicyCard extends StatelessWidget {
   final Vehicle? vehicle;
 
   const PolicyCard({
-    super.key,
     required this.user,
+    super.key,
     this.vehicle,
   });
 
@@ -274,7 +274,7 @@ class PolicyCard extends StatelessWidget {
     try {
       // Intentar analizar la fecha según varios formatos posibles
       DateTime? date;
-      
+
       // Intentar formato yyyy-MM-dd
       try {
         if (dateStr.contains('-') && dateStr.length == 10) {
@@ -283,7 +283,7 @@ class PolicyCard extends StatelessWidget {
             // Si parece ser yyyy-MM-dd
             if (parts[0].length == 4) {
               date = DateTime.parse(dateStr);
-            } 
+            }
             // Si parece ser MM-dd-yyyy
             else if (parts[2].length == 4) {
               date = DateTime(
@@ -297,7 +297,7 @@ class PolicyCard extends StatelessWidget {
       } catch (e) {
         // Ignorar error y continuar con otros formatos
       }
-      
+
       // Si no se pudo analizar, intentar con DateFormat
       if (date == null) {
         try {
@@ -313,7 +313,7 @@ class PolicyCard extends StatelessWidget {
           }
         }
       }
-      
+
       // Formatear la fecha al formato deseado (MM-dd-yyyy)
       return DateFormat('MM-dd-yyyy').format(date);
     } catch (e) {

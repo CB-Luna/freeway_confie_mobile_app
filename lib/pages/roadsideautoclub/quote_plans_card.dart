@@ -9,11 +9,8 @@ class QuotePlanCard extends StatefulWidget {
   final bool isMonthly;
 
   const QuotePlanCard({
-    super.key,
-    required this.plan,
-    required this.onRequestQuote,
+    required this.plan, required this.onRequestQuote, required this.isMonthly, super.key,
     this.isSelected = false,
-    required this.isMonthly,
   });
 
   @override
@@ -40,7 +37,7 @@ class _QuotePlanCardState extends State<QuotePlanCard>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutBack,
-    ));
+    ),);
 
     _controller.forward();
   }
@@ -228,7 +225,7 @@ class _QuotePlanCardState extends State<QuotePlanCard>
                   1.0,
                   curve: Curves.easeOut,
                 ),
-              )),
+              ),),
               child: child,
             );
           },

@@ -9,86 +9,125 @@ import '../entities/location.dart';
 
 class MapService {
   // API keys para Google Maps según la plataforma
-  static const String _androidApiKey = 'AIzaSyDPBzpzGaeI5URw33AuqMZKVkZvvJIfbKc';
+  static const String _androidApiKey =
+      'AIzaSyDPBzpzGaeI5URw33AuqMZKVkZvvJIfbKc';
   static const String _iosApiKey = 'AIzaSyA8xjmcodT9GFHF9ExkhhMarGEMue5JtpY';
-  
+
   // Seleccionar la API key correcta según la plataforma
   static String get _apiKey => Platform.isIOS ? _iosApiKey : _androidApiKey;
+
+  // Método para verificar y solicitar permisos de ubicación
+  Future<bool> checkLocationPermission({bool requestIfDenied = true}) async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    // Primero verificamos si los servicios de ubicación están habilitados
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      debugPrint('⚠️ Los servicios de ubicación están desactivados');
+      return false;
+    }
+
+    // Verificar el estado actual de los permisos
+    permission = await Geolocator.checkPermission();
+
+    if (permission == LocationPermission.denied) {
+      // Si se deniegan los permisos y queremos solicitarlos
+      if (requestIfDenied) {
+        debugPrint('📍 Solicitando permisos de ubicación...');
+        permission = await Geolocator.requestPermission();
+
+        // Verificar el resultado de la solicitud
+        if (permission == LocationPermission.denied) {
+          debugPrint('❌ El usuario denegó los permisos de ubicación');
+          return false;
+        }
+      } else {
+        return false;
+      }
+    }
+
+    // Verificar si los permisos están permanentemente denegados
+    if (permission == LocationPermission.deniedForever) {
+      debugPrint('❌ Los permisos de ubicación están permanentemente denegados');
+      return false;
+    }
+
+    // Si llegamos aquí, tenemos permisos
+    debugPrint('✅ Permisos de ubicación concedidos: $permission');
+    return true;
+  }
 
   Future<Location> getCurrentLocation() async {
     // Número máximo de intentos para obtener la ubicación
     const maxAttempts = 5;
-    
+
+    // Verificar permisos primero
+    final hasPermission = await checkLocationPermission();
+    if (!hasPermission) {
+      debugPrint(
+          '⚠️ Sin permisos de ubicación, usando ubicación predeterminada',);
+      return const Location(latitude: 32.5149, longitude: -117.0382); // Tijuana
+    }
+
     for (int attempt = 1; attempt <= maxAttempts; attempt++) {
       try {
-        debugPrint('📍 Intento $attempt de $maxAttempts para obtener la ubicación actual');
-        
-        // Verificar permisos de ubicación
-        final permission = await Geolocator.checkPermission();
-        debugPrint('📍 Estado de permisos de ubicación: $permission');
-        
-        if (permission == LocationPermission.denied) {
-          debugPrint('⚠️ Permisos de ubicación denegados. Solicitando permisos...');
-          final requestedPermission = await Geolocator.requestPermission();
-          debugPrint('📍 Resultado de solicitud de permisos: $requestedPermission');
-          
-          if (requestedPermission == LocationPermission.denied) {
-            throw Exception('Location permissions are denied');
-          }
-        }
-        
-        if (permission == LocationPermission.deniedForever) {
-          throw Exception('Location permissions are permanently denied');
-        }
-        
+        debugPrint(
+            '📍 Intento $attempt de $maxAttempts para obtener la ubicación actual',);
+
         // Verificar si la ubicación está habilitada
         final isLocationEnabled = await Geolocator.isLocationServiceEnabled();
         debugPrint('📍 Servicios de ubicación habilitados: $isLocationEnabled');
-        
+
         if (!isLocationEnabled) {
-          throw Exception('Location services are disabled');
+          throw Exception('Los servicios de ubicación están desactivados');
         }
-        
+
         // Primero intentar con la mayor precisión posible
         debugPrint('📍 Obteniendo ubicación con precisión BEST...');
         final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.best,  // Usar la mejor precisión disponible
-            timeLimit: Duration(seconds: 20), // Aumentar el tiempo de espera
-            distanceFilter: 0,  // No filtrar por distancia
-          ),
+          desiredAccuracy: LocationAccuracy.best,
+          timeLimit: const Duration(seconds: 20),
+          forceAndroidLocationManager: false,
         );
-        
+
         // Verificar que las coordenadas no sean cero (indicador de posible problema)
         if (position.latitude == 0 && position.longitude == 0) {
-          debugPrint('⚠️ Se obtuvo una ubicación con coordenadas (0,0). Posible error.');
-          throw Exception('Invalid location coordinates (0,0)');
+          debugPrint(
+              '⚠️ Se obtuvo una ubicación con coordenadas (0,0). Posible error.',);
+          throw Exception('Coordenadas inválidas (0,0)');
         }
-        
+
         // Verificar que la precisión sea aceptable
-        if (position.accuracy > 500) {  // Si la precisión es peor que 500 metros
-          debugPrint('⚠️ Precisión de ubicación demasiado baja: ${position.accuracy} metros');
+        if (position.accuracy > 500) {
+          // Si la precisión es peor que 500 metros
+          debugPrint(
+              '⚠️ Precisión de ubicación demasiado baja: ${position.accuracy} metros',);
           if (attempt < maxAttempts) {
             // Intentar de nuevo si la precisión es mala
             continue;
           }
         }
-        
-        debugPrint('📍 Ubicación actual obtenida: (${position.latitude}, ${position.longitude})');
+
+        debugPrint(
+            '📍 Ubicación actual obtenida: (${position.latitude}, ${position.longitude})',);
         debugPrint('📍 Precisión: ${position.accuracy} metros');
-        return Location(latitude: position.latitude, longitude: position.longitude);
+        return Location(
+            latitude: position.latitude, longitude: position.longitude,);
       } catch (e) {
-        debugPrint('❌ Error al obtener la ubicación actual (intento $attempt): $e');
-        
+        debugPrint(
+            '❌ Error al obtener la ubicación actual (intento $attempt): $e',);
+
         // Si no es el último intento, esperar antes de intentar de nuevo
         if (attempt < maxAttempts) {
           await Future.delayed(const Duration(seconds: 3));
         }
       }
     }
-    
+
     // Si después de todos los intentos no se pudo obtener la ubicación, devolver la ubicación de Tijuana como predeterminada
-    debugPrint('⚠️ No se pudo obtener la ubicación actual después de $maxAttempts intentos. Usando ubicación predeterminada de Tijuana.');
+    debugPrint(
+        '⚠️ No se pudo obtener la ubicación actual después de $maxAttempts intentos. Usando ubicación predeterminada de Tijuana.',);
     // Coordenadas aproximadas de Tijuana
     return const Location(latitude: 32.5149, longitude: -117.0382);
   }
@@ -131,7 +170,7 @@ class MapService {
         if (data.containsKey('error_message') &&
             (data['error_message'] as String).contains('not authorized')) {
           debugPrint(
-              '⚠️ API Key authorization error: ${data['error_message']}');
+              '⚠️ API Key authorization error: ${data['error_message']}',);
           return _getOfflineAddress(latitude, longitude);
         }
 
@@ -168,7 +207,7 @@ class MapService {
       } else {
         // Si la solicitud HTTP falla, usar la solución alternativa
         debugPrint(
-            '❌ HTTP error: ${response.statusCode}, using offline geocoding');
+            '❌ HTTP error: ${response.statusCode}, using offline geocoding',);
         return _getOfflineAddress(latitude, longitude);
       }
     } catch (e) {

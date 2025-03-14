@@ -13,9 +13,7 @@ class CardSwiperSection extends StatefulWidget {
   final String policyNumber;
 
   const CardSwiperSection({
-    super.key,
-    required this.user,
-    required this.policyNumber,
+    required this.user, required this.policyNumber, super.key,
   });
 
   @override
@@ -75,7 +73,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
         debugPrint('Total vehicles: ${policyProvider.vehicles.length}');
         for (var vehicle in policyProvider.vehicles) {
           debugPrint(
-              'Vehicle: ${vehicle.plate}, policy_type_id: ${vehicle.policyTypeId}, provider_id: ${vehicle.providerId}');
+              'Vehicle: ${vehicle.plate}, policy_type_id: ${vehicle.policyTypeId}, provider_id: ${vehicle.providerId}',);
         }
 
         // Si hay un error, mostrar tarjetas predeterminadas
@@ -95,7 +93,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
             cards.add(PolicyCard(
               user: widget.user,
               vehicle: vehicle,
-            ));
+            ),);
           }
         }
 
@@ -107,7 +105,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
             cards.add(RoadsideAssist(
               policyNumber: vehicle.plate,
               vehicle: vehicle,
-            ));
+            ),);
           }
         }
 
@@ -120,7 +118,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
               user: widget.user,
               policyNumber: vehicle.plate,
               vehicle: vehicle,
-            ));
+            ),);
           }
         }
 
@@ -171,7 +169,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                       (context, index, percentThresholdX, percentThresholdY) =>
                           SizedBox(
                               width: double.infinity,
-                              child: cards[index % cards.length]),
+                              child: cards[index % cards.length],),
                   allowedSwipeDirection:
                       const AllowedSwipeDirection.symmetric(horizontal: true),
                   isLoop: true,

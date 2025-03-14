@@ -4,8 +4,7 @@ class AddPaymentMethod extends StatelessWidget {
   final VoidCallback onTap;
 
   const AddPaymentMethod({
-    super.key,
-    required this.onTap,
+    required this.onTap, super.key,
   });
 
   @override

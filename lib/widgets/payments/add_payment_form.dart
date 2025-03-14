@@ -8,12 +8,13 @@ const colorGreen = Color(0xFF64A520);
 class AddPaymentForm extends StatefulWidget {
   final VoidCallback onClose;
   final bool isExpanded;
-  final Function(String cardNumber, String expiry, String cardHolder) onSaveCard;
+  final Function(String cardNumber, String expiry, String cardHolder)
+      onSaveCard;
 
   const AddPaymentForm({
-    super.key,
     required this.onClose,
     required this.onSaveCard,
+    super.key,
     this.isExpanded = false,
   });
 
@@ -53,7 +54,7 @@ class _AddPaymentFormState extends State<AddPaymentForm> {
                   color: Colors.black.withAlpha(26), // 0.1 * 255 ≈ 26
                   blurRadius: 8,
                   offset: const Offset(0, 4),
-                )
+                ),
               ]
             : [],
       ),

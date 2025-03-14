@@ -12,9 +12,11 @@ class NotificationsWidget extends StatelessWidget {
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, child) {
         debugPrint(
-            'NotificationsWidget - Construyendo widget, isLoading: ${notificationProvider.isLoading}');
+          'NotificationsWidget - Construyendo widget, isLoading: ${notificationProvider.isLoading}',
+        );
         debugPrint(
-            'NotificationsWidget - Error: ${notificationProvider.errorMessage}');
+          'NotificationsWidget - Error: ${notificationProvider.errorMessage}',
+        );
 
         if (notificationProvider.isLoading) {
           debugPrint('NotificationsWidget - Mostrando estado de carga');
@@ -23,7 +25,8 @@ class NotificationsWidget extends StatelessWidget {
 
         if (notificationProvider.errorMessage != null) {
           debugPrint(
-              'NotificationsWidget - Mostrando error: ${notificationProvider.errorMessage}');
+            'NotificationsWidget - Mostrando error: ${notificationProvider.errorMessage}',
+          );
           // Mostrar un mensaje de error discreto
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,7 +50,8 @@ class NotificationsWidget extends StatelessWidget {
                   color: Colors.red.withAlpha(26), // 0.1 de opacidad
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                      color: Colors.red.withAlpha(51)), // 0.2 de opacidad
+                    color: Colors.red.withAlpha(51),
+                  ), // 0.2 de opacidad
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,22 +73,26 @@ class NotificationsWidget extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               // Mostrar notificaciones de ejemplo
-              ...notificationProvider.notifications.map((notification) =>
-                  _buildNotificationCard(context, notification)),
+              ...notificationProvider.notifications.map(
+                (notification) => _buildNotificationCard(context, notification),
+              ),
             ],
           );
         }
 
         final notifications = notificationProvider.notifications;
         debugPrint(
-            'NotificationsWidget - Número de notificaciones: ${notifications.length}');
+          'NotificationsWidget - Número de notificaciones: ${notifications.length}',
+        );
 
         if (notifications.isNotEmpty) {
           debugPrint(
-              'NotificationsWidget - Primera notificación: ${notifications.first.title}');
+            'NotificationsWidget - Primera notificación: ${notifications.first.title}',
+          );
         } else {
           debugPrint(
-              'NotificationsWidget - No hay notificaciones para mostrar');
+            'NotificationsWidget - No hay notificaciones para mostrar',
+          );
         }
 
         return Column(
@@ -352,7 +360,9 @@ class NotificationsWidget extends StatelessWidget {
   }
 
   Widget _buildNotificationCard(
-      BuildContext context, NotificationModel notification) {
+    BuildContext context,
+    NotificationModel notification,
+  ) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
       decoration: BoxDecoration(

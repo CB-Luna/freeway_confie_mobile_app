@@ -37,7 +37,7 @@ class _HomePageState extends State<HomePage> {
     if (!_isInitialized) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       debugPrint(
-          'HomePage - Inicializando datos con usuario: ${authProvider.currentUser?.fullName}');
+          'HomePage - Inicializando datos con usuario: ${authProvider.currentUser?.fullName}',);
 
       if (authProvider.currentUser != null) {
         final customerId = authProvider.currentUser!.customerId;
@@ -45,7 +45,7 @@ class _HomePageState extends State<HomePage> {
 
         if (customerId <= 0) {
           debugPrint(
-              'HomePage - ADVERTENCIA: customerId inválido: $customerId');
+              'HomePage - ADVERTENCIA: customerId inválido: $customerId',);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Error: ID de cliente inválido'),
@@ -59,14 +59,14 @@ class _HomePageState extends State<HomePage> {
         final policyProvider =
             Provider.of<HomePolicyProvider>(context, listen: false);
         debugPrint(
-            'HomePage - Cargando políticas para customerId: $customerId');
+            'HomePage - Cargando políticas para customerId: $customerId',);
         policyProvider.fetchHomePolicies(customerId);
 
         // Cargar notificaciones
         final notificationProvider =
             Provider.of<NotificationProvider>(context, listen: false);
         debugPrint(
-            'HomePage - Cargando notificaciones para customerId: $customerId');
+            'HomePage - Cargando notificaciones para customerId: $customerId',);
         notificationProvider.fetchNotifications(customerId);
       } else {
         debugPrint('HomePage - No hay usuario autenticado');
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                 child: HeaderSection(
                   onNotificationTap: () {
                     debugPrint(
-                        'HomePage - Navegando a la sección de notificaciones');
+                        'HomePage - Navegando a la sección de notificaciones',);
                     if (notificationsKey.currentContext != null) {
                       Scrollable.ensureVisible(
                         notificationsKey.currentContext!,
@@ -156,7 +156,7 @@ class _HomePageState extends State<HomePage> {
                     // Card Swiper Section
                     Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 24.0, vertical: 12.0),
+                          horizontal: 24.0, vertical: 12.0,),
                       child: CardSwiperSection(
                         user: user,
                         policyNumber: 'CAAAPO000380840',

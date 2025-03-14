@@ -19,7 +19,7 @@ class _LocationHomePageState extends State<LocationHomePage> {
   ) async {
     try {
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         throw Exception('Los servicios de ubicación están desactivados');
       }
@@ -38,9 +38,9 @@ class _LocationHomePageState extends State<LocationHomePage> {
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
 
-      List<Map<String, dynamic>> officesWithDistances = [];
+      final List<Map<String, dynamic>> officesWithDistances = [];
 
       // Calcular distancias para cada oficina
       for (final office in offices) {
@@ -66,19 +66,25 @@ class _LocationHomePageState extends State<LocationHomePage> {
       }
 
       // Ordenar por distancia (la más cercana primero)
-      officesWithDistances.sort((a, b) => (a['distanceInMiles'] as double)
-          .compareTo(b['distanceInMiles'] as double));
+      officesWithDistances.sort(
+        (a, b) => (a['distanceInMiles'] as double)
+            .compareTo(b['distanceInMiles'] as double),
+      );
 
       return officesWithDistances;
     } catch (e) {
-      developer.log('Error al calcular distancias: $e',
-          name: 'LocationHomePage');
+      developer.log(
+        'Error al calcular distancias: $e',
+        name: 'LocationHomePage',
+      );
       // Devolver la lista original sin distancias calculadas
       return offices
-          .map((office) => {
-                ...office,
-                'distanceInMiles': -1.0, // Valor de error
-              })
+          .map(
+            (office) => {
+              ...office,
+              'distanceInMiles': -1.0, // Valor de error
+            },
+          )
           .toList();
     }
   }
@@ -108,7 +114,7 @@ class _LocationHomePageState extends State<LocationHomePage> {
       );
 
       // Crear datos de prueba para las oficinas
-      List<Map<String, dynamic>> officesMaps = [
+      final List<Map<String, dynamic>> officesMaps = [
         {
           'id': 'chula_vista',
           'latitude': 32.6024602,
@@ -134,7 +140,7 @@ class _LocationHomePageState extends State<LocationHomePage> {
       ];
 
       // Calcular distancias usando Geolocator directamente
-      List<Map<String, dynamic>> officesWithDistances =
+      final List<Map<String, dynamic>> officesWithDistances =
           await _calculateDistances(officesMaps);
 
       // Cerrar diálogo de carga y mostrar resultados solo si el widget sigue montado
@@ -156,7 +162,8 @@ class _LocationHomePageState extends State<LocationHomePage> {
             return AlertDialog(
               title: const Text('Error en la prueba'),
               content: Text(
-                  'Ocurrió un error al ejecutar la prueba: ${e.toString()}'),
+                'Ocurrió un error al ejecutar la prueba: ${e.toString()}',
+              ),
               actions: <Widget>[
                 TextButton(
                   child: const Text('Aceptar'),
@@ -174,7 +181,8 @@ class _LocationHomePageState extends State<LocationHomePage> {
 
   // Método para mostrar los resultados del cálculo de distancias
   Future<void> _showResultsDialog(
-      List<Map<String, dynamic>> officesWithDistances) async {
+    List<Map<String, dynamic>> officesWithDistances,
+  ) async {
     await showDialog(
       context: context,
       builder: (BuildContext context) {

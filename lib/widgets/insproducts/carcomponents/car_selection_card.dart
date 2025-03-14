@@ -9,12 +9,7 @@ class CarSelectionCard extends StatelessWidget {
   final VoidCallback onRemove;
 
   const CarSelectionCard({
-    super.key,
-    required this.car,
-    required this.isSelected,
-    required this.onSelect,
-    required this.onEdit,
-    required this.onRemove,
+    required this.car, required this.isSelected, required this.onSelect, required this.onEdit, required this.onRemove, super.key,
   });
 
   @override

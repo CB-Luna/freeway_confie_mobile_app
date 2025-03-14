@@ -15,9 +15,9 @@ class LocationDetailsView extends StatefulWidget {
   final List<OfficeLocation> allOffices;
 
   const LocationDetailsView({
-    super.key,
     required this.office,
     required this.allOffices,
+    super.key,
   });
 
   @override
@@ -65,10 +65,12 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
   Future<void> _getCurrentDeviceLocation() async {
     try {
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        developer.log('Los servicios de ubicación están desactivados',
-            name: 'LocationDetailsView');
+        developer.log(
+          'Los servicios de ubicación están desactivados',
+          name: 'LocationDetailsView',
+        );
         return;
       }
 
@@ -77,20 +79,24 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          developer.log('Permiso de ubicación denegado',
-              name: 'LocationDetailsView');
+          developer.log(
+            'Permiso de ubicación denegado',
+            name: 'LocationDetailsView',
+          );
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        developer.log('Permiso de ubicación denegado permanentemente',
-            name: 'LocationDetailsView');
+        developer.log(
+          'Permiso de ubicación denegado permanentemente',
+          name: 'LocationDetailsView',
+        );
         return;
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
 
       // Actualizar la posición actual con la ubicación del dispositivo
       if (mounted) {
@@ -107,8 +113,10 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
         }
       }
     } catch (e) {
-      developer.log('Error al obtener la ubicación actual: $e',
-          name: 'LocationDetailsView');
+      developer.log(
+        'Error al obtener la ubicación actual: $e',
+        name: 'LocationDetailsView',
+      );
     }
   }
 
@@ -159,14 +167,15 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
   Future<void> _getAddressFromLatLng(LatLng position) async {
     try {
       debugPrint(
-          'Obteniendo dirección para: ${position.latitude}, ${position.longitude}');
-      List<Placemark> placemarks = await placemarkFromCoordinates(
+        'Obteniendo dirección para: ${position.latitude}, ${position.longitude}',
+      );
+      final List<Placemark> placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
 
       if (placemarks.isNotEmpty) {
-        Placemark place = placemarks[0];
+        final Placemark place = placemarks[0];
         debugPrint('Placemark obtenido: $place');
 
         // Construimos la dirección principal
@@ -191,7 +200,7 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
         }
 
         // Construimos la dirección secundaria
-        List<String> secondaryParts = [];
+        final List<String> secondaryParts = [];
         if (place.locality != null && place.locality!.isNotEmpty) {
           secondaryParts.add(place.locality!);
         }
@@ -203,22 +212,25 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
           secondaryParts.add(place.postalCode!);
         }
 
-        String secondaryAddress = secondaryParts.join(', ');
+        final String secondaryAddress = secondaryParts.join(', ');
 
         // Actualizamos el estado con las nuevas direcciones
         setState(() {
           _currentAddress = mainAddress;
           _currentSecondaryAddress = secondaryAddress;
           debugPrint(
-              'Dirección actualizada: $_currentAddress, $_currentSecondaryAddress');
+            'Dirección actualizada: $_currentAddress, $_currentSecondaryAddress',
+          );
 
           // Actualizamos el marcador con la nueva información
           _updateMarkerInfo();
         });
       }
     } catch (e) {
-      developer.log('Error obteniendo dirección: $e',
-          name: 'LocationDetailsView');
+      developer.log(
+        'Error obteniendo dirección: $e',
+        name: 'LocationDetailsView',
+      );
     }
   }
 
@@ -227,7 +239,8 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
     if (!_isMapReady) return;
 
     debugPrint(
-        'Actualizando marcador en: ${_currentPosition.latitude}, ${_currentPosition.longitude}');
+      'Actualizando marcador en: ${_currentPosition.latitude}, ${_currentPosition.longitude}',
+    );
 
     // Eliminamos el marcador existente
     _markers
@@ -249,11 +262,13 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
         draggable: true,
         onDragStart: (startPosition) {
           debugPrint(
-              'Comenzando a arrastrar desde: ${startPosition.latitude}, ${startPosition.longitude}');
+            'Comenzando a arrastrar desde: ${startPosition.latitude}, ${startPosition.longitude}',
+          );
         },
         onDragEnd: (newPosition) {
           debugPrint(
-              'Finalizando arrastre en: ${newPosition.latitude}, ${newPosition.longitude}');
+            'Finalizando arrastre en: ${newPosition.latitude}, ${newPosition.longitude}',
+          );
           setState(() {
             _currentPosition = newPosition;
           });
@@ -537,13 +552,15 @@ class _LocationDetailsViewState extends State<LocationDetailsView> {
       _showErrorSnackBar();
     }
   }
-  
+
   // Método auxiliar para mostrar un mensaje de error
   void _showErrorSnackBar() {
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('No se pudo iniciar la llamada. Por favor, intente más tarde.'),
+          content: Text(
+            'No se pudo iniciar la llamada. Por favor, intente más tarde.',
+          ),
           duration: Duration(seconds: 3),
         ),
       );

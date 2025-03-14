@@ -25,7 +25,7 @@ dependencies:
   circular_profile_avatar: ^2.0.5
   # Location dependencies
   google_maps_flutter: ^2.10.1
-  geolocator: ^13.0.0
+  geolocator: ^11.0.0
   geocoding: ^2.1.1
   # API REST dependencies
   dio: ^5.4.0
@@ -45,6 +45,7 @@ dev_dependencies:
   retrofit_generator: ^7.0.8
   build_runner: ^2.4.7
   json_serializable: ^6.7.1
+  custom_lint: ^0.7.0
 
 flutter:
   uses-material-design: true

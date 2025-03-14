@@ -116,7 +116,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
   }
 
   Widget _buildInsuranceItem(
-      BuildContext context, String title, String iconName) {
+      BuildContext context, String title, String iconName,) {
     return GestureDetector(
       onTap: () {
         switch (title) {
@@ -132,7 +132,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const MotorcycleInsurancePage()),
+                  builder: (context) => const MotorcycleInsurancePage(),),
             );
             break;
           // TODO: Implementar navegación para otros tipos de seguro

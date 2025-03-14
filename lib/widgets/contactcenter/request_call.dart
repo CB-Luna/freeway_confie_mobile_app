@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../utils/menu/circle_nav_bar.dart';
 
 class RequestCallPage extends StatefulWidget {
@@ -143,8 +144,11 @@ class _RequestCallPageState extends State<RequestCallPage> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.phone_in_talk,
-                                color: Colors.white, size: 24),
+                            Icon(
+                              Icons.phone_in_talk,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Call (888) 443-4662',
@@ -183,8 +187,11 @@ class _RequestCallPageState extends State<RequestCallPage> {
                         child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.phone_in_talk,
-                                color: Colors.white, size: 24),
+                            Icon(
+                              Icons.phone_in_talk,
+                              color: Colors.white,
+                              size: 24,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Call (877) 753-7823',

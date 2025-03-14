@@ -8,11 +8,7 @@ class ProfileSettingsSwitch extends StatelessWidget {
   final ValueChanged<bool> onChanged;
 
   const ProfileSettingsSwitch({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.value,
-    required this.onChanged,
+    required this.title, required this.icon, required this.value, required this.onChanged, super.key,
   });
 
   @override

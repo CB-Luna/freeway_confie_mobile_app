@@ -290,7 +290,7 @@ class _MotorcycleInsurancePageState extends State<MotorcycleInsurancePage> {
                     EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               ),
               items: List.generate(
-                      11, (index) => (DateTime.now().year - index).toString())
+                      11, (index) => (DateTime.now().year - index).toString(),)
                   .map((String value) {
                 return DropdownMenuItem<String>(
                   value: value,

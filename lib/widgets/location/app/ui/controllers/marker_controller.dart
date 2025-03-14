@@ -53,7 +53,6 @@ class MarkerController {
     if (_customMarkerIcon != null) return;
 
     try {
-      // Intentar cargar el icono personalizado
       final Uint8List markerIcon = await getBytesFromAsset(
         'assets/prefix.png',
         120,
@@ -62,46 +61,65 @@ class MarkerController {
       debugPrint('✅ Custom marker icon loaded successfully from prefix.png');
     } catch (e) {
       debugPrint('❌ Error loading custom marker icon: $e');
-      // En caso de error, usar un icono predeterminado de Google Maps
       _customMarkerIcon =
           BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
       debugPrint('✅ Using default blue marker as fallback');
     }
   }
 
-  // Método para cargar el icono de ubicación del usuario (círculo azul)
+  // Método para cargar el icono de la flecha roja
   Future<void> loadRedArrowIcon() async {
     if (_redArrowIcon != null) return;
 
     try {
-      // Intentar cargar un icono personalizado para la ubicación del usuario
-      final Uint8List markerIcon = await getBytesFromAsset(
-        'assets/user_location.png',  // Intentar usar un icono personalizado si existe
-        100,
+      // Crear un icono personalizado con forma de flecha
+      final BitmapDescriptor customArrow = await _createArrowMarkerIcon(
+        Colors.red,
       );
-      _redArrowIcon = BitmapDescriptor.bytes(markerIcon);
-      debugPrint('✅ User location icon loaded successfully from user_location.png');
+      _redArrowIcon = customArrow;
+      debugPrint('✅ Red arrow icon created successfully');
     } catch (e) {
-      debugPrint('❌ Error loading user location icon: $e');
-      
-      try {
-        // Si no se puede cargar el icono personalizado, crear un círculo azul
-        final BitmapDescriptor customCircle = await _createCircleMarkerIcon(
-          Colors.blue,  // Color azul para el círculo
-          Colors.white,  // Color blanco para el borde
-        );
-        _redArrowIcon = customCircle;
-        debugPrint('✅ Created custom blue circle icon for user location');
-      } catch (e2) {
-        debugPrint('❌ Error creating custom circle icon: $e2');
-        // En caso de error, usar un icono predeterminado de Google Maps
-        _redArrowIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
-        debugPrint('✅ Using default azure marker as fallback');
-      }
+      debugPrint('❌ Error creating red arrow icon: $e');
+      // Usar un icono predeterminado como fallback
+      _redArrowIcon = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueRed,
+      );
     }
   }
 
+  // Método auxiliar para crear un icono de flecha personalizado
+  Future<BitmapDescriptor> _createArrowMarkerIcon(Color color) async {
+    const size = Size(120, 120);
+    final pictureRecorder = ui.PictureRecorder();
+    final canvas = Canvas(pictureRecorder);
+    final paint = Paint()..color = color;
 
+    // Dibujamos una flecha apuntando hacia abajo
+    final path = Path();
+    path.moveTo(size.width / 2, size.height); // Punta inferior
+    path.lineTo(size.width * 0.25, size.height * 0.6); // Esquina izquierda
+    path.lineTo(size.width * 0.4, size.height * 0.6); // Interior izquierdo
+    path.lineTo(size.width * 0.4, size.height * 0.2); // Subida izquierda
+    path.lineTo(size.width * 0.6, size.height * 0.2); // Parte superior
+    path.lineTo(size.width * 0.6, size.height * 0.6); // Bajada derecha
+    path.lineTo(size.width * 0.75, size.height * 0.6); // Interior derecho
+    path.close(); // Cierra el path
+
+    canvas.drawPath(path, paint);
+
+    // Convertir a imagen
+    final img = await pictureRecorder.endRecording().toImage(
+          size.width.toInt(),
+          size.height.toInt(),
+        );
+    final data = await img.toByteData(format: ui.ImageByteFormat.png);
+
+    if (data == null) {
+      throw Exception('Failed to convert arrow to bytes');
+    }
+
+    return BitmapDescriptor.bytes(data.buffer.asUint8List());
+  }
 
   // Método auxiliar para obtener los bytes de una imagen de assets con el tamaño correcto
   Future<Uint8List> getBytesFromAsset(String path, int width) async {
@@ -137,48 +155,10 @@ class MarkerController {
     }
     return _redArrowMode;
   }
-  
-  // Método para crear un icono de marcador circular
-  Future<BitmapDescriptor> _createCircleMarkerIcon(
-    Color fillColor,
-    Color borderColor,
-  ) async {
-    const size = Size(120.0, 120.0);
-    final pictureRecorder = ui.PictureRecorder();
-    final canvas = Canvas(pictureRecorder);
-    
-    // Dibujar el círculo exterior (borde)
-    final borderPaint = Paint()
-      ..color = borderColor
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 2, borderPaint);
-    
-    // Dibujar el círculo interior
-    final fillPaint = Paint()
-      ..color = fillColor
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 2.4, fillPaint);
-    
-    // Dibujar un punto central
-    final centerPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 8, centerPaint);
-    
-    // Convertir a imagen
-    final img = await pictureRecorder.endRecording().toImage(
-          size.width.toInt(),
-          size.height.toInt(),
-        );
-    final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
-  }
 
   // Método para añadir un marcador con ajustes para mejor visualización
   void addMarker(LatLng position) {
-    // Siempre mostrar los marcadores de oficinas, sin importar el modo
-    // Eliminamos la verificación de _markerMode para que siempre se muestren
+    if (!_markerMode) return;
 
     final markerId = position.toString();
     final officeName = 'Office $_markerCounter';
@@ -186,16 +166,16 @@ class MarkerController {
 
     // Verificación explícita del icono personalizado
     final icon = _customMarkerIcon ??
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed); // Cambiamos a rojo para las oficinas
+        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
 
     final mapMarker = MapMarkerModel(
       id: markerId,
-      title: 'Freeway Insurance',
-      snippet: 'Oficina $_markerCounter',
+      title: officeName,
+      snippet:
+          'Lat: ${position.latitude.toStringAsFixed(4)}, Lng: ${position.longitude.toStringAsFixed(4)}',
       position: position,
       icon: icon,
       onDragEnd: _updateMarkerPosition,
-      visible: true, // Aseguramos que sea visible
     );
 
     _markers.add(mapMarker.toMarker());
@@ -204,32 +184,30 @@ class MarkerController {
     );
   }
 
-  // Método para añadir o actualizar el marcador de ubicación del usuario (solo permite uno a la vez)
+  // Método para añadir o actualizar el marcador de flecha roja (solo permite uno a la vez)
   void addOrUpdateRedArrowMarker(LatLng position) {
-    final markerId = const MarkerId('user_location_marker');
+    if (!_redArrowMode) return;
 
-    // Crear un icono personalizado para la ubicación del usuario si no existe
-    _redArrowIcon ??= BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure);
+    final markerId = const MarkerId('red_arrow_marker');
 
-    // Solo se permite un marcador de ubicación a la vez
+    // Solo se permite un marcador rojo a la vez
     _redArrowMarker = Marker(
       markerId: markerId,
       position: position,
-      icon: _redArrowIcon!,
+      icon: _redArrowIcon ??
+          BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
       infoWindow: const InfoWindow(
-        title: 'Tu Ubicación Actual',
-        snippet: 'Toca para encontrar la oficina más cercana',
+        title: 'Your Location',
+        snippet: 'Tap to find nearest office',
       ),
       draggable: true,
       onDragEnd: _updateRedArrowPosition,
       onTap: () => _findNearestOffice(position),
       anchor: const Offset(0.5, 1.0), // Ancla en la parte inferior del icono
-      visible: true,  // Asegurar que el marcador sea visible
-      zIndex: 2,  // Mayor prioridad que los marcadores de oficinas
     );
 
     debugPrint(
-      'User location marker set at: ${position.latitude}, ${position.longitude}',
+      'Red arrow marker set at: ${position.latitude}, ${position.longitude}',
     );
   }
 

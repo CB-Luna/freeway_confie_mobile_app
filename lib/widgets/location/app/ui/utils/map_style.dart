@@ -1,4 +1,17 @@
+/// A class that represents a custom style for Google Maps.
 class MapStyle {
+  final String json;
+
+  const MapStyle(this.json);
+
+  /// Creates a MapStyle from a JSON string.
+  factory MapStyle.fromJson(String json) {
+    return MapStyle(json);
+  }
+
+  /// Returns the JSON string representing this style.
+  String toJson() => json;
+
   static const String style1 = '''[
     {
         "featureType": "all",

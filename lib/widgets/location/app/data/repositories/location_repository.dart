@@ -11,7 +11,7 @@ class LocationRepository {
   /// Obtiene la ubicación actual del dispositivo
   Future<LocationModel> getCurrentLocation() async {
     // Verificar si los servicios de ubicación están habilitados
-    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled) {
       throw Exception('Los servicios de ubicación están desactivados');
     }
@@ -30,7 +30,7 @@ class LocationRepository {
     }
 
     // Obtener la ubicación actual
-    Position position = await Geolocator.getCurrentPosition();
+    final Position position = await Geolocator.getCurrentPosition();
 
     return LocationModel(
       latitude: position.latitude,
@@ -53,10 +53,10 @@ class LocationRepository {
   Future<List<OfficeLocation>> getOfficesWithDistances() async {
     try {
       // Obtener las oficinas
-      List<OfficeLocation> offices = OfficeData.getOffices();
+      final List<OfficeLocation> offices = OfficeData.getOffices();
       
       // Convertir oficinas a formato de mapa para el cálculo de distancias
-      List<Map<String, dynamic>> officesMaps = offices.map((office) => {
+      final List<Map<String, dynamic>> officesMaps = offices.map((office) => {
         'id': office.id,
         'latitude': office.latitude,
         'longitude': office.longitude,
@@ -66,14 +66,14 @@ class LocationRepository {
         'closeHours': office.closeHours,
         'reference': office.reference,
         'rating': office.rating,
-      }).toList();
+      },).toList();
       
       // Calcular distancias para todas las oficinas desde la ubicación actual
-      List<Map<String, dynamic>> officesWithDistances = 
+      final List<Map<String, dynamic>> officesWithDistances = 
           await DistanceCalculator.calculateDistancesFromCurrentLocation(officesMaps);
       
       // Convertir de nuevo a objetos OfficeLocation
-      List<OfficeLocation> result = officesWithDistances.map((officeMap) => OfficeLocation(
+      final List<OfficeLocation> result = officesWithDistances.map((officeMap) => OfficeLocation(
         id: officeMap['id'] as String,
         latitude: officeMap['latitude'] as double,
         longitude: officeMap['longitude'] as double,
@@ -84,7 +84,7 @@ class LocationRepository {
         distanceInMiles: officeMap['distanceInMiles'] as double,
         reference: officeMap['reference'] as String,
         rating: officeMap['rating'] as double,
-      )).toList();
+      ),).toList();
       
       return result;
     } catch (e) {
@@ -98,7 +98,7 @@ class LocationRepository {
   Future<OfficeLocation?> getNearestOffice() async {
     try {
       // Obtener todas las oficinas con distancias calculadas
-      List<OfficeLocation> offices = await getOfficesWithDistances();
+      final List<OfficeLocation> offices = await getOfficesWithDistances();
       
       // Verificar si hay oficinas disponibles
       if (offices.isEmpty) {

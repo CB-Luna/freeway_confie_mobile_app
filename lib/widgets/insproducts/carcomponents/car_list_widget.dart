@@ -7,10 +7,7 @@ class CarListWidget extends StatelessWidget {
   final Function(String) onCarSelect;
 
   const CarListWidget({
-    super.key,
-    required this.cars,
-    required this.selectedVin,
-    required this.onCarSelect,
+    required this.cars, required this.selectedVin, required this.onCarSelect, super.key,
   });
 
   @override

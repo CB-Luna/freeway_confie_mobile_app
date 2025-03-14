@@ -1,0 +1,70 @@
+{
+    "editor.bracketPairColorization.enabled": true,
+    "editor.guides.bracketPairs": true,
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+        80
+    ],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off",
+    "dart.debugExternalPackageLibraries": false,
+    "dart.debugSdkLibraries": false,
+    "dart.enableSdkFormatter": true,
+    "dart.lineLength": 80,
+    "dart.showInlineErrors": true,
+    "dart.analysisExcludedFolders": [
+        "build",
+        ".dart_tool",
+        ".idea",
+        ".vscode",
+        "android",
+        "ios",
+        "test"
+    ],
+    "dart.doNotFormat": [
+        "**.g.dart",
+        "**.freezed.dart"
+    ],
+    "dart.warnWhenEditingFilesOutsideWorkspace": true,
+    "dart.renameFilesWithClasses": "prompt",
+    "dart.checkForSdkUpdates": true,
+    "dart.flutterSdkPath": "",
+    "dart.devToolsLocation": "external",
+    "dart.previewFlutterUiGuides": true,
+    "dart.previewFlutterUiGuidesCustomTracking": true,
+    "dart.showSkippedTests": true,
+    "dart.closingLabels": true,
+    "dart.debuggerUseColors": true,
+    "dart.hotReloadOnSave": "all",
+    "dart.previewLsp": true,
+    "dart.updateImportsOnRename": true,
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.selectionHighlight": false,
+        "editor.suggest.snippetsPreventQuickSuggestions": false,
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "onlySnippets",
+        "editor.wordBasedSuggestions": "off",
+        "editor.codeActionsOnSave": {
+            "source.fixAll": "explicit",
+            "source.organizeImports": "explicit"
+        }
+    },
+    "problems.decorations.enabled": true,
+    "problems.showCurrentInStatus": true,
+    "workbench.colorCustomizations": {
+        "editorError.foreground": "#ff0000",
+        "editorWarning.foreground": "#FFA500",
+        "editorInfo.foreground": "#2196f3",
+        "editorError.border": "#ff000055",
+        "editorWarning.border": "#FFA50055",
+        "editorInfo.border": "#2196f355"
+    },
+    "editor.renderLineHighlight": "all",
+    "editor.showUnused": true
+}

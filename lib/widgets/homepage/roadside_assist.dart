@@ -8,8 +8,8 @@ class RoadsideAssist extends StatelessWidget {
   final Vehicle? vehicle;
 
   const RoadsideAssist({
-    super.key,
     required this.policyNumber,
+    super.key,
     this.vehicle,
   });
 
@@ -163,7 +163,9 @@ class RoadsideAssist extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 10),
+                        horizontal: 5,
+                        vertical: 10,
+                      ),
                       minimumSize: const Size(85, 38),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
@@ -195,7 +197,9 @@ class RoadsideAssist extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 10),
+                        horizontal: 5,
+                        vertical: 10,
+                      ),
                     ),
                     child: const Text(
                       'Service Request',
@@ -227,7 +231,9 @@ class RoadsideAssist extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 5, vertical: 10),
+                        horizontal: 5,
+                        vertical: 10,
+                      ),
                     ),
                     child: const Text(
                       'Plan Details',

@@ -4,8 +4,7 @@ class SafetyCheckCard extends StatelessWidget {
   final VoidCallback onSafetyConfirmed;
 
   const SafetyCheckCard({
-    super.key,
-    required this.onSafetyConfirmed,
+    required this.onSafetyConfirmed, super.key,
   });
 
   @override

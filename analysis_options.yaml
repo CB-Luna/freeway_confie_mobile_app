@@ -11,12 +11,38 @@ include: package:flutter_lints/flutter.yaml
 
 analyzer:
   errors:
+    # Errores fatales (líneas rojas)
     invalid_assignment: error
     missing_return: error
     dead_code: error
     duplicate_import: error
-    unused_import: warning
     invalid_null_aware_operator: error
+    undefined_function: error
+    undefined_method: error
+    undefined_class: error
+    undefined_named_parameter: error
+    must_be_immutable: error
+
+    # Advertencias (líneas amarillas)
+    unused_import: warning
+    unused_local_variable: warning
+    unused_field: warning
+    deprecated_member_use: warning
+    prefer_const_constructors: warning
+    prefer_final_locals: warning
+    avoid_print: warning
+    todo: warning
+
+  # Habilitar análisis detallado
+  strong-mode:
+    implicit-casts: false
+    implicit-dynamic: false
+
+  # Excluir archivos generados
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "lib/generated_plugin_registrant.dart"
 
 linter:
   # The lint rules applied to this project can be customized in the
@@ -95,5 +121,14 @@ linter:
     - use_rethrow_when_possible
     - valid_regexps
 
+    # Reglas adicionales para mejor visualización
+    - always_put_required_named_parameters_first
+    - avoid_print
+    - prefer_final_locals
+    - require_trailing_commas
+    - sized_box_for_whitespace
+    - use_key_in_widget_constructors
+    - use_full_hex_values_for_flutter_colors
+    - use_build_context_synchronously
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

@@ -10,10 +10,7 @@ class InsuranceCard extends StatelessWidget {
   final double imageHeight;
 
   const InsuranceCard({
-    super.key,
-    required this.title,
-    required this.imagePath,
-    required this.route,
+    required this.title, required this.imagePath, required this.route, super.key,
     this.imageWidth = 100, // valor por defecto
     this.imageHeight = 100, // valor por defecto
   });
@@ -28,7 +25,7 @@ class InsuranceCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const VehicleInsuranceGrid()),
+                  builder: (context) => const VehicleInsuranceGrid(),),
             );
           } else {
             Navigator.pushNamed(context, route);

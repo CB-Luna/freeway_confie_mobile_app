@@ -7,9 +7,8 @@ class QuoteCallcenter extends StatefulWidget {
   final VoidCallback? onBackPressed;
 
   const QuoteCallcenter({
-    super.key,
+    required this.insuranceType, super.key,
     this.phoneNumber = '123-456-7890',
-    required this.insuranceType,
     this.onBackPressed,
   });
 

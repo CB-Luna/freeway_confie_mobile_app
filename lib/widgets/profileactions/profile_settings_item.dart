@@ -6,10 +6,7 @@ class ProfileSettingsItem extends StatelessWidget {
   final VoidCallback onTap;
 
   const ProfileSettingsItem({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.onTap,
+    required this.title, required this.icon, required this.onTap, super.key,
   });
 
   @override

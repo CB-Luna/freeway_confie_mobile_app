@@ -30,15 +30,16 @@ class MapMarkerModel {
       icon: icon,
       // Ajustando el punto de ancla para que coincida con la parte inferior de la imagen
       anchor: const Offset(0.5, 1.0),
-      draggable: onDragEnd != null,  // Solo arrastrable si hay un callback definido
+      draggable:
+          onDragEnd != null, // Solo arrastrable si hay un callback definido
       onDragEnd: (newPosition) {
         position = newPosition;
         if (onDragEnd != null) {
           onDragEnd!(MarkerId(id), newPosition);
         }
       },
-      visible: visible,  // Controlar la visibilidad del marcador
-      zIndex: zIndex,    // Controlar la prioridad de visualización
+      visible: visible, // Controlar la visibilidad del marcador
+      zIndex: zIndex, // Controlar la prioridad de visualización
     );
   }
 }

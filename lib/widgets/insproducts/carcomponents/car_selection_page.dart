@@ -189,8 +189,8 @@ class _CarSelectionPageState extends State<CarSelectionPage> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => const AutoInsurancePage(
-                                    initialMenuIndex:
-                                        1), // Mantener +Add Insurance seleccionado
+                                  initialMenuIndex: 1,
+                                ), // Mantener +Add Insurance seleccionado
                               ),
                             );
                           }
@@ -198,7 +198,8 @@ class _CarSelectionPageState extends State<CarSelectionPage> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: selectedVin == null
                           ? const Color(
-                              0xFFF76707) // Naranja cuando no hay selección
+                              0xFFF76707,
+                            ) // Naranja cuando no hay selección
                           : Colors.grey[200], // Gris cuando hay selección
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(

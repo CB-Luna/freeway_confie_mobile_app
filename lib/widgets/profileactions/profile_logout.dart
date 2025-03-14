@@ -15,7 +15,7 @@ class ProfileLogoutButton extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () {
           debugPrint(
-              'ProfileLogoutButton - Button pressed, showing confirmation modal');
+              'ProfileLogoutButton - Button pressed, showing confirmation modal',);
           _showLogoutConfirmation(context);
         },
         style: ElevatedButton.styleFrom(
@@ -105,7 +105,7 @@ class ProfileLogoutButton extends StatelessWidget {
                     },
                     child: Padding(
                       padding: const EdgeInsets.fromLTRB(
-                          24.0, 12.0, 24.0, 24.0), // Ajustado el padding
+                          24.0, 12.0, 24.0, 24.0,), // Ajustado el padding
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -115,7 +115,7 @@ class ProfileLogoutButton extends StatelessWidget {
                             height: 80,
                             decoration: BoxDecoration(
                               color: const Color(0xFF4CAF50).withAlpha(
-                                  26), // 0.1 opacity converted to alpha
+                                  26,), // 0.1 opacity converted to alpha
                               shape: BoxShape.circle,
                             ),
                             child: const Icon(
@@ -157,7 +157,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     debugPrint(
-                                        'ProfileLogoutButton - Cancel button pressed');
+                                        'ProfileLogoutButton - Cancel button pressed',);
                                     Navigator.of(modalContext).pop();
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -165,7 +165,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                     foregroundColor: Colors.grey[700],
                                     side: BorderSide(color: Colors.grey[300]!),
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12), // Reducido de 14 a 12
+                                        vertical: 12,), // Reducido de 14 a 12
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),
@@ -187,7 +187,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     debugPrint(
-                                        'ProfileLogoutButton - Log out button pressed');
+                                        'ProfileLogoutButton - Log out button pressed',);
                                     // Close the modal first
                                     Navigator.of(modalContext).pop();
 
@@ -198,7 +198,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                     backgroundColor: const Color(0xFF4CAF50),
                                     foregroundColor: Colors.white,
                                     padding: const EdgeInsets.symmetric(
-                                        vertical: 12), // Reducido de 14 a 12
+                                        vertical: 12,), // Reducido de 14 a 12
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(12),
                                     ),

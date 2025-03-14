@@ -5,8 +5,7 @@ class ProfileAvatarName extends StatelessWidget {
   final bool showName;
 
   const ProfileAvatarName({
-    super.key,
-    required this.userName,
+    required this.userName, super.key,
     this.showName = true,
   });
 

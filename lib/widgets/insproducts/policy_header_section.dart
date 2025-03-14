@@ -6,10 +6,7 @@ class PolicyHeaderSection extends StatefulWidget {
   final Function(Map<String, String>) onFieldsChanged;
 
   const PolicyHeaderSection({
-    super.key,
-    required this.title,
-    required this.fields,
-    required this.onFieldsChanged,
+    required this.title, required this.fields, required this.onFieldsChanged, super.key,
   });
 
   @override

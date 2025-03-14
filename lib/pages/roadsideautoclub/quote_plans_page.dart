@@ -185,7 +185,7 @@ class _QuotePlansPageState extends State<QuotePlansPage> {
                             isSelected: _selectedPlanIndex == entry.key,
                             isMonthly: _isMonthly,
                           ),
-                        ))
+                        ),)
                     .toList(),
               ),
             ),
@@ -224,7 +224,7 @@ class _QuotePlansPageState extends State<QuotePlansPage> {
           cornerRadius: 30.0,
           activeBgColors: [
             [const Color(0xFF0046B9)],
-            [const Color(0xFF0046B9)]
+            [const Color(0xFF0046B9)],
           ],
           activeFgColor: Colors.white,
           inactiveBgColor: Colors.white,

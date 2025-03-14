@@ -7,21 +7,24 @@ import '../widgets/location/location_zipcode_page.dart';
 
 class DirectionsService {
   /// Solicita permisos de ubicación y abre la navegación hacia la oficina
-  static Future<void> navigateToOffice(BuildContext context, OfficeLocation office) async {
+  static Future<void> navigateToOffice(
+    BuildContext context,
+    OfficeLocation office,
+  ) async {
     // Capturar el contexto en una variable local para evitar problemas con el contexto
     // cuando se usa en operaciones asíncronas
     final scaffoldContext = context;
-    
+
     try {
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         // Verificar si el contexto sigue siendo válido
         if (scaffoldContext.mounted) {
           _showErrorDialog(
-            scaffoldContext, 
+            scaffoldContext,
             'Los servicios de ubicación están desactivados',
-            'Por favor, active los servicios de ubicación para obtener direcciones.'
+            'Por favor, active los servicios de ubicación para obtener direcciones.',
           );
         }
         return;
@@ -35,22 +38,22 @@ class DirectionsService {
           // Verificar si el contexto sigue siendo válido
           if (scaffoldContext.mounted) {
             _showErrorDialog(
-              scaffoldContext, 
+              scaffoldContext,
               'Permiso de ubicación denegado',
-              'Se requiere acceso a la ubicación para proporcionar direcciones precisas.'
+              'Se requiere acceso a la ubicación para proporcionar direcciones precisas.',
             );
           }
           return;
         }
       }
-      
+
       if (permission == LocationPermission.deniedForever) {
         // Verificar si el contexto sigue siendo válido
         if (scaffoldContext.mounted) {
           _showErrorDialog(
-            scaffoldContext, 
+            scaffoldContext,
             'Permiso de ubicación denegado permanentemente',
-            'Por favor, habilite los permisos de ubicación en la configuración de su dispositivo.'
+            'Por favor, habilite los permisos de ubicación en la configuración de su dispositivo.',
           );
         }
         return;
@@ -64,7 +67,7 @@ class DirectionsService {
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
 
       // Cerrar diálogo de carga solo si el contexto sigue siendo válido
       if (scaffoldContext.mounted) {
@@ -78,14 +81,15 @@ class DirectionsService {
           '&origin=${position.latitude},${position.longitude}'
           '&destination=${office.latitude},${office.longitude}'
           '&travelmode=driving';
-      
+
       // Lanzar la URL
       final Uri uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
         await launchUrl(uri, mode: LaunchMode.externalApplication);
       } else {
         // Si no se puede abrir Google Maps, intentar con la URL básica
-        final fallbackUrl = 'https://www.google.com/maps/dir/?api=1&destination=${office.latitude},${office.longitude}';
+        final fallbackUrl =
+            'https://www.google.com/maps/dir/?api=1&destination=${office.latitude},${office.longitude}';
         final fallbackUri = Uri.parse(fallbackUrl);
         if (await canLaunchUrl(fallbackUri)) {
           await launchUrl(fallbackUri, mode: LaunchMode.externalApplication);
@@ -93,9 +97,9 @@ class DirectionsService {
           // Verificar si el contexto sigue siendo válido
           if (scaffoldContext.mounted) {
             _showErrorDialog(
-              scaffoldContext, 
+              scaffoldContext,
               'No se pudo abrir el navegador',
-              'No se pudo abrir la aplicación de mapas. Por favor, intente nuevamente.'
+              'No se pudo abrir la aplicación de mapas. Por favor, intente nuevamente.',
             );
           }
         }
@@ -105,20 +109,24 @@ class DirectionsService {
       if (scaffoldContext.mounted && Navigator.canPop(scaffoldContext)) {
         Navigator.of(scaffoldContext).pop();
       }
-      
+
       // Mostrar error solo si el contexto sigue siendo válido
       if (scaffoldContext.mounted) {
         _showErrorDialog(
-          scaffoldContext, 
+          scaffoldContext,
           'Error al obtener direcciones',
-          'Ocurrió un error al intentar obtener direcciones: ${e.toString()}'
+          'Ocurrió un error al intentar obtener direcciones: ${e.toString()}',
         );
       }
     }
   }
 
   // Mostrar diálogo de error
-  static void _showErrorDialog(BuildContext context, String title, String message) {
+  static void _showErrorDialog(
+    BuildContext context,
+    String title,
+    String message,
+  ) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -162,7 +170,10 @@ class DirectionsService {
   }
 
   // Método para navegar a la página de código postal
-  static void navigateToZipCodePage(BuildContext context, OfficeLocation office) {
+  static void navigateToZipCodePage(
+    BuildContext context,
+    OfficeLocation office,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(

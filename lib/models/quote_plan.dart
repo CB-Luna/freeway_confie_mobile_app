@@ -15,10 +15,7 @@ class QuotePlan {
     required this.iconPath,
     required this.monthlyPrice,
     required this.annualPrice,
-    this.isPopular = false,
-    required this.features,
-    required this.primaryColor,
-    required this.accentColor,
+    required this.features, required this.primaryColor, required this.accentColor, this.isPopular = false,
   });
 }
 
@@ -29,7 +26,6 @@ class PlanFeature {
 
   PlanFeature({
     required this.title,
-    this.subtitle,
-    required this.iconPath,
+    required this.iconPath, this.subtitle,
   });
 }

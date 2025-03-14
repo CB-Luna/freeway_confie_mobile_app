@@ -83,7 +83,7 @@ class LoginPageState extends State<LoginPage> {
                         suffixIcon: IconButton(
                           icon: Icon(_obscureText
                               ? Icons.visibility_off
-                              : Icons.visibility),
+                              : Icons.visibility,),
                           onPressed: () {
                             setState(() {
                               _obscureText = !_obscureText;

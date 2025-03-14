@@ -4,8 +4,8 @@ class PaymentButton extends StatelessWidget {
   final VoidCallback onPressed;
 
   const PaymentButton({
-    super.key,
     required this.onPressed,
+    super.key,
   });
 
   @override

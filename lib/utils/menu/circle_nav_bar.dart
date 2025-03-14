@@ -13,10 +13,7 @@ class CircleNavBar extends StatefulWidget {
   final Function(int) onTap;
 
   const CircleNavBar({
-    super.key,
-    required this.tabItems,
-    required this.selectedPos,
-    required this.onTap,
+    required this.tabItems, required this.selectedPos, required this.onTap, super.key,
   });
 
   @override

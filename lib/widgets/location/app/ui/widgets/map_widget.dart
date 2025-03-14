@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../data/office_data.dart';
 import '../../domain/models/office_location.dart';
 import '../../domain/services/map_service.dart';
 import '../controllers/map_style_controller.dart';
 import '../controllers/marker_controller.dart';
 import '../utils/snackbar_helper.dart';
+import './google_map_view.dart';
 
 class MapWidget extends StatefulWidget {
   const MapWidget({super.key});
@@ -21,6 +21,8 @@ class MapWidgetState extends State<MapWidget> {
   bool _styleLoaded = false;
   bool _markerIconLoaded = false;
   bool _redArrowIconLoaded = false;
+  bool _locationPermissionGranted = false;
+  bool _initialLocationObtained = false;
 
   // Variables para el panel deslizable
   bool _showOfficePanel = false;
@@ -30,12 +32,13 @@ class MapWidgetState extends State<MapWidget> {
 
   // Indicador de carga para la obtención de la dirección
   bool _isLoadingAddress = false;
+  bool _isLoadingCurrentLocation = true;
+
   // Dirección real obtenida de la API de geocodificación inversa
   String? _formattedAddress;
 
-  // Variables para la dirección del marcador rojo (ubicación del usuario)
-  bool _isLoadingUserAddress = false;
-  String? _userFormattedAddress;
+  // Dirección de ubicación actual
+  String? _currentLocationAddress;
 
   // Controladores refactorizados
   final MapStyleController _styleController = MapStyleController();
@@ -43,14 +46,12 @@ class MapWidgetState extends State<MapWidget> {
   // Servicio para obtener la dirección real
   final MapService _mapService = MapService();
 
-  // Posición inicial del mapa (será actualizada con la ubicación real)
-  CameraPosition _initialPosition = const CameraPosition(
-    target: LatLng(33.987407, -118.269281), // Posición predeterminada
-    zoom: 13,
-  );
-  
-  // Indicador de si ya se cargó la ubicación del usuario
-  bool _userLocationLoaded = false;
+  // Usaremos CameraPosition definida por la ubicación real, no una posición inicial fija
+  CameraPosition? _initialCameraPosition;
+
+  // Constante para la posición predeterminada (Tijuana)
+  static const _defaultPosition = LatLng(32.5149, -117.0382);
+  static const _defaultZoom = 13.0;
 
   @override
   void initState() {
@@ -61,124 +62,173 @@ class MapWidgetState extends State<MapWidget> {
     // Registramos los callbacks
     _markerController.setOnMarkerDraggedCallback(_notifyMarkerDragged);
     _markerController.setOnNearestOfficeFoundCallback(_showNearestOfficePanel);
-    
-    // Obtener la ubicación actual del dispositivo con un pequeño retraso
-    // para evitar problemas de inicialización
-    Future.delayed(const Duration(milliseconds: 300), () {
-      _getCurrentDeviceLocation();
+
+    // Suscribirse a cambios de estilo
+    _styleController.addListener(() {
+      if (mounted) setState(() {});
     });
-    
-    // Cargar los marcadores de las oficinas de Freeway Insurance
-    _loadOfficeMarkers();
+
+    // Verificar permisos y detectar ubicación actual al iniciar
+    _initializeLocation();
   }
-  
-  // Método para cargar los marcadores de las oficinas de Freeway Insurance
-  void _loadOfficeMarkers() {
-    // Obtener la lista de oficinas desde OfficeData
-    final offices = OfficeData.getOffices();
-    
-    // Agregar un marcador para cada oficina
-    for (final office in offices) {
-      final position = LatLng(office.latitude, office.longitude);
-      _markerController.addMarker(position);
-    }
-    
-    debugPrint('📍 Cargados ${offices.length} marcadores de oficinas');
-  }
-  
-  // Método para obtener la ubicación actual del dispositivo
-  Future<void> _getCurrentDeviceLocation() async {
-    // Mostrar indicador de carga
-    if (mounted) {
-      setState(() {
-        _userLocationLoaded = false;
-      });
-    }
-    
+
+  // Método consolidado para inicializar la ubicación
+  Future<void> _initializeLocation() async {
+    setState(() {
+      _isLoadingCurrentLocation = true;
+    });
+
     try {
-      debugPrint('📍 Obteniendo ubicación del dispositivo...');
-      final location = await _mapService.getCurrentLocation();
-      
-      // Verificar si la ubicación obtenida es la predeterminada (Los Ángeles)
-      final isDefaultLocation = 
-          location.latitude == 33.987407 && location.longitude == -118.269281;
-      
-      if (isDefaultLocation) {
-        debugPrint('⚠️ Se obtuvo la ubicación predeterminada. Intentando de nuevo...');
+      // Paso 1: Verificar los permisos de ubicación
+      final hasPermission = await _mapService.checkLocationPermission();
+
+      if (!mounted) return; // Comprobar si el widget sigue montado
+
+      setState(() {
+        _locationPermissionGranted = hasPermission;
+      });
+
+      // Paso 2: Obtener la ubicación si tenemos permisos
+      if (_locationPermissionGranted) {
+        await _getCurrentLocation(isInitial: true);
+      } else {
+        // Si no hay permisos, usar la posición predeterminada
+        _setDefaultPosition();
+
         // Mostrar un mensaje al usuario
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Intentando obtener tu ubicación actual...'),
-              duration: Duration(seconds: 3),
-            ),
+          SnackbarHelper.showErrorSnackBar(
+            context,
+            'Se requieren permisos de ubicación para mostrar tu posición actual.',
+            duration: const Duration(seconds: 5),
           );
         }
-        // Intentar obtener la ubicación nuevamente después de un breve retraso
-        await Future.delayed(const Duration(seconds: 2));
-        return _getCurrentDeviceLocation();
-      }
-      
-      if (mounted) {
-        setState(() {
-          // Actualizar la posición inicial del mapa con la ubicación actual
-          _initialPosition = CameraPosition(
-            target: LatLng(location.latitude, location.longitude),
-            zoom: 13,
-          );
-          _userLocationLoaded = true;
-          
-          // Si ya tenemos el controlador del mapa, mover la cámara a la nueva posición
-          // Usamos un try-catch para manejar posibles errores de comunicación con el canal
-          if (mapController != null) {
-            try {
-              debugPrint('📍 Intentando mover cámara a la ubicación actual: (${location.latitude}, ${location.longitude})');
-              // Usamos moveCamara en lugar de animateCamera para reducir la probabilidad de errores
-              mapController!.moveCamera(
-                CameraUpdate.newCameraPosition(_initialPosition),
-              );
-            } catch (e) {
-              debugPrint('❌ Error al mover la cámara: $e');
-              // No hacemos nada más, ya que la posición inicial ya está actualizada
-              // y se usará cuando el mapa se reconstruya
-            }
-          }
-          
-          // Guardar las coordenadas del usuario para usarlas en otras funciones
-          _userLatitude = location.latitude;
-          _userLongitude = location.longitude;
-          
-          // Agregar un marcador en la ubicación actual del usuario
-          _markerController.addOrUpdateRedArrowMarker(
-            LatLng(location.latitude, location.longitude)
-          );
-          
-          // Obtener la dirección formateada para la ubicación actual
-          _getUserAddress(location.latitude, location.longitude);
-          
-          debugPrint('📍 Ubicación del dispositivo actualizada: (${location.latitude}, ${location.longitude})');
-        });
       }
     } catch (e) {
-      debugPrint('❌ Error al obtener la ubicación del dispositivo: $e');
-      if (mounted) {
+      debugPrint('Error inicializando ubicación: $e');
+
+      // Si hay un error, usar la posición predeterminada
+      _setDefaultPosition();
+    }
+  }
+
+  // Método para establecer la posición predeterminada
+  void _setDefaultPosition() {
+    setState(() {
+      _isLoadingCurrentLocation = false;
+      _initialCameraPosition = const CameraPosition(
+        target: _defaultPosition,
+        zoom: _defaultZoom,
+      );
+      _initialLocationObtained =
+          true; // Marcar como obtenida aunque sea predeterminada
+    });
+  }
+
+  // Método optimizado para obtener la ubicación actual
+  Future<void> _getCurrentLocation({bool isInitial = false}) async {
+    setState(() {
+      _isLoadingCurrentLocation = true;
+    });
+
+    try {
+      // Si es una solicitud no inicial y no tenemos permisos, intentar obtenerlos
+      if (!isInitial && !_locationPermissionGranted) {
+        final hasPermission = await _mapService.checkLocationPermission();
+
         setState(() {
-          _userLocationLoaded = true; // Terminar la carga aunque haya error
+          _locationPermissionGranted = hasPermission;
         });
-        
-        // Mostrar un mensaje de error al usuario
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('No se pudo obtener tu ubicación: $e'),
-            duration: const Duration(seconds: 5),
-            action: SnackBarAction(
-              label: 'Reintentar',
-              onPressed: () => _getCurrentDeviceLocation(),
-            ),
+
+        if (!hasPermission) {
+          _setDefaultPosition();
+          SnackbarHelper.showErrorSnackBar(
+            context,
+            'No se concedieron permisos de ubicación. Usando ubicación predeterminada.',
+            duration: const Duration(seconds: 3),
+          );
+          return;
+        }
+      }
+
+      // Obtener ubicación actual usando el servicio
+      final location = await _mapService.getCurrentLocation();
+      final currentPosition = LatLng(location.latitude, location.longitude);
+
+      // Añadir un marcador en la ubicación actual
+      _markerController.addOrUpdateRedArrowMarker(currentPosition);
+
+      // Actualizar las variables de ubicación
+      setState(() {
+        _userLatitude = location.latitude;
+        _userLongitude = location.longitude;
+      });
+
+      // Configurar la cámara según sea una solicitud inicial o no
+      if (isInitial) {
+        setState(() {
+          _initialCameraPosition = CameraPosition(
+            target: currentPosition,
+            zoom: 15,
+          );
+          _initialLocationObtained = true;
+        });
+      } else if (mapController != null) {
+        mapController!.animateCamera(
+          CameraUpdate.newLatLngZoom(
+            currentPosition,
+            15,
           ),
         );
       }
+
+      // Obtener la dirección de la ubicación actual
+      await _getAddressForCurrentLocation(
+        location.latitude,
+        location.longitude,
+      );
+    } catch (e) {
+      debugPrint('Error obteniendo ubicación: $e');
+
+      if (isInitial) {
+        _setDefaultPosition();
+      }
+
+      SnackbarHelper.showWarningSnackBar(
+        context,
+        'No se pudo obtener la ubicación actual. Usando ubicación predeterminada.',
+      );
+
+      setState(() {
+        _isLoadingCurrentLocation = false;
+      });
     }
+  }
+
+  // Método para obtener dirección desde coordenadas
+  Future<void> _getAddressForCurrentLocation(double lat, double lng) async {
+    if (!mounted) return;
+
+    setState(() {
+      _isLoadingAddress = true;
+      _currentLocationAddress = null;
+    });
+
+    String address;
+    try {
+      address = await _mapService.getAddressFromCoordinates(lat, lng);
+    } catch (e) {
+      debugPrint('Error obteniendo dirección: $e');
+      address = 'No se pudo determinar la dirección';
+    }
+
+    if (!mounted) return;
+
+    setState(() {
+      _currentLocationAddress = address;
+      _isLoadingAddress = false;
+      _isLoadingCurrentLocation = false;
+    });
   }
 
   // Carga el icono personalizado para oficinas
@@ -204,52 +254,30 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   void _onMapCreated(GoogleMapController controller) {
-    // Evitar reinicialización si ya tenemos un controlador activo
-    if (mapController != null) return;
-
+    if (mapController != null) return; // Evitar reinicialización
     mapController = controller;
-    // Inicializar el controlador de estilo (ahora solo para registro)
     _styleController.initMapController(controller);
-
     if (mounted) {
       setState(() {
         _styleLoaded = true;
       });
     }
 
-    debugPrint('GoogleMap controller initialized successfully');
-    
-    // Esperar un momento para asegurar que el mapa esté completamente cargado
-    // Esto ayuda a evitar errores de comunicación con el canal
-    Future.delayed(const Duration(milliseconds: 500), () {
-      // Si ya tenemos la ubicación del usuario, mover la cámara a esa ubicación
-      if (_userLocationLoaded && _initialPosition.target.latitude != 33.987407) {
-        try {
-          debugPrint('📍 Intentando mover cámara a la ubicación del usuario: ${_initialPosition.target.latitude}, ${_initialPosition.target.longitude}');
-          // Usamos moveCamara en lugar de animateCamera para reducir la probabilidad de errores
-          controller.moveCamera(
-            CameraUpdate.newCameraPosition(_initialPosition),
-          );
-        } catch (e) {
-          debugPrint('❌ Error al mover la cámara: $e');
-        }
-      } else {
-        // Si aún no tenemos la ubicación del usuario, intentar obtenerla de nuevo
-        _getCurrentDeviceLocation();
-      }
-    });
+    // Si ya tenemos una ubicación al crear el mapa, movernos a ella
+    if (_userLatitude != 0 && _userLongitude != 0) {
+      controller.animateCamera(
+        CameraUpdate.newLatLngZoom(
+          LatLng(_userLatitude, _userLongitude),
+          15,
+        ),
+      );
+    }
   }
 
   // Método para cambiar el estilo del mapa
   void _changeMapStyle() {
-    // Cambiar al siguiente estilo en el controlador
     _styleController.changeMapStyle();
-    
-    // Actualizar la UI para que el widget GoogleMap se reconstruya con el nuevo estilo
-    // La propiedad style del GoogleMap tomará el valor actualizado de _styleController.currentMapStyle
-    setState(() {
-      debugPrint('🗺️ Actualizando estilo del mapa en la UI');
-    });
+    setState(() {}); // Actualizar la UI para reflejar el nuevo tipo de mapa
   }
 
   // Método para activar/desactivar el modo de marcadores de oficina
@@ -296,148 +324,39 @@ class MapWidgetState extends State<MapWidget> {
   }
 
   // Método actualizado para mostrar el panel de la oficina más cercana
-  void _showNearestOfficePanel(
+  Future<void> _showNearestOfficePanel(
     OfficeLocation office,
     double userLat,
     double userLon,
   ) async {
+    if (!mounted) return;
+
     setState(() {
       _nearestOffice = office;
       _userLatitude = userLat;
       _userLongitude = userLon;
       _showOfficePanel = true;
       _isLoadingAddress = true;
-      _formattedAddress = null; // Limpiar la dirección anterior
+      _formattedAddress = null;
     });
 
-    // Obtener la dirección real desde las coordenadas
+    String address;
     try {
-      final address = await _mapService.getAddressFromCoordinates(
+      address = await _mapService.getAddressFromCoordinates(
         office.latitude,
         office.longitude,
       );
-      if (mounted) {
-        setState(() {
-          _formattedAddress = address;
-          _isLoadingAddress = false;
-        });
-      }
     } catch (e) {
       debugPrint('Error obteniendo la dirección: $e');
-      if (mounted) {
-        setState(() {
-          _formattedAddress = 'Dirección no disponible';
-          _isLoadingAddress = false;
-        });
-      }
+      address = 'Dirección no disponible';
     }
 
-    // Si no tenemos la dirección del usuario, la obtenemos
-    if (_userFormattedAddress == null) {
-      await _getUserAddress(userLat, userLon);
-    }
-  }
-
-  // Método mejorado para obtener la dirección del usuario a partir de coordenadas
-  Future<void> _getUserAddress(double latitude, double longitude) async {
-    // Guardar las coordenadas del usuario para uso posterior
-    _userLatitude = latitude;
-    _userLongitude = longitude;
+    if (!mounted) return;
 
     setState(() {
-      _isLoadingUserAddress = true;
-      _userFormattedAddress = null;
+      _formattedAddress = address;
+      _isLoadingAddress = false;
     });
-
-    try {
-      debugPrint('Obteniendo dirección para: ($latitude, $longitude)');
-
-      final address = await _mapService.getAddressFromCoordinates(
-        latitude,
-        longitude,
-      );
-
-      // Verificar si la dirección obtenida es válida (no es solo las coordenadas)
-      final isDefaultAddress = address.contains('Location at');
-
-      if (mounted) {
-        setState(() {
-          if (isDefaultAddress) {
-            // Si recibimos la dirección por defecto, intentar nuevamente con un pequeño retraso
-            debugPrint('Se recibió dirección por defecto, reintentando...');
-            _userFormattedAddress = 'Obteniendo dirección precisa...';
-            _isLoadingUserAddress = true;
-
-            // Programar un nuevo intento después de un breve retraso
-            Future.delayed(const Duration(seconds: 1), () {
-              _retryGetUserAddress(latitude, longitude);
-            });
-          } else {
-            // Si recibimos una dirección válida, la mostramos
-            _userFormattedAddress = address;
-            _isLoadingUserAddress = false;
-            debugPrint('Dirección obtenida correctamente: $address');
-          }
-        });
-      }
-    } catch (e) {
-      debugPrint('Error obteniendo la dirección del usuario: $e');
-      if (mounted) {
-        setState(() {
-          _userFormattedAddress = 'Dirección no disponible';
-          _isLoadingUserAddress = false;
-        });
-      }
-    }
-  }
-
-  // Método para reintentar obtener la dirección del usuario
-  Future<void> _retryGetUserAddress(double latitude, double longitude) async {
-    try {
-      debugPrint(
-          'Reintentando obtener dirección para: ($latitude, $longitude)');
-
-      final address = await _mapService.getAddressFromCoordinates(
-        latitude,
-        longitude,
-      );
-
-      if (mounted) {
-        setState(() {
-          _userFormattedAddress = address;
-          _isLoadingUserAddress = false;
-          debugPrint('Dirección obtenida en reintento: $address');
-        });
-      }
-    } catch (e) {
-      debugPrint('Error en reintento de obtener dirección: $e');
-      if (mounted) {
-        setState(() {
-          _userFormattedAddress = 'Dirección no disponible';
-          _isLoadingUserAddress = false;
-        });
-      }
-    }
-  }
-
-  // Método para abrir Google Maps con la ubicación del usuario
-  void _openGoogleMapsWithUserLocation() {
-    if (_userLatitude == 0 && _userLongitude == 0) {
-      SnackbarHelper.showBlueSnackBar(
-        context,
-        'No user location available',
-        duration: const Duration(seconds: 2),
-      );
-      return;
-    }
-
-    // Crear la URL para abrir Google Maps en la ubicación del usuario
-    final url =
-        'https://www.google.com/maps/search/?api=1&query=$_userLatitude,$_userLongitude';
-    launchUrl(Uri.parse(url));
-
-    debugPrint(
-        'Opening Google Maps at location: $_userLatitude, $_userLongitude');
   }
 
   // Método para añadir un marcador dependiendo del modo activo
@@ -460,12 +379,10 @@ class MapWidgetState extends State<MapWidget> {
       setState(() {
         _showOfficePanel = false; // Ocultar panel si se mueve el marcador
         _formattedAddress = null;
-        _userFormattedAddress = null;
-        _isLoadingUserAddress = true;
       }); // Actualizar la UI
 
-      // Obtener la dirección real del marcador rojo (ubicación del usuario)
-      _getUserAddress(position.latitude, position.longitude);
+      // Actualizar dirección para la nueva posición
+      _getAddressForCurrentLocation(position.latitude, position.longitude);
 
       SnackbarHelper.showBlueSnackBar(
         context,
@@ -482,7 +399,7 @@ class MapWidgetState extends State<MapWidget> {
       _showOfficePanel =
           false; // Ocultar el panel cuando se borran los marcadores
       _formattedAddress = null;
-      _userFormattedAddress = null;
+      _currentLocationAddress = null;
     }); // Actualizar la UI
 
     SnackbarHelper.showBlueSnackBar(
@@ -494,35 +411,81 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   Widget build(BuildContext context) {
+    // Mostrar indicador de carga hasta que tengamos la ubicación y estilos cargados
+    if (!_initialLocationObtained ||
+        _initialCameraPosition == null ||
+        !_markerIconLoaded ||
+        !_redArrowIconLoaded) {
+      return const Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text('Obteniendo tu ubicación...'),
+          ],
+        ),
+      );
+    }
+
     return Stack(
       children: [
-        // Usamos una clave única para el widget GoogleMap para evitar problemas de recreación
-        GoogleMap(
-          key: const ValueKey<String>('google_map_key'),
+        GoogleMapView(
           onMapCreated: _onMapCreated,
-          initialCameraPosition: _initialPosition,
+          initialPosition: _initialCameraPosition!,
           markers: _markerController.getAllMarkers(),
           onTap: _handleMapTap,
-          myLocationEnabled: true,
-          myLocationButtonEnabled: false,
-          zoomControlsEnabled: false,
-          compassEnabled: true,
-          mapToolbarEnabled: false,
-          // Usar la propiedad style en lugar del método obsoleto setMapStyle()
-          style: _styleController.currentMapStyle,
+          mapType: _styleController.currentMapType,
+          customMapStyle: _styleController.currentCustomStyle,
+          myLocationEnabled: _locationPermissionGranted,
+          myLocationButtonEnabled: false, // Usamos nuestro propio botón
         ),
+        if (!_styleLoaded ||
+            !_markerIconLoaded ||
+            !_redArrowIconLoaded ||
+            _isLoadingCurrentLocation)
+          const Center(child: CircularProgressIndicator()),
 
-        // Mostrar indicador de carga mientras se obtiene la ubicación del usuario o se cargan los recursos del mapa
-        if (!_styleLoaded || !_markerIconLoaded || !_redArrowIconLoaded || !_userLocationLoaded)
-          Container(
-            color: const Color.fromRGBO(255, 255, 255, 0.7),
-            child: const Center(
+        // Mostrar la dirección actual en la parte superior de la pantalla
+        if (_currentLocationAddress != null && !_showOfficePanel)
+          Positioned(
+            top: 16,
+            left: 16,
+            right: 70, // Dejar espacio para los botones de la derecha
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  const BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 8,
+                    offset: Offset(0, 2),
+                  ),
+                ],
+              ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Obteniendo tu ubicación...', style: TextStyle(fontWeight: FontWeight.bold)),
+                  const Text(
+                    'Ubicación actual:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: Color(0xFF0A4DA2),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _currentLocationAddress!,
+                    style: const TextStyle(
+                      fontSize: 13,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),
@@ -534,6 +497,20 @@ class MapWidgetState extends State<MapWidget> {
           right: 16,
           child: Column(
             children: [
+              // Botón para obtener ubicación actual
+              Tooltip(
+                message: 'Obtener ubicación actual',
+                child: FloatingActionButton(
+                  onPressed: () => _getCurrentLocation(isInitial: false),
+                  heroTag: 'btn0',
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF0A4DA2),
+                  elevation: 4,
+                  child: const Icon(Icons.my_location),
+                ),
+              ),
+              const SizedBox(height: 10),
+
               // Botón para cambiar el estilo del mapa
               Tooltip(
                 message: 'Change map style',
@@ -608,6 +585,52 @@ class MapWidgetState extends State<MapWidget> {
           ),
         ),
 
+        // Si no hay permisos de ubicación, mostrar un mensaje para solicitarlos
+        if (!_locationPermissionGranted && !_isLoadingCurrentLocation)
+          Positioned(
+            bottom: 16,
+            left: 16,
+            right: 16,
+            child: Card(
+              elevation: 4,
+              color: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Permisos de Ubicación',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0A4DA2),
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Se requieren permisos de ubicación para mostrar tu posición en el mapa.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed:
+                          _initializeLocation, // Corregido: llamar a _initializeLocation en lugar de _checkLocationPermission
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF0A4DA2),
+                        foregroundColor: Colors.white,
+                      ),
+                      child: const Text('Conceder Permisos'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
         // Panel deslizable para mostrar la oficina más cercana
         if (_showOfficePanel && _nearestOffice != null) _buildOfficePanel(),
       ],
@@ -641,7 +664,7 @@ class MapWidgetState extends State<MapWidget> {
               // Indicador de arrastre
               Center(
                 child: Container(
-                  width: 60,
+                  width: 40,
                   height: 5,
                   margin: const EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
@@ -652,6 +675,32 @@ class MapWidgetState extends State<MapWidget> {
               ),
 
               // Card para destacar el nombre de la oficina
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                child: Card(
+                  elevation: 4,
+                  color: const Color(0xFF0A4DA2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: 12.0,
+                      horizontal: 16.0,
+                    ),
+                    child: Text(
+                      _nearestOffice!.id,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
 
               // Contenido del panel
               Padding(
@@ -659,49 +708,26 @@ class MapWidgetState extends State<MapWidget> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Estado de la oficina - Mostrado de manera más prominente
+                    // Estado y distancia
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Row(
-                          children: [
-                            Container(
-                              width: 10,
-                              height: 10,
-                              decoration: const BoxDecoration(
-                                color: Colors.green,
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            const SizedBox(width: 6),
-                            const Text(
-                              'Open Now',
-                              style: TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
+                        Text(
+                          'Open Now • Closes at ${_nearestOffice!.closeHours}',
+                          style: const TextStyle(
+                            color: Colors.green,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                         Text(
-                          'Closes at ${_nearestOffice!.closeHours}',
+                          '${_nearestOffice!.distanceInMiles.toStringAsFixed(2)} miles',
                           style: const TextStyle(
-                            color: Colors.black87,
-                            fontWeight: FontWeight.w500,
+                            color: Colors.blue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
                           ),
                         ),
                       ],
-                    ),
-
-                    // Distancia a la oficina
-                    const SizedBox(height: 8),
-                    Text(
-                      'Distance: ${_nearestOffice!.distanceInMiles.toStringAsFixed(2)} miles',
-                      style: const TextStyle(
-                        color: Color(0xFF0A4DA2),
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
                     ),
                     const SizedBox(height: 12),
 
@@ -738,57 +764,10 @@ class MapWidgetState extends State<MapWidget> {
                       ),
                     ),
 
-                    // Dirección del usuario (marcador rojo)
+                    // Coordenadas en una sola línea
                     const SizedBox(height: 12),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Your Location:',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.red,
-                          ),
-                        ),
-                        // Botón para abrir Google Maps con la ubicación del usuario
-                        IconButton(
-                          onPressed: () {
-                            _openGoogleMapsWithUserLocation();
-                          },
-                          icon: const Icon(
-                            Icons.map,
-                            color: Colors.red,
-                          ),
-                          tooltip: 'Open in Google Maps',
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 4),
-                    if (_isLoadingUserAddress)
-                      // Mostrar un indicador de carga mientras se obtiene la dirección del usuario
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(vertical: 8.0),
-                          child: SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          ),
-                        ),
-                      )
-                    else
-                      Text(
-                        _userFormattedAddress ??
-                            'Location at ($_userLatitude, $_userLongitude)',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    const SizedBox(height: 4),
                     Text(
-                      'Coordinates: ${_userLatitude.toStringAsFixed(6)}, ${_userLongitude.toStringAsFixed(6)}',
+                      'Coordinates: ${_nearestOffice!.latitude.toStringAsFixed(6)}, ${_nearestOffice!.longitude.toStringAsFixed(6)}',
                       style: const TextStyle(fontSize: 14),
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -887,12 +866,8 @@ class MapWidgetState extends State<MapWidget> {
 
   @override
   void dispose() {
-    // Asegurarse de liberar los recursos del controlador del mapa
-    if (mapController != null) {
-      debugPrint('Disposing GoogleMap controller');
-      mapController!.dispose();
-      mapController = null;
-    }
+    mapController?.dispose();
+    _styleController.dispose();
     super.dispose();
   }
 }

@@ -9,11 +9,7 @@ class OptionsCoverCard extends StatelessWidget {
   final bool isSelected;
 
   const OptionsCoverCard({
-    super.key,
-    required this.logoPath,
-    required this.price,
-    required this.onCoverageDetails,
-    required this.onContinue,
+    required this.logoPath, required this.price, required this.onCoverageDetails, required this.onContinue, super.key,
     this.isSelected = false,
   });
 

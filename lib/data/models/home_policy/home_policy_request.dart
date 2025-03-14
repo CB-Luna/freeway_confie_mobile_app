@@ -9,8 +9,8 @@ class HomePolicyRequest {
 
   HomePolicyRequest({required this.customerId});
 
-  factory HomePolicyRequest.fromJson(Map<String, dynamic> json) => 
+  factory HomePolicyRequest.fromJson(Map<String, dynamic> json) =>
       _$HomePolicyRequestFromJson(json);
-  
+
   Map<String, dynamic> toJson() => _$HomePolicyRequestToJson(this);
 }

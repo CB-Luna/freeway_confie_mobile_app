@@ -7,11 +7,11 @@ class MapControlButtons extends StatelessWidget {
   final bool markerModeActive;
 
   const MapControlButtons({
-    super.key,
     required this.onChangeStylePressed,
     required this.onToggleMarkerModePressed,
     required this.onClearMarkersPressed,
     required this.markerModeActive,
+    super.key,
   });
 
   @override

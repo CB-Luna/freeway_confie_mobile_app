@@ -8,8 +8,7 @@ class LocationZipCodePage extends StatefulWidget {
   final OfficeLocation office;
 
   const LocationZipCodePage({
-    super.key,
-    required this.office,
+    required this.office, super.key,
   });
 
   @override
@@ -74,7 +73,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
       });
 
       // Verificar si los servicios de ubicación están habilitados
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _showErrorMessage('Location services are disabled');
         return;
@@ -96,7 +95,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
       }
 
       // Obtener la ubicación actual
-      Position position = await Geolocator.getCurrentPosition();
+      final Position position = await Geolocator.getCurrentPosition();
 
       // Construir URL para Google Maps con origen y destino
       final url = 'https://www.google.com/maps/dir/?api=1'
@@ -158,7 +157,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
           // Fondo del mapa (simulado)
           Container(
             color: const Color(
-                0xFFE6F0F5), // Color azul claro para simular el mapa
+                0xFFE6F0F5,), // Color azul claro para simular el mapa
           ),
 
           // Contenido principal
@@ -240,7 +239,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
                                 Container(
                                   height: 1,
                                   color: const Color(
-                                      0xFF157EAD), // Mismo color que el botón Search
+                                      0xFF157EAD,), // Mismo color que el botón Search
                                 ),
                               ],
                             ),
@@ -256,7 +255,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
                               onPressed: _isLoading ? null : _handleSearch,
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: const Color(
-                                    0xFF157EAD), // Color azul claro actualizado
+                                    0xFF157EAD,), // Color azul claro actualizado
                                 padding: EdgeInsets.zero,
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(8),
@@ -270,7 +269,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
                                         strokeWidth: 2,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                                Colors.white),
+                                                Colors.white,),
                                       ),
                                     )
                                   : const Text(
@@ -315,7 +314,7 @@ class _LocationZipCodePageState extends State<LocationZipCodePage> {
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20,
-                                vertical: 12), // Padding específico
+                                vertical: 12,), // Padding específico
                             side: const BorderSide(color: Color(0xFF0A4DA2)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

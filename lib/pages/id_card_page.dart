@@ -119,14 +119,14 @@ class _IdCardPageState extends State<IdCardPage> {
                       children: [
                         IconButton(
                           icon: const Icon(Icons.download_outlined,
-                              color: Color(0xFF0047BB)),
+                              color: Color(0xFF0047BB),),
                           onPressed: () {
                             // TODO: Implement download functionality
                           },
                         ),
                         IconButton(
                           icon: const Icon(Icons.print_outlined,
-                              color: Color(0xFF0047BB)),
+                              color: Color(0xFF0047BB),),
                           onPressed: () {
                             // TODO: Implement print functionality
                           },

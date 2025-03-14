@@ -8,10 +8,7 @@ class NearestOfficePage extends StatelessWidget {
   final double userLongitude;
 
   const NearestOfficePage({
-    super.key,
-    required this.nearestOffice,
-    required this.userLatitude,
-    required this.userLongitude,
+    required this.nearestOffice, required this.userLatitude, required this.userLongitude, super.key,
   });
 
   @override

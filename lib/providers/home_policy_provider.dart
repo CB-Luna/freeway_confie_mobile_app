@@ -15,13 +15,13 @@ class HomePolicyProvider with ChangeNotifier {
   // Obtener el vehículo con provider_id = 1 (BlueFire Insurance)
   Vehicle? get blueFireVehicle => _vehicles.isNotEmpty
       ? _vehicles.firstWhere((vehicle) => vehicle.providerId == 1,
-          orElse: () => _vehicles.first)
+          orElse: () => _vehicles.first,)
       : null;
 
   // Obtener el vehículo con provider_id = 2 (Freeway Insurance)
   Vehicle? get freewayVehicle => _vehicles.isNotEmpty
       ? _vehicles.firstWhere((vehicle) => vehicle.providerId == 2,
-          orElse: () => _vehicles.first)
+          orElse: () => _vehicles.first,)
       : null;
 
   // Obtener vehículos por policy_type_id
