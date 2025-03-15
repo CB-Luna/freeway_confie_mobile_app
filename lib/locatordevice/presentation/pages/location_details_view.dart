@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
@@ -9,29 +10,63 @@ import '../widgets/map_buttons.dart';
 import '../widgets/office_list.dart';
 import '../widgets/simulator_banner.dart';
 
-class LocationDetailsView extends StatelessWidget {
+class LocationDetailsView extends StatefulWidget {
   const LocationDetailsView({super.key});
 
   @override
+  State<LocationDetailsView> createState() => _LocationDetailsViewState();
+}
+
+class _LocationDetailsViewState extends State<LocationDetailsView> {
+  late LocationController _controller;
+  bool _isInitialized = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeController();
+  }
+
+  Future<void> _initializeController() async {
+    if (!mounted) return;
+    
+    final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    if (args == null) {
+      throw Exception('Missing dependencies');
+    }
+
+    _controller = LocationController(
+      getCurrentLocation: args['getCurrentLocation'],
+      getOffices: args['getOffices'],
+      deviceInfo: args['deviceInfo'],
+    );
+
+    if (mounted) {
+      setState(() {
+        _isInitialized = true;
+      });
+      await _controller.initialize();
+    }
+  }
+
+  @override
+  void dispose() {
+    if (_isInitialized) {
+      _controller.dispose();
+    }
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) {
-        final args =
-            ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
-        if (args == null) {
-          throw Exception('Missing dependencies');
-        }
+    if (!_isInitialized) {
+      return const Scaffold(
+        body: LoadingView(),
+      );
+    }
 
-        final controller = LocationController(
-          getCurrentLocation: args['getCurrentLocation'],
-          getOffices: args['getOffices'],
-          deviceInfo: args['deviceInfo'],
-        );
-
-        // Inicializar después de crear el controller
-        controller.initialize();
-        return controller;
-      },
+    return ChangeNotifierProvider.value(
+      value: _controller,
       child: const LocationDetailsViewContent(),
     );
   }
@@ -45,10 +80,24 @@ class LocationDetailsViewContent extends StatefulWidget {
       _LocationDetailsViewContentState();
 }
 
-class _LocationDetailsViewContentState
-    extends State<LocationDetailsViewContent> {
+class _LocationDetailsViewContentState extends State<LocationDetailsViewContent> {
   final DraggableScrollableController _scrollController =
       DraggableScrollableController();
+      
+  // Estilo básico del mapa para Android
+  static const String _mapStyle = '''
+    [
+      {
+        "featureType": "all",
+        "elementType": "all",
+        "stylers": [
+          {
+            "visibility": "on"
+          }
+        ]
+      }
+    ]
+  ''';
 
   @override
   void dispose() {
@@ -131,6 +180,11 @@ class _LocationDetailsViewContentState
           myLocationButtonEnabled: false,
           markers: state.markers,
           onMapCreated: controller.onMapCreated,
+          liteModeEnabled: defaultTargetPlatform == TargetPlatform.android,
+          mapType: MapType.normal,
+          zoomControlsEnabled: true,
+          compassEnabled: true,
+          style: defaultTargetPlatform == TargetPlatform.android ? _mapStyle : null,
         ),
 
         // Botones para controlar el mapa

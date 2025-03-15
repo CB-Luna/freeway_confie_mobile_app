@@ -84,7 +84,9 @@ class LocationRepositoryImpl implements LocationRepository {
 
   @override
   Future<double> calculateDistance(
-      Location source, Location destination) async {
+    Location source,
+    Location destination,
+  ) async {
     return Geolocator.distanceBetween(
       source.latitude,
       source.longitude,
