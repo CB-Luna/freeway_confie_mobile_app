@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../core/platform/device_info.dart';
 import 'di/injection_container.dart' as di;
 import 'domain/usecases/get_current_location.dart';
-import 'domain/usecases/get_sorted_offices.dart';
+import 'domain/usecases/get_offices.dart';
 import 'presentation/pages/location_details_view.dart';
 
 /// Main entry point for the Locator Device module
@@ -29,7 +30,6 @@ class LocatorDeviceModule {
           debugPrint('LocatorDeviceModule: Dependencies initialized successfully');
         } catch (e) {
           debugPrint('LocatorDeviceModule: Error initializing dependencies: $e');
-          // Verificar si el contexto sigue montado antes de usarlo
           if (context.mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text('Error initializing location services: $e')),
@@ -48,7 +48,8 @@ class LocatorDeviceModule {
       // Verify dependencies are available
       try {
         final getCurrentLocation = di.sl.get<GetCurrentLocation>();
-        final getSortedOffices = di.sl.get<GetSortedOffices>();
+        final getOffices = di.sl.get<GetOffices>();
+        final deviceInfo = di.sl.get<DeviceInfo>();
         debugPrint('LocatorDeviceModule: Dependencies retrieved successfully');
         
         // Navigate to the location view with required dependencies
@@ -58,7 +59,8 @@ class LocatorDeviceModule {
             settings: RouteSettings(
               arguments: {
                 'getCurrentLocation': getCurrentLocation,
-                'getSortedOffices': getSortedOffices,
+                'getOffices': getOffices,
+                'deviceInfo': deviceInfo,
               },
             ),
             builder: (context) => const LocationDetailsView(),

@@ -9,6 +9,7 @@ import '../domain/repositories/location_repository.dart';
 import '../domain/repositories/office_repository.dart';
 import '../domain/usecases/get_current_location.dart';
 import '../domain/usecases/get_offices.dart';
+import '../presentation/bloc/location_bloc.dart';
 
 /// Simple service locator without external dependencies
 class ServiceLocator {
@@ -69,6 +70,10 @@ Future<void> init() async {
 
     final getOffices = GetOffices(officeRepository);
     sl.registerSingleton<GetOffices>(getOffices);
+
+    // BLoC
+    final locationBloc = LocationBloc(getCurrentLocation, getOffices);
+    sl.registerSingleton<LocationBloc>(locationBloc);
 
     debugPrint('All dependencies registered successfully');
   } catch (e) {
