@@ -57,6 +57,10 @@ class LocationController extends ChangeNotifier {
   LocationState _state = LocationState();
   LocationState get state => _state;
 
+  // Coordenadas por defecto para simuladores (San Diego)
+  static const double defaultLat = 32.715738;
+  static const double defaultLng = -117.161084;
+
   LocationController({
     required this.getCurrentLocation,
     required this.getOffices,
@@ -66,8 +70,15 @@ class LocationController extends ChangeNotifier {
   Future<void> initialize() async {
     try {
       await _detectIfEmulator();
-      await _checkAndRequestLocationPermission();
-      await _loadCurrentLocation();
+
+      // Si estamos en un emulador, usar ubicación por defecto sin solicitar permisos
+      if (_state.isEmulatorOrSimulator) {
+        await _useDefaultLocationForEmulator();
+      } else {
+        await _checkAndRequestLocationPermission();
+        await _loadCurrentLocation();
+      }
+
       await _loadOffices();
     } catch (e) {
       _updateState(
@@ -107,6 +118,10 @@ class LocationController extends ChangeNotifier {
   Future<void> _detectIfEmulator() async {
     final isEmulator = await deviceInfo.isEmulatorOrSimulator();
     _updateState(isEmulatorOrSimulator: isEmulator);
+
+    if (isEmulator) {
+      debugPrint('Detectado emulador/simulador - usando ubicación simulada');
+    }
   }
 
   Future<void> _checkAndRequestLocationPermission() async {
@@ -144,14 +159,39 @@ class LocationController extends ChangeNotifier {
     }
   }
 
+  // Método para usar ubicación por defecto en emuladores
+  Future<void> _useDefaultLocationForEmulator() async {
+    debugPrint('Usando ubicación por defecto para emulador/simulador');
+    final newPosition = Position(
+      latitude: defaultLat,
+      longitude: defaultLng,
+      timestamp: DateTime.now(),
+      accuracy: 0,
+      altitude: 0,
+      heading: 0,
+      speed: 0,
+      speedAccuracy: 0,
+      altitudeAccuracy: 0,
+      headingAccuracy: 0,
+    );
+
+    _updateState(
+      currentPosition: newPosition,
+      isLoading: false,
+    );
+
+    // Agregamos el marcador para la ubicación simulada
+    _updateCurrentLocationMarker();
+  }
+
   void _startLocationTracking() {
     _positionStreamSubscription?.cancel();
-    
+
     const locationSettings = LocationSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 10,
     );
-    
+
     _positionStreamSubscription = Geolocator.getPositionStream(
       locationSettings: locationSettings,
     ).listen(
@@ -170,11 +210,11 @@ class LocationController extends ChangeNotifier {
     try {
       final offices = await getOffices.execute();
       _updateState(offices: offices);
-      
+
       if (state.currentPosition != null) {
         _calculateDistancesToOffices();
       }
-      
+
       _updateOfficeMarkers();
     } catch (e) {
       _updateState(
@@ -185,9 +225,9 @@ class LocationController extends ChangeNotifier {
 
   void _calculateDistancesToOffices() {
     if (state.currentPosition == null || state.offices.isEmpty) return;
-    
+
     final List<Office> updatedOffices = [];
-    
+
     for (var office in state.offices) {
       final double distanceInMeters = Geolocator.distanceBetween(
         state.currentPosition!.latitude,
@@ -195,9 +235,9 @@ class LocationController extends ChangeNotifier {
         office.latitude,
         office.longitude,
       );
-      
+
       final double distanceInMiles = distanceInMeters * 0.000621371;
-      
+
       updatedOffices.add(
         Office.fromMap({
           ...office.toMap(),
@@ -205,20 +245,21 @@ class LocationController extends ChangeNotifier {
         }),
       );
     }
-    
-    updatedOffices.sort((a, b) => 
-      a.distanceInMiles.compareTo(b.distanceInMiles),
+
+    updatedOffices.sort(
+      (a, b) => a.distanceInMiles.compareTo(b.distanceInMiles),
     );
-    
+
     _updateState(offices: updatedOffices);
   }
 
   void _updateCurrentLocationMarker() {
     if (state.currentPosition == null) return;
-    
+
     final currentMarkers = Set<Marker>.from(state.markers);
-    currentMarkers.removeWhere((marker) => marker.markerId.value == 'current_location');
-    
+    currentMarkers
+        .removeWhere((marker) => marker.markerId.value == 'current_location');
+
     currentMarkers.add(
       Marker(
         markerId: const MarkerId('current_location'),
@@ -234,18 +275,18 @@ class LocationController extends ChangeNotifier {
         zIndex: 2,
       ),
     );
-    
+
     _updateState(markers: currentMarkers);
   }
 
   void _updateOfficeMarkers() {
     if (state.offices.isEmpty) return;
-    
+
     final currentMarkers = Set<Marker>.from(state.markers);
-    currentMarkers.removeWhere((marker) => 
-      marker.markerId.value.startsWith('office_'),
+    currentMarkers.removeWhere(
+      (marker) => marker.markerId.value.startsWith('office_'),
     );
-    
+
     for (var i = 0; i < state.offices.length; i++) {
       final office = state.offices[i];
       final marker = Marker(
@@ -260,7 +301,7 @@ class LocationController extends ChangeNotifier {
       );
       currentMarkers.add(marker);
     }
-    
+
     _updateState(markers: currentMarkers);
   }
 
@@ -310,7 +351,9 @@ class LocationController extends ChangeNotifier {
     );
 
     _updateState(currentPosition: newPosition);
+    _updateCurrentLocationMarker();
     updateMapPosition();
+    _calculateDistancesToOffices();
   }
 
   void setEmulatorMode(bool value) {

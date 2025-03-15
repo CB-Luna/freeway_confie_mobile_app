@@ -10,63 +10,32 @@ import '../widgets/map_buttons.dart';
 import '../widgets/office_list.dart';
 import '../widgets/simulator_banner.dart';
 
-class LocationDetailsView extends StatefulWidget {
+class LocationDetailsView extends StatelessWidget {
   const LocationDetailsView({super.key});
 
   @override
-  State<LocationDetailsView> createState() => _LocationDetailsViewState();
-}
-
-class _LocationDetailsViewState extends State<LocationDetailsView> {
-  late LocationController _controller;
-  bool _isInitialized = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeController();
-  }
-
-  Future<void> _initializeController() async {
-    if (!mounted) return;
-    
+  Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args == null) {
-      throw Exception('Missing dependencies');
-    }
-
-    _controller = LocationController(
-      getCurrentLocation: args['getCurrentLocation'],
-      getOffices: args['getOffices'],
-      deviceInfo: args['deviceInfo'],
-    );
-
-    if (mounted) {
-      setState(() {
-        _isInitialized = true;
-      });
-      await _controller.initialize();
-    }
-  }
-
-  @override
-  void dispose() {
-    if (_isInitialized) {
-      _controller.dispose();
-    }
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_isInitialized) {
       return const Scaffold(
-        body: LoadingView(),
+        body: Center(
+          child: Text('Error: Missing dependencies'),
+        ),
       );
     }
 
-    return ChangeNotifierProvider.value(
-      value: _controller,
+    return ChangeNotifierProvider(
+      create: (context) {
+        final controller = LocationController(
+          getCurrentLocation: args['getCurrentLocation'],
+          getOffices: args['getOffices'],
+          deviceInfo: args['deviceInfo'],
+        );
+
+        // Inicializar después de crear el controller
+        Future.microtask(() => controller.initialize());
+        return controller;
+      },
       child: const LocationDetailsViewContent(),
     );
   }
@@ -76,28 +45,11 @@ class LocationDetailsViewContent extends StatefulWidget {
   const LocationDetailsViewContent({super.key});
 
   @override
-  State<LocationDetailsViewContent> createState() =>
-      _LocationDetailsViewContentState();
+  State<LocationDetailsViewContent> createState() => _LocationDetailsViewContentState();
 }
 
 class _LocationDetailsViewContentState extends State<LocationDetailsViewContent> {
-  final DraggableScrollableController _scrollController =
-      DraggableScrollableController();
-      
-  // Estilo básico del mapa para Android
-  static const String _mapStyle = '''
-    [
-      {
-        "featureType": "all",
-        "elementType": "all",
-        "stylers": [
-          {
-            "visibility": "on"
-          }
-        ]
-      }
-    ]
-  ''';
+  final DraggableScrollableController _scrollController = DraggableScrollableController();
 
   @override
   void dispose() {
@@ -165,7 +117,7 @@ class _LocationDetailsViewContentState extends State<LocationDetailsViewContent>
 
     return Stack(
       children: [
-        // Mapa
+        // Mapa con configuración optimizada para emuladores
         GoogleMap(
           initialCameraPosition: CameraPosition(
             target: state.currentPosition != null
@@ -173,18 +125,21 @@ class _LocationDetailsViewContentState extends State<LocationDetailsViewContent>
                     state.currentPosition!.latitude,
                     state.currentPosition!.longitude,
                   )
-                : const LatLng(0, 0),
+                : const LatLng(32.715738, -117.161084), // San Diego por defecto
             zoom: 14.0,
           ),
-          myLocationEnabled: true,
+          myLocationEnabled: !state.isEmulatorOrSimulator, // Desactivar en emuladores
           myLocationButtonEnabled: false,
           markers: state.markers,
-          onMapCreated: controller.onMapCreated,
-          liteModeEnabled: defaultTargetPlatform == TargetPlatform.android,
-          mapType: MapType.normal,
+          onMapCreated: (GoogleMapController mapController) {
+            controller.onMapCreated(mapController);
+          },
           zoomControlsEnabled: true,
           compassEnabled: true,
-          style: defaultTargetPlatform == TargetPlatform.android ? _mapStyle : null,
+          mapToolbarEnabled: true,
+          liteModeEnabled: defaultTargetPlatform == TargetPlatform.android && 
+                           state.isEmulatorOrSimulator, // Usar lite mode solo en emuladores Android
+          trafficEnabled: false, // Desactivar tráfico para mejor rendimiento
         ),
 
         // Botones para controlar el mapa
