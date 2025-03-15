@@ -1,6 +1,14 @@
 import 'package:flutter/foundation.dart';
 
+import '../../../core/platform/device_info.dart';
 import '../data/datasources/location_data_source.dart';
+import '../data/datasources/office_datasource.dart';
+import '../data/repositories/location_repository_impl.dart';
+import '../data/repositories/office_repository_impl.dart';
+import '../domain/repositories/location_repository.dart';
+import '../domain/repositories/office_repository.dart';
+import '../domain/usecases/get_current_location.dart';
+import '../domain/usecases/get_offices.dart';
 
 /// Simple service locator without external dependencies
 class ServiceLocator {
@@ -38,10 +46,29 @@ Future<void> init() async {
   debugPrint('Initializing Locator Device dependencies...');
 
   try {
-    // Create instances in the correct order
+    // Platform/External
+    sl.registerSingleton<DeviceInfo>(DeviceInfo());
+
+    // Data sources
     final locationDataSource = LocationDataSourceImpl();
     sl.registerSingleton<LocationDataSource>(locationDataSource);
-    debugPrint('Registered LocationDataSource');
+
+    final officeDataSource = OfficeDataSourceImpl();
+    sl.registerSingleton<OfficeDataSource>(officeDataSource);
+
+    // Repositories
+    final locationRepository = LocationRepositoryImpl(locationDataSource);
+    sl.registerSingleton<LocationRepository>(locationRepository);
+
+    final officeRepository = OfficeRepositoryImpl(officeDataSource);
+    sl.registerSingleton<OfficeRepository>(officeRepository);
+
+    // Use cases
+    final getCurrentLocation = GetCurrentLocation(locationRepository);
+    sl.registerSingleton<GetCurrentLocation>(getCurrentLocation);
+
+    final getOffices = GetOffices(officeRepository);
+    sl.registerSingleton<GetOffices>(getOffices);
 
     debugPrint('All dependencies registered successfully');
   } catch (e) {

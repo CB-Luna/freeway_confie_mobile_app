@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../domain/entities/location.dart';
 import '../../domain/entities/office.dart';
@@ -13,50 +14,54 @@ class MapWidget extends StatelessWidget {
     this.offices,
   });
 
+  Set<Marker> _createMarkers() {
+    final Set<Marker> markers = {};
+
+    // Marcador de la ubicación actual
+    markers.add(
+      Marker(
+        markerId: const MarkerId('current_location'),
+        position: LatLng(location.latitude, location.longitude),
+        infoWindow: const InfoWindow(
+          title: 'Mi ubicación',
+        ),
+        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+      ),
+    );
+
+    // Marcadores de las oficinas
+    if (offices != null) {
+      for (var office in offices!) {
+        markers.add(
+          Marker(
+            markerId: MarkerId('office_${office.id}'),
+            position: LatLng(office.latitude, office.longitude),
+            infoWindow: InfoWindow(
+              title: office.name,
+              snippet: office.address,
+            ),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          ),
+        );
+      }
+    }
+
+    return markers;
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Here you would implement a proper map view with location and office markers
-    // For now, we'll use a placeholder that shows location details
-    return Container(
-      color: Colors.grey[200],
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.map, size: 60, color: Colors.blue),
-            const SizedBox(height: 16),
-            Text(
-              'Tu ubicación actual',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Latitud: ${location.latitude.toStringAsFixed(6)}',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            Text(
-              'Longitud: ${location.longitude.toStringAsFixed(6)}',
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            if (offices != null && offices!.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(
-                '${offices!.length} oficinas encontradas',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Oficina más cercana: ${offices!.first.name}',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-              Text(
-                'Distancia: ${offices!.first.distanceInMiles.toStringAsFixed(2)} millas',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ],
-        ),
+    return GoogleMap(
+      initialCameraPosition: CameraPosition(
+        target: LatLng(location.latitude, location.longitude),
+        zoom: 14,
       ),
+      markers: _createMarkers(),
+      myLocationEnabled: true,
+      myLocationButtonEnabled: false,
+      zoomControlsEnabled: true,
+      mapToolbarEnabled: true,
     );
   }
 }
