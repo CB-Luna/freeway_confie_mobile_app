@@ -34,10 +34,15 @@ class LocationDataSourceImpl implements LocationDataSource {
       throw Exception('Location permissions are permanently denied');
     }
 
-    // Get position
+    // Get position with higher accuracy
     try {
-      debugPrint('LocationDataSourceImpl: Getting position from Geolocator');
-      final position = await Geolocator.getCurrentPosition();
+      debugPrint(
+        'LocationDataSourceImpl: Getting position from Geolocator with high accuracy',
+      );
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+        timeLimit: const Duration(seconds: 10),
+      );
       debugPrint(
         'LocationDataSourceImpl: Position retrieved: ${position.latitude}, ${position.longitude}',
       );

@@ -1,0 +1,2 @@
+/Users/joslop/Documents/CBLUNA/proyectos/confia/freewayv3.1.x/android/app/.cxx/Debug/4x6i5h5n/x86/CMakeFiles/edit_cache.dir
+/Users/joslop/Documents/CBLUNA/proyectos/confia/freewayv3.1.x/android/app/.cxx/Debug/4x6i5h5n/x86/CMakeFiles/rebuild_cache.dir
