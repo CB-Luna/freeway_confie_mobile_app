@@ -117,7 +117,7 @@ class _LocationDetailsViewContentState extends State<LocationDetailsViewContent>
 
     return Stack(
       children: [
-        // Mapa con configuración optimizada para emuladores
+        // Mapa interactivo con Google Maps
         GoogleMap(
           initialCameraPosition: CameraPosition(
             target: state.currentPosition != null
@@ -140,6 +140,23 @@ class _LocationDetailsViewContentState extends State<LocationDetailsViewContent>
           liteModeEnabled: defaultTargetPlatform == TargetPlatform.android && 
                            state.isEmulatorOrSimulator, // Usar lite mode solo en emuladores Android
           trafficEnabled: false, // Desactivar tráfico para mejor rendimiento
+          // Habilitar todos los gestos para interactividad completa
+          rotateGesturesEnabled: true,
+          scrollGesturesEnabled: true,
+          zoomGesturesEnabled: true,
+          tiltGesturesEnabled: true,
+          // Permitir que el usuario interactúe con el mapa
+          onCameraMove: (CameraPosition position) {
+            // Se puede implementar lógica adicional aquí si es necesario
+          },
+          onTap: (LatLng position) {
+            // Cerrar el panel inferior al tocar el mapa para mejor UX
+            _scrollController.animateTo(
+              0.1,
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
         ),
 
         // Botones para controlar el mapa
