@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
 import '../../domain/entities/office.dart';
+import 'no_nearby_offices_view.dart';
 
 class OfficeList extends StatelessWidget {
   final List<Office> offices;
   final ScrollController scrollController;
   final Function(Office) onOfficeTap;
+  final VoidCallback? onExpandSearchRadius;
+  final VoidCallback? onViewAllOffices;
+  final bool showNoNearbyOfficesView;
 
   const OfficeList({
     required this.offices,
     required this.scrollController,
     required this.onOfficeTap,
+    this.onExpandSearchRadius,
+    this.onViewAllOffices,
+    this.showNoNearbyOfficesView = false,
     super.key,
   });
 
@@ -48,40 +55,51 @@ class OfficeList extends StatelessWidget {
             ),
           ),
 
-          // Título
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Nearest Office',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+          // Si showNoNearbyOfficesView es true, mostrar el mensaje de no hay oficinas cercanas
+          if (showNoNearbyOfficesView) ...[            
+            // Contenido cuando no hay oficinas cercanas
+            Expanded(
+              child: NoNearbyOfficesView(
+                onExpandSearchRadius: onExpandSearchRadius ?? () {},
+                onViewAllOffices: onViewAllOffices ?? () {},
               ),
             ),
-          ),
+          ] else ...[            
+            // Título
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Nearest Office',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
 
-          const SizedBox(height: 8),
+            const SizedBox(height: 8),
 
-          // Lista de oficinas
-          Expanded(
-            child: offices.isEmpty
-                ? const Center(child: Text('No hay oficinas disponibles'))
-                : ListView.separated(
-                    controller: scrollController,
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    itemCount: offices.length,
-                    separatorBuilder: (_, __) => const Divider(),
-                    itemBuilder: (context, index) {
-                      final office = offices[index];
-                      return OfficeListItem(
-                        office: office,
-                        index: index,
-                        onTap: () => onOfficeTap(office),
-                        onDirectionsTap: () => onOfficeTap(office),
-                      );
-                    },
-                  ),
-          ),
+            // Lista de oficinas
+            Expanded(
+              child: offices.isEmpty
+                  ? const Center(child: Text('No hay oficinas disponibles'))
+                  : ListView.separated(
+                      controller: scrollController,
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      itemCount: offices.length,
+                      separatorBuilder: (_, __) => const Divider(),
+                      itemBuilder: (context, index) {
+                        final office = offices[index];
+                        return OfficeListItem(
+                          office: office,
+                          index: index,
+                          onTap: () => onOfficeTap(office),
+                          onDirectionsTap: () => onOfficeTap(office),
+                        );
+                      },
+                    ),
+            ),
+          ],
         ],
       ),
     );

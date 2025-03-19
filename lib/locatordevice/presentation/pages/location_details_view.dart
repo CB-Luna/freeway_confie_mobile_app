@@ -150,9 +150,10 @@ class _LocationDetailsViewContentState
             zoom: 14.0,
           ),
           myLocationEnabled:
-              !state.isEmulatorOrSimulator, // Desactivar en emuladores
+              false, // Desactivamos porque usamos un marcador personalizado
           myLocationButtonEnabled: false,
           markers: state.markers,
+          circles: state.circles, // Agregamos los círculos de cobertura
           onMapCreated: (GoogleMapController mapController) {
             controller.onMapCreated(mapController);
           },
@@ -184,8 +185,17 @@ class _LocationDetailsViewContentState
           maxChildSize: 0.6,
           controller: _scrollController,
           builder: (context, scrollController) {
+            // Obtener la lista de oficinas a mostrar (cercanas o todas)
+            final officesToDisplay = controller.getOfficeListToDisplay();
+            // Verificar si hay oficinas cercanas
+            final hasNearbyOffices = controller.hasNearbyOffices();
+            // Mostrar el mensaje de no hay oficinas cercanas solo si no hay oficinas cercanas
+            // y no estamos mostrando todas las oficinas
+            final showNoNearbyOfficesView =
+                !hasNearbyOffices && !state.showAllOffices;
+
             return OfficeList(
-              offices: state.offices,
+              offices: officesToDisplay,
               scrollController: scrollController,
               onOfficeTap: (office) {
                 controller.goToOffice(office);
@@ -195,6 +205,9 @@ class _LocationDetailsViewContentState
                   curve: Curves.easeInOut,
                 );
               },
+              showNoNearbyOfficesView: showNoNearbyOfficesView,
+              onExpandSearchRadius: () => controller.expandSearchRadius(),
+              onViewAllOffices: () => controller.showAllOffices(),
             );
           },
         ),
