@@ -180,9 +180,14 @@ class _LocationDetailsViewContentState
 
         // Lista de oficinas
         DraggableScrollableSheet(
-          initialChildSize: 0.25,
+          // Ajustar el tamaño inicial según si se muestra el mensaje de no hay oficinas cercanas
+          initialChildSize:
+              !controller.hasNearbyOffices() && !state.showAllOffices
+                  ? 0.5
+                  : 0.25,
           minChildSize: 0.1,
-          maxChildSize: 0.6,
+          // Aumentar el tamaño máximo para mostrar todo el contenido
+          maxChildSize: 0.8,
           controller: _scrollController,
           builder: (context, scrollController) {
             // Obtener la lista de oficinas a mostrar (cercanas o todas)

@@ -59,9 +59,12 @@ class OfficeList extends StatelessWidget {
           if (showNoNearbyOfficesView) ...[            
             // Contenido cuando no hay oficinas cercanas
             Expanded(
-              child: NoNearbyOfficesView(
-                onExpandSearchRadius: onExpandSearchRadius ?? () {},
-                onViewAllOffices: onViewAllOffices ?? () {},
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: NoNearbyOfficesView(
+                  onExpandSearchRadius: onExpandSearchRadius ?? () {},
+                  onViewAllOffices: onViewAllOffices ?? () {},
+                ),
               ),
             ),
           ] else ...[            
