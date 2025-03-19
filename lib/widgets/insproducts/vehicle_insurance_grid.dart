@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../pages/home_page.dart';
 import '../../utils/menu/circle_nav_bar.dart';
-import 'carcomponents/car_selection_page.dart';
+import '../../widgets/common/custom_dialog.dart';
 import 'motorcycle_insurance_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class VehicleInsuranceGrid extends StatefulWidget {
   const VehicleInsuranceGrid({super.key});
@@ -116,24 +117,18 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
   }
 
   Widget _buildInsuranceItem(
-      BuildContext context, String title, String iconName,) {
+    BuildContext context,
+    String title,
+    String iconName,
+  ) {
     return GestureDetector(
       onTap: () {
         switch (title) {
           case 'Auto':
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const CarSelectionPage(),
-              ),
-            );
+            _showWebPageDialog(context);
             break;
           case 'Motorcycle':
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const MotorcycleInsurancePage(),),
-            );
+            _showMotorcycleDialog(context);
             break;
           // TODO: Implementar navegación para otros tipos de seguro
         }
@@ -171,6 +166,56 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           ],
         ),
       ),
+    );
+  }
+
+  // Método para mostrar el diálogo de página web
+  Future<void> _showWebPageDialog(BuildContext context) async {
+    final bool? result = await CustomDialog.show(
+      context: context,
+      title: 'Web Page Inside the App',
+      content: 'You are about to open a web page within the app to complete this action. Please follow the instructions there.',
+      onConfirm: () async {
+        // Abrir la URL en el navegador
+        final Uri url = Uri.parse('https://www.freeway.com/');
+        try {
+          if (await canLaunchUrl(url)) {
+            await launchUrl(url, mode: LaunchMode.inAppWebView);
+          } else {
+            // Si no se puede abrir en modo inAppWebView, intentar con el navegador externo
+            await launchUrl(url, mode: LaunchMode.externalApplication);
+          }
+        } catch (e) {
+          // Mostrar un mensaje de error si no se puede abrir la URL
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Could not open the website. Please try again later.'),
+                duration: Duration(seconds: 3),
+              ),
+            );
+          }
+        }
+      },
+    );
+  }
+
+  // Método para mostrar el diálogo de motocicleta
+  Future<void> _showMotorcycleDialog(BuildContext context) async {
+    final bool? result = await CustomDialog.show(
+      context: context,
+      title: 'Motorcycle Insurance',
+      content: 'You\'re about to get a quote for motorcycle insurance. Would you like to proceed?',
+      confirmText: 'Get Quote',
+      cancelText: 'Not Now',
+      onConfirm: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MotorcycleInsurancePage(),
+          ),
+        );
+      },
     );
   }
 }
