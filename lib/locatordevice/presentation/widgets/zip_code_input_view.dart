@@ -117,18 +117,7 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                if (_zipController.text.length == 5) {
-                  _searchByZipCode();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Please enter a valid 5-digit zip code'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                }
-              },
+              onPressed: _searchByZipCode,
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF0046B9),
                 foregroundColor: Colors.white,
@@ -183,8 +172,19 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
   }
 
   void _searchByZipCode() {
-    final zipCode = _zipController.text;
-    if (zipCode.isEmpty) return;
+    final zipCode = _zipController.text.trim();
+    
+    // Validar que el código postal tenga 5 dígitos
+    if (zipCode.isEmpty || zipCode.length != 5 || !RegExp(r'^[0-9]{5}$').hasMatch(zipCode)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter a valid 5-digit zip code'),
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     // Ocultar el teclado
     FocusScope.of(context).unfocus();
@@ -195,15 +195,16 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
       listen: false,
     );
 
-    // Llamar al método de búsqueda por código postal
-    locationController.searchByZipCode(zipCode);
-    
     // Mostrar un mensaje al usuario
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text('Searching for offices near zip code: $zipCode'),
         duration: const Duration(seconds: 2),
+        backgroundColor: Colors.blue,
       ),
     );
+    
+    // Llamar al método de búsqueda por código postal
+    locationController.searchByZipCode(zipCode);
   }
 }

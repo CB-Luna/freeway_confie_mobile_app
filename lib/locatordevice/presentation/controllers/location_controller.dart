@@ -5,6 +5,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import '../../../core/platform/device_info.dart';
+import '../../../data/models/office/office.dart' as office_model;
+import '../../../data/services/office_service.dart';
 import '../../domain/entities/office.dart';
 import '../../domain/usecases/get_current_location.dart';
 import '../../domain/usecases/get_offices.dart';
@@ -244,9 +246,6 @@ class LocationController extends ChangeNotifier {
       currentPosition: newPosition,
       isLoading: false,
     );
-
-    // No quiero que se agregre el marcador para la ubicación simulada
-    // _updateCurrentLocationMarker();
   }
 
   void _startLocationTracking() {
@@ -417,7 +416,7 @@ class LocationController extends ChangeNotifier {
           title: office.name,
           snippet: office.address,
         ),
-        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+        icon: AssetMapBitmap('assets/prefix.png', width: 40, height: 40),
         zIndex: 1,
       );
       currentMarkers.add(marker);
@@ -462,14 +461,27 @@ class LocationController extends ChangeNotifier {
     try {
       _updateState(isLoading: true, errorMessage: null);
 
-      // TODO: Implementar la búsqueda de coordenadas por código postal
-      // Por ahora, usaremos coordenadas fijas para simular
-      final double latitude = 32.715738; // San Diego
-      final double longitude = -117.161084;
+      // Crear una instancia del servicio de oficinas
+      final officeService = OfficeService();
 
+      // Obtener las oficinas cercanas al código postal
+      final List<office_model.Office> nearbyOffices =
+          await officeService.getNearbyOfficesByZipCode(zipCode);
+
+      if (nearbyOffices.isEmpty) {
+        _updateState(
+          isLoading: false,
+          errorMessage:
+              'No se encontraron oficinas cercanas al código postal: $zipCode',
+        );
+        return;
+      }
+
+      // Usar la ubicación de la primera oficina como ubicación actual
+      final firstOffice = nearbyOffices.first;
       final newPosition = Position(
-        latitude: latitude,
-        longitude: longitude,
+        latitude: firstOffice.latitude,
+        longitude: firstOffice.longitude,
         timestamp: DateTime.now(),
         accuracy: 0,
         altitude: 0,
@@ -480,19 +492,37 @@ class LocationController extends ChangeNotifier {
         headingAccuracy: 0,
       );
 
+      // Convertir las oficinas del modelo al formato de dominio
+      final List<Office> domainOffices = nearbyOffices
+          .map(
+            (office) => Office(
+              id: office.locationId.toString(),
+              name: office.name,
+              address:
+                  '${office.streetAddress}, ${office.city}, ${office.state} ${office.postalCode}',
+              phone: office.phone,
+              latitude: office.latitude,
+              longitude: office.longitude,
+              distanceInMiles: office.distance,
+            ),
+          )
+          .toList();
+
       _updateState(
         currentPosition: newPosition,
         isLoading: false,
+        offices: domainOffices,
+        nearbyOffices: domainOffices,
       );
 
-      // Actualizar marcador y cargar oficinas
-      _updateCurrentLocationMarker();
+      // Actualizar posición del mapa y marcar oficinas
       updateMapPosition();
-      await _loadOffices();
+      _updateOfficeMarkers();
     } catch (e) {
       _updateState(
         isLoading: false,
-        errorMessage: 'Error searching by zip code: ${e.toString()}',
+        errorMessage:
+            'Error al buscar oficinas por código postal: ${e.toString()}',
       );
     }
   }
