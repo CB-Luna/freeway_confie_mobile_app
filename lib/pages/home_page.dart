@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
                     setState(() {
                       _isNotificationsExpanded = !_isNotificationsExpanded;
                     });
-                    
+
                     // Hacer scroll hasta la sección de notificaciones
                     if (notificationsKey.currentContext != null) {
                       Scrollable.ensureVisible(
@@ -217,6 +217,11 @@ class _HomePageState extends State<HomePage> {
                     NotificationsWidget(
                       key: notificationsKey,
                       isExpanded: _isNotificationsExpanded,
+                      onClose: () {
+                        setState(() {
+                          _isNotificationsExpanded = false;
+                        });
+                      },
                     ),
 
                     // Espacio adicional al final para asegurar que el último contenido sea visible

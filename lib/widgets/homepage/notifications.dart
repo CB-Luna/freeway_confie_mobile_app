@@ -7,10 +7,12 @@ import 'notification_item_content.dart';
 
 class NotificationsWidget extends StatelessWidget {
   final bool isExpanded;
+  final VoidCallback? onClose;
 
   const NotificationsWidget({
     super.key,
     this.isExpanded = false,
+    this.onClose,
   });
 
   @override
@@ -117,7 +119,6 @@ class NotificationsWidget extends StatelessWidget {
                       color: Colors.black,
                     ),
                   ),
-                  // Contador de notificaciones eliminado
                 ],
               ),
             ),
@@ -137,69 +138,100 @@ class NotificationsWidget extends StatelessWidget {
               ),
               // Ajustar la altura según la cantidad de notificaciones y si está expandida
               height: isExpanded
-                  ? 300 // Altura expandida
+                  ? 330 // Altura expandida
                   : notifications.length > 1
-                      ? 200 // Altura para 2 o más notificaciones
+                      ? 205 // Altura para 2 o más notificaciones
                       : notifications.length == 1
-                          ? 100 // Altura para 1 notificación
-                          : 100, // Altura para estado vacío
+                          ? 102 // Altura para 1 notificación
+                          : 102, // Altura para estado vacío
               child: notifications.isEmpty
                   ? _buildEmptyState()
-                  : SingleChildScrollView(
-                      physics: isExpanded
-                          ? const AlwaysScrollableScrollPhysics() // Scroll habilitado cuando está expandido
-                          : const NeverScrollableScrollPhysics(), // Scroll deshabilitado cuando no está expandido
-                      child: Column(
-                        children: [
-                          ...List.generate(
-                            notifications.length,
-                            (index) {
-                              final notification = notifications[index];
-                              // Alternar colores: primera azul, segunda naranja, y así sucesivamente
-                              final bool isBlue = index % 2 == 0;
-                              final Color iconColor = isBlue
-                                  ? const Color(0xFF0047BB)
-                                  : const Color(0xFFC74E10);
-
-                              return Column(
+                  : Column(
+                      children: [
+                        // Botón para cerrar la vista expandida (solo visible cuando está expandida)
+                        if (isExpanded && onClose != null)
+                          GestureDetector(
+                            onTap: onClose,
+                            child: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Center(
-                                    child: _buildNotificationItem(
-                                      notification.policyNumber,
-                                      notification.title,
-                                      notification.location,
-                                      notification.date,
-                                      notification.time,
-                                      iconColor,
-                                      notification.id,
-                                      isBlue,
+                                  Icon(
+                                    Icons.close,
+                                    size: 18,
+                                    color: Color(0xFF0047BB),
+                                  ),
+                                  SizedBox(width: 4),
+                                  Text(
+                                    'Close',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xFF0047BB),
                                     ),
                                   ),
-                                  if (index < notifications.length - 1)
-                                    Center(
-                                      child: Padding(
-                                        padding:
-                                            const EdgeInsets.only(bottom: 0),
-                                        child: Container(
-                                          width: 320,
-                                          decoration: const BoxDecoration(
-                                            border: Border(
-                                              bottom: BorderSide(
-                                                width: 0.5,
-                                                color: Color(0xFFC4C4C4),
+                                ],
+                              ),
+                            ),
+                          ),
+                        SingleChildScrollView(
+                          physics: isExpanded
+                              ? const AlwaysScrollableScrollPhysics() // Scroll habilitado cuando está expandido
+                              : const NeverScrollableScrollPhysics(), // Scroll deshabilitado cuando no está expandido
+                          child: Column(
+                            children: [
+                              ...List.generate(
+                                notifications.length,
+                                (index) {
+                                  final notification = notifications[index];
+                                  // Alternar colores: primera azul, segunda naranja, y así sucesivamente
+                                  final bool isBlue = index % 2 == 0;
+                                  final Color iconColor = isBlue
+                                      ? const Color(0xFF0047BB)
+                                      : const Color(0xFFC74E10);
+
+                                  return Column(
+                                    children: [
+                                      Center(
+                                        child: _buildNotificationItem(
+                                          notification.policyNumber,
+                                          notification.title,
+                                          notification.location,
+                                          notification.date,
+                                          notification.time,
+                                          iconColor,
+                                          notification.id,
+                                          isBlue,
+                                        ),
+                                      ),
+                                      if (index < notifications.length - 1)
+                                        Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.only(
+                                              bottom: 0,
+                                            ),
+                                            child: Container(
+                                              width: 320,
+                                              decoration: const BoxDecoration(
+                                                border: Border(
+                                                  bottom: BorderSide(
+                                                    width: 0.5,
+                                                    color: Color(0xFFC4C4C4),
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                  const SizedBox(height: 2),
-                                ],
-                              );
-                            },
+                                      const SizedBox(height: 2),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
             ),
           ],
