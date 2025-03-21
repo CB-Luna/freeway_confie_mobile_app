@@ -6,7 +6,12 @@ import '../../providers/notification_provider.dart';
 import 'notification_item_content.dart';
 
 class NotificationsWidget extends StatelessWidget {
-  const NotificationsWidget({super.key});
+  final bool isExpanded;
+
+  const NotificationsWidget({
+    super.key,
+    this.isExpanded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -130,11 +135,20 @@ class NotificationsWidget extends StatelessWidget {
                   ),
                 ],
               ),
-              // Limitar la altura y permitir scroll
-              height: 200,
+              // Ajustar la altura según la cantidad de notificaciones y si está expandida
+              height: isExpanded
+                  ? 300 // Altura expandida
+                  : notifications.length > 1
+                      ? 200 // Altura para 2 o más notificaciones
+                      : notifications.length == 1
+                          ? 100 // Altura para 1 notificación
+                          : 100, // Altura para estado vacío
               child: notifications.isEmpty
                   ? _buildEmptyState()
                   : SingleChildScrollView(
+                      physics: isExpanded
+                          ? const AlwaysScrollableScrollPhysics() // Scroll habilitado cuando está expandido
+                          : const NeverScrollableScrollPhysics(), // Scroll deshabilitado cuando no está expandido
                       child: Column(
                         children: [
                           ...List.generate(
@@ -149,15 +163,17 @@ class NotificationsWidget extends StatelessWidget {
 
                               return Column(
                                 children: [
-                                  _buildNotificationItem(
-                                    notification.policyNumber,
-                                    notification.title,
-                                    notification.location,
-                                    notification.date,
-                                    notification.time,
-                                    iconColor,
-                                    notification.id,
-                                    isBlue,
+                                  Center(
+                                    child: _buildNotificationItem(
+                                      notification.policyNumber,
+                                      notification.title,
+                                      notification.location,
+                                      notification.date,
+                                      notification.time,
+                                      iconColor,
+                                      notification.id,
+                                      isBlue,
+                                    ),
                                   ),
                                   if (index < notifications.length - 1)
                                     Center(
@@ -181,20 +197,6 @@ class NotificationsWidget extends StatelessWidget {
                                 ],
                               );
                             },
-                          ),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                            child: const Center(
-                              child: Text(
-                                'More',
-                                style: TextStyle(
-                                  color: Color(0xFF0047BB),
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                ),
-                              ),
-                            ),
                           ),
                         ],
                       ),
@@ -297,7 +299,7 @@ class NotificationsWidget extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(12.0),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             Container(
               width: 40,
@@ -385,4 +387,3 @@ class NotificationsWidget extends StatelessWidget {
     );
   }
 }
-

@@ -24,6 +24,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
   bool _isInitialized = false;
+  bool _isNotificationsExpanded = false;
   final notificationsKey = GlobalKey();
 
   @override
@@ -120,6 +121,12 @@ class _HomePageState extends State<HomePage> {
                     debugPrint(
                       'HomePage - Navegando a la sección de notificaciones',
                     );
+                    // Cambiar el estado de expansión
+                    setState(() {
+                      _isNotificationsExpanded = !_isNotificationsExpanded;
+                    });
+                    
+                    // Hacer scroll hasta la sección de notificaciones
                     if (notificationsKey.currentContext != null) {
                       Scrollable.ensureVisible(
                         notificationsKey.currentContext!,
@@ -207,7 +214,10 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 8),
 
                     // Notifications Section
-                    NotificationsWidget(key: notificationsKey),
+                    NotificationsWidget(
+                      key: notificationsKey,
+                      isExpanded: _isNotificationsExpanded,
+                    ),
 
                     // Espacio adicional al final para asegurar que el último contenido sea visible
                     const SizedBox(height: 20),
