@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
 import '../../providers/notification_provider.dart';
 
 /// Widget con estado para manejar la animación de eliminación de notificaciones
@@ -12,9 +13,8 @@ class NotificationItemContent extends StatefulWidget {
   final Color iconColor;
   final String notificationId;
   final bool isBlue;
-  
+
   const NotificationItemContent({
-    Key? key,
     required this.policyNumber,
     required this.title,
     required this.location,
@@ -23,8 +23,9 @@ class NotificationItemContent extends StatefulWidget {
     required this.iconColor,
     required this.notificationId,
     required this.isBlue,
-  }) : super(key: key);
-  
+    super.key,
+  });
+
   @override
   NotificationItemContentState createState() => NotificationItemContentState();
 }
@@ -32,24 +33,25 @@ class NotificationItemContent extends StatefulWidget {
 class NotificationItemContentState extends State<NotificationItemContent> {
   bool isDeleting = false;
   double progressValue = 0.0;
-  
+
   // Función para iniciar la animación de eliminación
   void startDeleteAnimation() {
     setState(() {
       isDeleting = true;
     });
-    
+
     // Animar el progreso de 0 a 1 durante 3 segundos
     const animationDuration = Duration(seconds: 3);
     final startTime = DateTime.now();
-    
+
     // Función para actualizar el progreso
     void updateProgress() {
       if (!mounted) return; // Verificar si el widget aún está montado
-      
+
       final elapsedTime = DateTime.now().difference(startTime);
-      final newProgressValue = elapsedTime.inMilliseconds / animationDuration.inMilliseconds;
-      
+      final newProgressValue =
+          elapsedTime.inMilliseconds / animationDuration.inMilliseconds;
+
       if (newProgressValue >= 1.0) {
         // Animación completa, eliminar la notificación
         Provider.of<NotificationProvider>(context, listen: false)
@@ -62,11 +64,11 @@ class NotificationItemContentState extends State<NotificationItemContent> {
         Future.delayed(const Duration(milliseconds: 16), updateProgress);
       }
     }
-    
+
     // Iniciar la actualización del progreso
     updateProgress();
   }
-      
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -97,7 +99,9 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                     ),
                     child: Center(
                       child: Icon(
-                        Icons.chat_outlined,
+                        widget.isBlue
+                            ? Icons.info_outline
+                            : Icons.chat_outlined,
                         color: widget.iconColor,
                         size: 20,
                       ),
@@ -173,7 +177,7 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                 ],
               ),
             ),
-            
+
             // Indicador de progreso (visible solo durante la eliminación)
             if (isDeleting)
               Positioned(
@@ -184,7 +188,9 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                   value: progressValue,
                   backgroundColor: Colors.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(
-                    widget.isBlue ? const Color(0xFF0047BB) : const Color(0xFFC74E10),
+                    widget.isBlue
+                        ? const Color(0xFF0047BB)
+                        : const Color(0xFFC74E10),
                   ),
                   minHeight: 2,
                 ),

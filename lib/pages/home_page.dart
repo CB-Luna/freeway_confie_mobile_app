@@ -26,6 +26,7 @@ class _HomePageState extends State<HomePage> {
   bool _isInitialized = false;
   bool _isNotificationsExpanded = false;
   final notificationsKey = GlobalKey();
+  final notificationsAnchorKey = GlobalKey();
 
   @override
   void initState() {
@@ -126,13 +127,17 @@ class _HomePageState extends State<HomePage> {
                       _isNotificationsExpanded = !_isNotificationsExpanded;
                     });
 
-                    // Hacer scroll hasta la sección de notificaciones
-                    if (notificationsKey.currentContext != null) {
-                      Scrollable.ensureVisible(
-                        notificationsKey.currentContext!,
-                        duration: const Duration(milliseconds: 500),
-                        curve: Curves.easeInOut,
-                      );
+                    // Hacer scroll hasta el anclaje de notificaciones
+                    if (notificationsAnchorKey.currentContext != null) {
+                      // Usar un pequeño retraso para asegurar que el estado se actualice antes del scroll
+                      Future.delayed(const Duration(milliseconds: 100), () {
+                        Scrollable.ensureVisible(
+                          notificationsAnchorKey.currentContext!,
+                          duration: const Duration(milliseconds: 800),
+                          curve: Curves
+                              .easeOutQuart, // Curva más suave para un efecto más elegante
+                        );
+                      });
                     }
                   },
                 ),
@@ -223,9 +228,14 @@ class _HomePageState extends State<HomePage> {
                         });
                       },
                     ),
-
                     // Espacio adicional al final para asegurar que el último contenido sea visible
                     const SizedBox(height: 20),
+                    // Widget de anclaje para el scroll de notificaciones
+                    SizedBox(
+                      key: notificationsAnchorKey,
+                      height:
+                          0, // Quitamos la altura para que el scroll no se pase
+                    ),
                   ],
                 ),
               ),

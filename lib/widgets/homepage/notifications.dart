@@ -158,17 +158,9 @@ class NotificationsWidget extends StatelessWidget {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
-                                    Icons.close,
-                                    size: 18,
+                                    Icons.keyboard_arrow_up,
+                                    size: 25,
                                     color: Color(0xFF0047BB),
-                                  ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Close',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Color(0xFF0047BB),
-                                    ),
                                   ),
                                 ],
                               ),
@@ -185,7 +177,8 @@ class NotificationsWidget extends StatelessWidget {
                                 (index) {
                                   final notification = notifications[index];
                                   // Alternar colores: primera azul, segunda naranja, y así sucesivamente
-                                  final bool isBlue = index % 2 == 0;
+                                  final bool isBlue =
+                                      !notification.title.contains('Welcome');
                                   final Color iconColor = isBlue
                                       ? const Color(0xFF0047BB)
                                       : const Color(0xFFC74E10);
