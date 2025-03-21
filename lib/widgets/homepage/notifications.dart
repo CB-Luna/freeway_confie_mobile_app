@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/notification_model.dart';
 import '../../providers/notification_provider.dart';
+import 'notification_item_content.dart';
 
 class NotificationsWidget extends StatelessWidget {
   const NotificationsWidget({super.key});
@@ -156,6 +157,7 @@ class NotificationsWidget extends StatelessWidget {
                                     notification.time,
                                     iconColor,
                                     notification.id,
+                                    isBlue,
                                   ),
                                   if (index < notifications.length - 1)
                                     Center(
@@ -265,97 +267,18 @@ class NotificationsWidget extends StatelessWidget {
     String time,
     Color iconColor,
     String notificationId,
+    bool isBlue,
   ) {
-    return Container(
-      width: 320,
-      height: 70,
-      padding: const EdgeInsets.only(top: 4, bottom: 2),
-      margin: const EdgeInsets.only(bottom: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: iconColor == const Color(0xFF0047BB)
-                  ? const Color(0xFFE6EEFF) // Light blue for blue icon
-                  : const Color(0xFFFFF1E9), // Light orange for orange icon
-              shape: BoxShape.circle,
-            ),
-            child: Icon(
-              Icons.chat_outlined,
-              color: iconColor,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  policyNumber,
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 12,
-                    height: 16 / 12, // line-height: 18px
-                    letterSpacing: 0,
-                    color: Color(0xFF828282),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w500,
-                    fontSize: 14,
-                    height: 16 / 14, // line-height: 21px
-                    letterSpacing: 0,
-                    color: iconColor == const Color(0xFF0047BB)
-                        ? const Color(0xFF414648)
-                        : const Color(0xFFC74E10),
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  '$location | $date | $time',
-                  style: const TextStyle(
-                    fontFamily: 'Poppins',
-                    fontWeight: FontWeight.w300,
-                    fontStyle: FontStyle.italic,
-                    fontSize: 12,
-                    height: 16 / 12, // line-height: 18px
-                    letterSpacing: 0,
-                    color: Color(0xFF414648),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Consumer<NotificationProvider>(
-            builder: (context, provider, child) {
-              return GestureDetector(
-                onTap: () => provider.markAsRead(notificationId),
-                child: Container(
-                  padding: const EdgeInsets.all(4),
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.grey, width: 1),
-                  ),
-                  child: const Icon(
-                    Icons.close,
-                    color: Colors.grey,
-                    size: 16,
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+    // Usar el widget NotificationItemContent desde el archivo separado
+    return NotificationItemContent(
+      policyNumber: policyNumber,
+      title: title,
+      location: location,
+      date: date,
+      time: time,
+      iconColor: iconColor,
+      notificationId: notificationId,
+      isBlue: isBlue,
     );
   }
 
@@ -462,3 +385,4 @@ class NotificationsWidget extends StatelessWidget {
     );
   }
 }
+
