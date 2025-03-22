@@ -117,13 +117,13 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                         // Número de póliza
                         Text(
                           widget.policyNumber,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
                             fontSize: 12,
                             height: 16 / 12,
                             letterSpacing: 0,
-                            color: Color(0xFF828282),
+                            color: widget.iconColor,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -136,9 +136,7 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                             fontSize: 14,
                             height: 16 / 14,
                             letterSpacing: 0,
-                            color: widget.isBlue
-                                ? const Color(0xFF414648)
-                                : const Color(0xFFC74E10),
+                            color: widget.iconColor,
                           ),
                         ),
                         const SizedBox(height: 2),
@@ -165,11 +163,11 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                       padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        border: Border.all(color: Colors.grey, width: 1),
+                        border: Border.all(color: widget.iconColor, width: 1),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.close,
-                        color: Colors.grey,
+                        color: widget.iconColor,
                         size: 16,
                       ),
                     ),
