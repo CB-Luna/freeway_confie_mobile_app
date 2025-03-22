@@ -344,8 +344,8 @@ class LocationController extends ChangeNotifier {
 
   // Método para crear un ícono personalizado para el marcador de ubicación actual
   Future<BitmapDescriptor> _createCustomMarkerIcon() async {
-    return await BitmapDescriptor.fromAssetImage(
-      const ImageConfiguration(size: Size(48, 48)),
+    return await BitmapDescriptor.asset(
+      const ImageConfiguration(size: Size(30, 30)),
       'assets/location/location_marker.png',
     );
   }
@@ -536,13 +536,51 @@ class LocationController extends ChangeNotifier {
   }
 
   // Método para expandir el radio de búsqueda
-  void expandSearchRadius() {
+  void expandSearchRadius(BuildContext context) {
+    // Verificar si ya alcanzamos el límite máximo de 10 millas
+    if (state.searchRadiusInMiles >= 10.0) {
+      // Mostrar mensaje de que ya se alcanzó el límite máximo
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Miles are already at the maximum limit (10 miles)'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
+
     // Incrementar el radio de búsqueda en 1 milla
     final newRadius = state.searchRadiusInMiles + 1.0;
     _updateState(searchRadiusInMiles: newRadius, showAllOffices: false);
 
     // Recalcular las oficinas cercanas con el nuevo radio
     _calculateDistancesToOffices();
+
+    // Actualizar el zoom de la cámara para mostrar el nuevo radio
+    _updateCameraZoomForRadius(newRadius);
+  }
+
+  // Método para actualizar el zoom de la cámara según el radio
+  void _updateCameraZoomForRadius(double radiusInMiles) {
+    if (state.currentPosition != null && mapController != null) {
+      // Calcular el zoom apropiado basado en el radio
+      // Fórmula aproximada: zoom = 14.0 - log2(radiusInMiles)
+      // Esto hace que el zoom disminuya a medida que aumenta el radio
+      double zoom = 14.0 - (radiusInMiles / 2.0);
+      // Asegurar que el zoom no sea demasiado pequeño
+      zoom = zoom.clamp(10.0, 15.0);
+
+      final cameraPosition = CameraPosition(
+        target: LatLng(
+          state.currentPosition!.latitude,
+          state.currentPosition!.longitude,
+        ),
+        zoom: zoom,
+      );
+
+      mapController!
+          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+    }
   }
 
   // Método para mostrar todas las oficinas

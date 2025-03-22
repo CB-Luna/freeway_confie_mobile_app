@@ -251,7 +251,8 @@ class _LocationDetailsViewContentState
                 );
               },
               showNoNearbyOfficesView: showNoNearbyOfficesView,
-              onExpandSearchRadius: () => controller.expandSearchRadius(),
+              onExpandSearchRadius: () =>
+                  controller.expandSearchRadius(context),
               onViewAllOffices: () => controller.showAllOffices(),
             );
           },
