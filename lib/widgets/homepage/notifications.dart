@@ -106,25 +106,29 @@ class NotificationsWidget extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Add Products Section
             const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: EdgeInsets.symmetric(horizontal: 24.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Notifications',
                     style: TextStyle(
+                      color: Color(0xFF414648),
+                      fontFamily: 'Open Sans',
                       fontSize: 14,
-                      fontWeight: FontWeight.normal,
-                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                      height: 22 / 14,
+                      letterSpacing: 0,
                     ),
                   ),
+                  SizedBox(height: 4),
                 ],
               ),
             ),
-            const SizedBox(height: 4),
             Container(
-              margin: const EdgeInsets.symmetric(horizontal: 12),
+              margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
                 color: const Color(0xFFFFFFFF),
                 borderRadius: BorderRadius.circular(15),
