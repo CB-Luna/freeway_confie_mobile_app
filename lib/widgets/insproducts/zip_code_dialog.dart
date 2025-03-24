@@ -152,7 +152,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
                 ),
-                disabledBackgroundColor: Colors.blue.withOpacity(0.5),
+                disabledBackgroundColor: Colors.blue.withValues(alpha: 0.5),
               ),
               child: const Text(
                 'Continue',

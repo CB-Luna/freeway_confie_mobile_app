@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:freeway_app/widgets/insproducts/motorcycle_insurance_page.dart'
-    show MotorcycleInsurancePage;
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../data/services/location_service.dart';
+import '../../locatordevice/locator_device_module.dart';
+import '../../locatordevice/presentation/widgets/loading_view.dart';
 import '../../pages/home_page.dart';
 import '../../utils/menu/circle_nav_bar.dart';
 import '../../widgets/common/custom_dialog.dart';
@@ -18,7 +18,9 @@ class VehicleInsuranceGrid extends StatefulWidget {
 }
 
 class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
+  int _selectedIndex = 1; // Inicializado en 1 para 'Add Insurance'
   final LocationService _locationService = LocationService();
+  bool _isProcessingAutoInsurance = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,16 +94,15 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           ),
         ),
       ),
-      bottomNavigationBar: Padding(
-        padding: const EdgeInsets.only(bottom: 16),
+      bottomNavigationBar: Transform.translate(
+        offset: const Offset(0, -10),
         child: CircleNavBar(
-          selectedPos: 1,
-          tabItems: [
-            TabData(Icons.home_outlined, 'My Products'),
-            TabData(Icons.verified_user_outlined, '+ Add Insurance'),
-            TabData(Icons.location_on_outlined, 'Location'),
-          ],
+          selectedPos: _selectedIndex,
           onTap: (index) {
+            setState(() {
+              _selectedIndex = index;
+            });
+
             switch (index) {
               case 0: // My Products
                 Navigator.pushReplacement(
@@ -109,14 +110,16 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
                   MaterialPageRoute(builder: (context) => const HomePage()),
                 );
                 break;
-              case 1: // Add Insurance
-                // Ya estamos en Add Insurance
-                break;
               case 2: // Location
-                // TODO: Implementar navegación a Location
+                LocatorDeviceModule.navigateToLocationView(context);
                 break;
             }
           },
+          tabItems: [
+            TabData(Icons.home_outlined, 'My Products'),
+            TabData(Icons.verified_user_outlined, 'Add Insurance'),
+            TabData(Icons.location_on_outlined, 'Location'),
+          ],
         ),
       ),
     );
@@ -131,10 +134,10 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       onTap: () {
         switch (title) {
           case 'Auto':
-            _handleAutoInsurance(context);
-            break;
-          case 'Motorcycle':
-            _showMotorcycleDialog(context);
+            // Evitar múltiples llamadas mientras se procesa una solicitud
+            if (!_isProcessingAutoInsurance) {
+              _handleAutoInsurance(context);
+            }
             break;
           // TODO: Implementar navegación para otros tipos de seguro
         }
@@ -177,6 +180,19 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
 
   // Método para manejar el seguro de auto con geolocalización
   Future<void> _handleAutoInsurance(BuildContext context) async {
+    // Establecer la bandera para evitar múltiples llamadas
+    setState(() {
+      _isProcessingAutoInsurance = true;
+    });
+
+    // Mostrar un indicador de progreso
+    final overlay = LoadingView.showOverlay(
+      context,
+      message: 'Obteniendo tu ubicación...', // Sin acentos
+      indicatorColor: Colors.blue,
+      textColor: Colors.white,
+    );
+
     try {
       // Verificar si los servicios de ubicación están habilitados
       final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
@@ -219,12 +235,42 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
 
       // Mostrar el diálogo con el código postal obtenido
       if (!context.mounted) return;
+      // Ocultar el indicador de progreso
+      overlay.remove();
+
+      if (!context.mounted) {
+        setState(() {
+          _isProcessingAutoInsurance = false;
+        });
+        return;
+      }
+
       await _showZipCodeDialog(context, zipCode);
+
+      // Restablecer la bandera después de completar el proceso
+      setState(() {
+        _isProcessingAutoInsurance = false;
+      });
     } catch (e) {
       debugPrint('Error al obtener la ubicación: $e');
+
+      // Ocultar el indicador de progreso
+      overlay.remove();
+
       // En caso de error, mostrar diálogo sin código postal
-      if (!context.mounted) return;
+      if (!context.mounted) {
+        setState(() {
+          _isProcessingAutoInsurance = false;
+        });
+        return;
+      }
+
       await _showZipCodeDialog(context, null);
+
+      // Restablecer la bandera después de completar el proceso
+      setState(() {
+        _isProcessingAutoInsurance = false;
+      });
     }
   }
 
@@ -276,7 +322,8 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       onConfirm: () async {
         // Abrir la URL en el navegador
         final Uri url = Uri.parse(
-            'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya');
+          'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya',
+        );
         try {
           if (await canLaunchUrl(url)) {
             await launchUrl(url, mode: LaunchMode.inAppWebView);
@@ -296,26 +343,6 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             );
           }
         }
-      },
-    );
-  }
-
-  // Método para mostrar el diálogo de motocicleta
-  Future<void> _showMotorcycleDialog(BuildContext context) async {
-    final bool? result = await CustomDialog.show(
-      context: context,
-      title: 'Motorcycle Insurance',
-      content:
-          'You\'re about to get a quote for motorcycle insurance. Would you like to proceed?',
-      confirmText: 'Get Quote',
-      cancelText: 'Not Now',
-      onConfirm: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const MotorcycleInsurancePage(),
-          ),
-        );
       },
     );
   }
