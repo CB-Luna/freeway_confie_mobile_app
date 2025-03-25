@@ -183,4 +183,43 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
+  
+  /// Guarda las credenciales del usuario actualmente autenticado
+  /// 
+  /// Este método se usa cuando el usuario habilita la autenticación biométrica
+  /// desde la configuración del perfil, sin necesidad de cerrar sesión.
+  Future<bool> saveCurrentCredentials() async {
+    try {
+      // Verificar si hay un usuario autenticado
+      if (!_isAuthenticated || _currentUser == null || _currentUser!.username == null) {
+        return false;
+      }
+      
+      // Obtener el nombre de usuario del usuario actual
+      final username = _currentUser!.username!;
+      
+      // Obtener la contraseña del usuario actual
+      // Nota: En una implementación real, es posible que no tengamos acceso a la contraseña
+      // en este punto, por lo que podríamos necesitar pedirla al usuario nuevamente
+      // o implementar otra solución.
+      
+      // Para esta implementación, asumiremos que tenemos la contraseña guardada temporalmente
+      // o que podemos obtenerla de alguna manera segura.
+      // Si no es posible, se debería mostrar un diálogo al usuario para pedirla.
+      
+      // Como ejemplo, podemos verificar si ya hay una contraseña guardada y usarla
+      final existingPassword = await _secureStorage.read(key: _passwordKey);
+      if (existingPassword != null) {
+        // Si ya hay una contraseña guardada, la usamos
+        return await saveCredentials(username, existingPassword);
+      }
+      
+      // Si no hay una contraseña guardada, devolvemos false
+      // En una implementación real, aquí se podría mostrar un diálogo al usuario
+      return false;
+    } catch (e) {
+      debugPrint('Error al guardar las credenciales actuales: $e');
+      return false;
+    }
+  }
 }

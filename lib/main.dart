@@ -35,7 +35,15 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => HomePolicyProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => BiometricProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, BiometricProvider>(
+          // Crear el BiometricProvider
+          create: (_) => BiometricProvider(),
+          // Actualizar el BiometricProvider con la referencia al AuthProvider
+          update: (_, authProvider, biometricProvider) {
+            biometricProvider!.setAuthProvider(authProvider);
+            return biometricProvider;
+          },
+        ),
       ],
       child: const MyApp(),
     ),

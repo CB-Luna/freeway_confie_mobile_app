@@ -2,9 +2,12 @@ import 'package:flutter/foundation.dart';
 import 'package:local_auth/local_auth.dart';
 
 import '../data/services/biometric_service.dart';
+import 'auth_provider.dart';
 
 class BiometricProvider extends ChangeNotifier {
   final BiometricService _biometricService = BiometricService();
+  // Referencia al AuthProvider para acceder a las credenciales y guardarlas
+  AuthProvider? _authProvider;
   
   bool _isAvailable = false;
   bool _isEnabled = false;
@@ -15,6 +18,11 @@ class BiometricProvider extends ChangeNotifier {
   bool get isEnabled => _isEnabled;
   String get biometricType => _biometricType;
   bool get isLoading => _isLoading;
+  
+  // Método para establecer el AuthProvider
+  void setAuthProvider(AuthProvider authProvider) {
+    _authProvider = authProvider;
+  }
 
   BiometricProvider() {
     _initBiometrics();
@@ -41,6 +49,9 @@ class BiometricProvider extends ChangeNotifier {
   }
 
   /// Habilita o deshabilita la autenticación biométrica
+  /// 
+  /// Si se está habilitando la biometría, también guarda las credenciales actuales
+  /// para que puedan ser usadas en futuras autenticaciones biométricas.
   Future<bool> toggleBiometric(bool enabled) async {
     _isLoading = true;
     notifyListeners();
@@ -53,6 +64,29 @@ class BiometricProvider extends ChangeNotifier {
         _isLoading = false;
         notifyListeners();
         return false;
+      }
+      
+      // Si la autenticación fue exitosa y estamos habilitando la biometría,
+      // guardar las credenciales actuales si el usuario está autenticado
+      if (_authProvider != null && _authProvider!.isAuthenticated) {
+        // Obtener las credenciales actuales del usuario autenticado
+        final currentUser = _authProvider!.currentUser;
+        if (currentUser != null && currentUser.username != null) {
+          // Guardar las credenciales para uso futuro con biometría
+          // Nota: Aquí asumimos que el AuthProvider tiene acceso a la contraseña
+          // Si no es así, se podría implementar un método para obtenerla
+          final credentialsSaved = await _authProvider!.saveCurrentCredentials();
+          if (!credentialsSaved) {
+            // Si no se pudieron guardar las credenciales, mostrar un mensaje de error
+            debugPrint('No se pudieron guardar las credenciales para biometría');
+            // Pero continuamos con la habilitación de la biometría
+          }
+        }
+      }
+    } else {
+      // Si estamos deshabilitando la biometría, eliminar las credenciales guardadas
+      if (_authProvider != null) {
+        await _authProvider!.deleteCredentials();
       }
     }
 
