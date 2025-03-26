@@ -12,6 +12,7 @@ class AuthProvider with ChangeNotifier {
   User? _currentUser;
   String? _errorMessage;
   bool _isAuthenticated = false;
+  String? _lastPassword; // Almacena temporalmente la última contraseña usada
 
   // Claves para almacenamiento seguro
   static const String _usernameKey = 'auth_username';
@@ -27,6 +28,9 @@ class AuthProvider with ChangeNotifier {
     try {
       _errorMessage = null;
       debugPrint('AuthProvider - Iniciando login para usuario: $username');
+
+      // Guardar la contraseña temporalmente para uso futuro
+      _lastPassword = password;
 
       final response = await _authService.login(username, password);
       debugPrint('AuthProvider - Respuesta de login: ${response.message}');
@@ -78,6 +82,7 @@ class AuthProvider with ChangeNotifier {
     _currentUser = null;
     _isAuthenticated = false;
     _errorMessage = null;
+    _lastPassword = null; // Limpiar la contraseña temporal
     notifyListeners();
     debugPrint('AuthProvider: estado de autenticación limpiado');
   }
@@ -192,33 +197,54 @@ class AuthProvider with ChangeNotifier {
     try {
       // Verificar si hay un usuario autenticado
       if (!_isAuthenticated || _currentUser == null || _currentUser!.username == null) {
+        debugPrint('No hay usuario autenticado para guardar credenciales');
         return false;
       }
       
       // Obtener el nombre de usuario del usuario actual
       final username = _currentUser!.username!;
       
-      // Obtener la contraseña del usuario actual
-      // Nota: En una implementación real, es posible que no tengamos acceso a la contraseña
-      // en este punto, por lo que podríamos necesitar pedirla al usuario nuevamente
-      // o implementar otra solución.
+      // Verificar si tenemos la contraseña en memoria
+      if (_lastPassword != null) {
+        debugPrint('Usando contraseña en memoria para guardar credenciales');
+        final result = await saveCredentials(username, _lastPassword!);
+        if (result) {
+          debugPrint('Credenciales guardadas exitosamente');
+        } else {
+          debugPrint('Error al guardar las credenciales');
+        }
+        return result;
+      }
       
-      // Para esta implementación, asumiremos que tenemos la contraseña guardada temporalmente
-      // o que podemos obtenerla de alguna manera segura.
-      // Si no es posible, se debería mostrar un diálogo al usuario para pedirla.
-      
-      // Como ejemplo, podemos verificar si ya hay una contraseña guardada y usarla
+      // Si no tenemos la contraseña en memoria, verificar si ya hay una guardada
       final existingPassword = await _secureStorage.read(key: _passwordKey);
       if (existingPassword != null) {
-        // Si ya hay una contraseña guardada, la usamos
+        debugPrint('Usando contraseña existente para guardar credenciales');
         return await saveCredentials(username, existingPassword);
       }
       
-      // Si no hay una contraseña guardada, devolvemos false
+      // Si no tenemos la contraseña de ninguna manera, mostramos un mensaje de depuración
+      debugPrint('No se pudo guardar las credenciales: no hay contraseña disponible');
+      
       // En una implementación real, aquí se podría mostrar un diálogo al usuario
+      // para pedirle la contraseña nuevamente
       return false;
     } catch (e) {
       debugPrint('Error al guardar las credenciales actuales: $e');
+      return false;
+    }
+  }
+  
+  /// Verifica si hay credenciales guardadas
+  Future<bool> hasCredentials() async {
+    try {
+      final username = await _secureStorage.read(key: _usernameKey);
+      final password = await _secureStorage.read(key: _passwordKey);
+      final hasCredentials = username != null && password != null;
+      debugPrint('Verificando credenciales guardadas: $hasCredentials');
+      return hasCredentials;
+    } catch (e) {
+      debugPrint('Error al verificar credenciales: $e');
       return false;
     }
   }
