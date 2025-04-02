@@ -59,11 +59,15 @@ class OfficeList extends StatelessWidget {
           if (showNoNearbyOfficesView) ...[
             // Contenido cuando no hay oficinas cercanas
             Expanded(
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8.0),
-                child: NoNearbyOfficesView(
-                  onExpandSearchRadius: onExpandSearchRadius ?? () {},
-                  onViewAllOffices: onViewAllOffices ?? () {},
+              child: SingleChildScrollView(
+                controller: scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: NoNearbyOfficesView(
+                    onExpandSearchRadius: onExpandSearchRadius ?? () {},
+                    onViewAllOffices: onViewAllOffices ?? () {},
+                  ),
                 ),
               ),
             ),
@@ -86,20 +90,40 @@ class OfficeList extends StatelessWidget {
             Expanded(
               child: offices.isEmpty
                   ? const Center(child: Text('No hay oficinas disponibles'))
-                  : ListView.separated(
+                  : CustomScrollView(
                       controller: scrollController,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      itemCount: offices.length,
-                      separatorBuilder: (_, __) => const Divider(),
-                      itemBuilder: (context, index) {
-                        final office = offices[index];
-                        return OfficeListItem(
-                          office: office,
-                          index: index,
-                          onTap: () => onOfficeTap(office),
-                          onDirectionsTap: () => onOfficeTap(office),
-                        );
-                      },
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                // Si es el último elemento, añadir espacio adicional al final
+                                if (index == offices.length) {
+                                  return const SizedBox(height: 24);
+                                }
+                                
+                                // Si no es el último elemento, mostrar el elemento de la oficina
+                                final office = offices[index];
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (index > 0) const Divider(),
+                                    OfficeListItem(
+                                      office: office,
+                                      index: index,
+                                      onTap: () => onOfficeTap(office),
+                                      onDirectionsTap: () => onOfficeTap(office),
+                                    ),
+                                  ],
+                                );
+                              },
+                              childCount: offices.length + 1, // +1 para el espacio adicional
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
             ),
           ],

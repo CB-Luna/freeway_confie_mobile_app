@@ -55,6 +55,10 @@ class _LocationDetailsViewContentState
     extends State<LocationDetailsViewContent> {
   final DraggableScrollableController _scrollController =
       DraggableScrollableController();
+  
+  // Valores para el DraggableScrollableSheet
+  double _minChildSize = 0.1;
+  double _maxChildSize = 0.8;
 
   @override
   void dispose() {
@@ -63,15 +67,26 @@ class _LocationDetailsViewContentState
   }
 
   void _toggleBottomSheet() {
-    if (_scrollController.size <= 0.25) {
+    // Si está en la posición mínima o cerca de ella, expandirlo
+    if (_scrollController.size <= _minChildSize + 0.05) {
       _scrollController.animateTo(
         0.5,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } else {
+    } 
+    // Si está expandido, colapsarlo
+    else if (_scrollController.size >= 0.4) {
       _scrollController.animateTo(
-        0.1,
+        _minChildSize,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+    // En posición intermedia, expandirlo
+    else {
+      _scrollController.animateTo(
+        0.5,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -223,12 +238,15 @@ class _LocationDetailsViewContentState
           // Ajustar el tamaño inicial según si se muestra el mensaje de no hay oficinas cercanas
           initialChildSize:
               !controller.hasNearbyOffices() && !state.showAllOffices
-                  ? 0.5
+                  ? 0.35  // Reducido de 0.5 a 0.35 para permitir más flexibilidad
                   : 0.25,
-          minChildSize: 0.1,
+          minChildSize: _minChildSize,
           // Aumentar el tamaño máximo para mostrar todo el contenido
-          maxChildSize: 0.8,
+          maxChildSize: _maxChildSize,
           controller: _scrollController,
+          // Añadir snap para que se ajuste a posiciones específicas
+          snap: true,
+          snapSizes: [_minChildSize, 0.35, 0.5, _maxChildSize],
           builder: (context, scrollController) {
             // Obtener la lista de oficinas a mostrar (cercanas o todas)
             final officesToDisplay = controller.getOfficeListToDisplay();
@@ -244,16 +262,32 @@ class _LocationDetailsViewContentState
               scrollController: scrollController,
               onOfficeTap: (office) {
                 controller.goToOffice(office);
+                // Colapsar la lista al mínimo cuando se selecciona una oficina
                 _scrollController.animateTo(
-                  0.1,
+                  _minChildSize,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
               },
               showNoNearbyOfficesView: showNoNearbyOfficesView,
-              onExpandSearchRadius: () =>
-                  controller.expandSearchRadius(context),
-              onViewAllOffices: () => controller.showAllOffices(),
+              onExpandSearchRadius: () {
+                controller.expandSearchRadius(context);
+                // Mantener la lista expandida después de expandir el radio
+                _scrollController.animateTo(
+                  0.35,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
+              onViewAllOffices: () {
+                controller.showAllOffices();
+                // Colapsar parcialmente la lista al mostrar todas las oficinas
+                _scrollController.animateTo(
+                  0.25,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeInOut,
+                );
+              },
             );
           },
         ),
