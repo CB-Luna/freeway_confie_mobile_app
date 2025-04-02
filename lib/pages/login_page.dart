@@ -18,12 +18,12 @@ class LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _twoFactorCodeController = TextEditingController();
+  final _twoFactorCodeController = TextEditingController(); // Se mantiene para uso futuro
   bool _isLoading = false;
   bool _obscureText = true;
   bool _isBiometricAvailable = false;
   bool _isBiometricEnabled = false;
-  bool _showTwoFactorInput = false;
+  bool _showTwoFactorInput = false; // Se mantiene para uso futuro pero siempre será falso
 
   @override
   void initState() {
@@ -153,92 +153,52 @@ class LoginPageState extends State<LoginPage> {
                           ),
                         ),
                         const SizedBox(height: 32),
-                        if (!_showTwoFactorInput) ...[
-                          // Campos de login normal
-                          SizedBox(
-                            height: 60,
-                            width: 346,
-                            child: TextFormField(
-                              controller: _usernameController,
-                              decoration:
-                                  AppTheme.inputDecoration(labelText: 'Username'),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your username';
-                                }
-                                return null;
-                              },
-                            ),
+                        // Campos de login normal
+                        SizedBox(
+                          height: 60,
+                          width: 346,
+                          child: TextFormField(
+                            controller: _usernameController,
+                            decoration:
+                                AppTheme.inputDecoration(labelText: 'Username'),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your username';
+                              }
+                              return null;
+                            },
                           ),
-                          const SizedBox(height: 16),
-                          SizedBox(
-                            width: 346,
-                            child: TextFormField(
-                              controller: _passwordController,
-                              decoration:
-                                  AppTheme.inputDecoration(labelText: 'Password')
-                                      .copyWith(
-                                suffixIcon: IconButton(
-                                  icon: Icon(
-                                    _obscureText
-                                        ? Icons.visibility_off
-                                        : Icons.visibility,
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _obscureText = !_obscureText;
-                                    });
-                                  },
+                        ),
+                        const SizedBox(height: 16),
+                        SizedBox(
+                          width: 346,
+                          child: TextFormField(
+                            controller: _passwordController,
+                            decoration:
+                                AppTheme.inputDecoration(labelText: 'Password')
+                                    .copyWith(
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _obscureText
+                                      ? Icons.visibility_off
+                                      : Icons.visibility,
                                 ),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureText = !_obscureText;
+                                  });
+                                },
                               ),
-                              obscureText: _obscureText,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter your password';
-                                }
-                                return null;
-                              },
                             ),
+                            obscureText: _obscureText,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              return null;
+                            },
                           ),
-                        ] else ...[
-                          // Campo de código de verificación 2FA
-                          const Text(
-                            'Two-Factor Authentication',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1F2937),
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          const Text(
-                            'Please enter the verification code sent to your email or phone',
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Color(0xFF6B7280),
-                            ),
-                          ),
-                          const SizedBox(height: 24),
-                          SizedBox(
-                            width: 346,
-                            child: TextFormField(
-                              controller: _twoFactorCodeController,
-                              decoration: AppTheme.inputDecoration(
-                                  labelText: 'Verification Code'),
-                              keyboardType: TextInputType.number,
-                              maxLength: 6,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) {
-                                  return 'Please enter the verification code';
-                                }
-                                if (value.length < 6) {
-                                  return 'Code must be 6 digits';
-                                }
-                                return null;
-                              },
-                            ),
-                          ),
-                        ],
+                        ),
                         const SizedBox(height: 16),
                         Center(
                           child: TextButton(
@@ -262,9 +222,9 @@ class LoginPageState extends State<LoginPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                             ),
-                            child: Text(
-                              _showTwoFactorInput ? 'Verify' : 'Sign In',
-                              style: const TextStyle(
+                            child: const Text(
+                              'Sign In',
+                              style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
@@ -272,7 +232,7 @@ class LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         ),
-                        if (_isBiometricAvailable && !_showTwoFactorInput)
+                        if (_isBiometricAvailable)
                           Center(
                             child: Consumer<BiometricProvider>(
                               builder: (context, biometricProvider, child) {
@@ -302,42 +262,41 @@ class LoginPageState extends State<LoginPage> {
                             ),
                           ),
                         const SizedBox(height: 24),
-                        if (!_showTwoFactorInput)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Text(
-                                "Don't have an account? ",
-                                style: TextStyle(
-                                  color: Color(0xFF6B7280),
-                                  fontSize: 14,
-                                ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              "Don't have an account? ",
+                              style: TextStyle(
+                                color: Color(0xFF6B7280),
+                                fontSize: 14,
                               ),
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => const SignUpPage(),
-                                    ),
-                                  );
-                                },
-                                style: TextButton.styleFrom(
-                                  foregroundColor: AppTheme.primaryColor,
-                                  padding: EdgeInsets.zero,
-                                  minimumSize: Size.zero,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: const Text(
-                                  'Sign Up',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
+                            ),
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => const SignUpPage(),
                                   ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor: AppTheme.primaryColor,
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: const Text(
+                                'Sign Up',
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 16),
                       ],
                     ),
@@ -355,30 +314,28 @@ class LoginPageState extends State<LoginPage> {
       final authProvider = context.read<AuthProvider>();
       bool success;
 
-      if (!_showTwoFactorInput) {
-        // Primer paso: login con username y password
-        success = await authProvider.loginStep1(
-          _usernameController.text,
-          _passwordController.text,
-        );
+      // Actualmente solo usamos loginStep1 ya que el 2FA está desactivado
+      // pero mantenemos la estructura para uso futuro
+      success = await authProvider.loginStep1(
+        _usernameController.text,
+        _passwordController.text,
+      );
 
-        // Verificar si se requiere 2FA
-        if (success && authProvider.requiresTwoFactor) {
-          setState(() {
-            _showTwoFactorInput = true;
-            _isLoading = false;
-          });
-          return; // Detener el proceso para esperar el código 2FA
-        }
-      } else {
-        // Segundo paso: enviar código 2FA
-        success = await authProvider.loginStep2(
-          _twoFactorCodeController.text,
-        );
+      // Esta condición nunca se cumplirá mientras el 2FA esté desactivado
+      // Se mantiene para uso futuro
+      if (success && authProvider.requiresTwoFactor) {
+        // Código comentado para uso futuro cuando se reactive el 2FA
+        /*
+        setState(() {
+          _showTwoFactorInput = true;
+          _isLoading = false;
+        });
+        return; // Detener el proceso para esperar el código 2FA
+        */
       }
 
       // Si el login fue exitoso y la biometría está disponible y habilitada, guardar las credenciales
-      if (success && _isBiometricAvailable && _isBiometricEnabled && !_showTwoFactorInput) {
+      if (success && _isBiometricAvailable && _isBiometricEnabled) {
         await authProvider.saveCredentials(
           _usernameController.text,
           _passwordController.text,

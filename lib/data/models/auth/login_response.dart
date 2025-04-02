@@ -6,6 +6,9 @@ part 'login_response.g.dart';
 @JsonSerializable()
 class LoginResponse {
   final String? token;
+  // Campo mantenido para compatibilidad con el código existente
+  // pero ya no se usa activamente ya que el 2FA está temporalmente desactivado
+  @Deprecated('Campo obsoleto, no se utiliza activamente')
   final bool requiresTwoFactor;
   final List<ErrorModel> errors;
 
@@ -27,7 +30,9 @@ class LoginResponse {
 
     return LoginResponse(
       token: json['token'],
-      requiresTwoFactor: json['requiresTwoFactor'] ?? false,
+      // El campo requiresTwoFactor ya no viene en la respuesta de la API
+      // siempre será false mientras el 2FA esté desactivado
+      requiresTwoFactor: false,
       errors: errorsList,
     );
   }

@@ -16,7 +16,7 @@ class AuthService {
 
   AuthService() : _dio = ApiClient.createDio();
 
-  // Primer paso del login: enviar username y password
+  // Método principal de login (ahora sin 2FA activo)
   Future<LoginResponse> loginStep1(String username, String password) async {
     try {
       final response = await _dio.post(
@@ -32,14 +32,7 @@ class AuthService {
         ),
       );
 
-      // Si el código de respuesta es 202, significa que se requiere 2FA
-      if (response.statusCode == 202) {
-        return LoginResponse.fromJson({
-          ...response.data,
-          'requiresTwoFactor': true,
-        });
-      }
-
+      // Ahora la API devuelve directamente un token en lugar de requerir 2FA
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
       throw ApiError.fromDioError(e);
@@ -48,12 +41,12 @@ class AuthService {
     }
   }
 
-  // Segundo paso del login: enviar código 2FA
+  // Mantenemos este método para uso futuro cuando se reactive el 2FA
+  // Actualmente no se utiliza, pero se mantiene la estructura
   Future<LoginResponse> loginStep2(String twoFactorCode) async {
     try {
-      log('Entramos y se ejecuta loginStep2');
-      log('Codigo 2FA: $twoFactorCode');
-
+      // NOTA: Este método no se usa actualmente ya que el 2FA está desactivado
+      // Se mantiene para implementación futura
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
@@ -65,6 +58,7 @@ class AuthService {
           },
         ),
       );
+
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
       throw ApiError.fromDioError(e);

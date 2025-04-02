@@ -16,7 +16,7 @@ class AuthProvider with ChangeNotifier {
   bool _isAuthenticated = false;
   String? _lastUsername; // Almacena temporalmente el último username usado
   String? _lastPassword; // Almacena temporalmente la última contraseña usada
-  bool _requiresTwoFactor = false;
+  bool _requiresTwoFactor = false; // Se mantiene para uso futuro
   String? _authToken;
 
   // Claves para almacenamiento seguro
@@ -28,14 +28,14 @@ class AuthProvider with ChangeNotifier {
   User? get currentUser => _currentUser;
   String? get errorMessage => _errorMessage;
   bool get isAuthenticated => _isAuthenticated;
-  bool get requiresTwoFactor => _requiresTwoFactor;
+  bool get requiresTwoFactor => _requiresTwoFactor; // Se mantiene para uso futuro
   String? get authToken => _authToken;
 
-  // Método para iniciar el proceso de login (paso 1)
+  // Método principal de login (ahora sin 2FA activo)
   Future<bool> loginStep1(String username, String password) async {
     try {
       _errorMessage = null;
-      _requiresTwoFactor = false;
+      _requiresTwoFactor = false; // Siempre será falso mientras el 2FA esté desactivado
       debugPrint('AuthProvider - Iniciando login para usuario: $username');
 
       // Guardar credenciales temporalmente para uso futuro
@@ -50,13 +50,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      if (response.requiresTwoFactor) {
-        _requiresTwoFactor = true;
-        notifyListeners();
-        return true; // Retorna true para indicar que el proceso continúa, pero requiere 2FA
-      }
-
-      // Si no requiere 2FA y no hay errores, entonces el login fue exitoso
+      // Ya no verificamos requiresTwoFactor porque la API ahora devuelve directamente el token
       return await _completeLogin(response);
     } on ApiError catch (e) {
       _errorMessage = e.message;
@@ -69,11 +63,14 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  // Método para completar el login con el código 2FA (paso 2)
+  // Mantenemos este método para uso futuro cuando se reactive el 2FA
+  // Actualmente no se utiliza, pero se mantiene la estructura
   Future<bool> loginStep2(String twoFactorCode) async {
     try {
       _errorMessage = null;
       
+      // NOTA: Este método no se usa actualmente ya que el 2FA está desactivado
+      // Se mantiene para implementación futura
       final response = await _authService.loginStep2(twoFactorCode);
       
       if (response.hasErrors) {
