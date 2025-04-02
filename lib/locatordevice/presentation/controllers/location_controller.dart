@@ -79,11 +79,11 @@ class LocationController extends ChangeNotifier {
   LocationState get state => _state;
 
   // Coordenadas por defecto para simuladores (San Diego) Sin covertura
-  static const double defaultLat = 32.715738;
-  static const double defaultLng = -117.161084;
+  // static const double defaultLat = 32.715738;
+  // static const double defaultLng = -117.161084;
   // Coordenadas por defecto para emuladores (San Diego) Con covertura
-  // static const double defaultLat = 32.6708864;
-  // static const double defaultLng = -117.1033635;
+  static const double defaultLat = 32.6708864;
+  static const double defaultLng = -117.1033635;
 
   LocationController({
     required this.getCurrentLocation,
