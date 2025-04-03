@@ -99,11 +99,47 @@ class OfficeList extends StatelessWidget {
                           sliver: SliverList(
                             delegate: SliverChildBuilderDelegate(
                               (context, index) {
-                                // Si es el último elemento, añadir espacio adicional al final
+                                // Si es el último elemento y solo hay una oficina,
+                                // mostrar el botón "Find other offices"
                                 if (index == offices.length) {
+                                  if (offices.length == 1) {
+                                    return Padding(
+                                      padding: const EdgeInsets.only(
+                                        top: 16.0,
+                                        bottom: 24.0,
+                                      ),
+                                      child: Center(
+                                        child: TextButton.icon(
+                                          onPressed: onViewAllOffices,
+                                          icon: const Icon(
+                                            Icons.search,
+                                            color: Color(
+                                              0xFF0A4DA2,
+                                            ),
+                                          ),
+                                          label: const Text(
+                                            'Find other offices',
+                                            style: TextStyle(
+                                              color: Color(
+                                                0xFF0A4DA2,
+                                              ),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          style: TextButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: 16.0,
+                                              vertical: 8.0,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  // Si hay más de una oficina, solo añadir espacio adicional
                                   return const SizedBox(height: 24);
                                 }
-                                
+
                                 // Si no es el último elemento, mostrar el elemento de la oficina
                                 final office = offices[index];
                                 return Column(
@@ -114,12 +150,14 @@ class OfficeList extends StatelessWidget {
                                       office: office,
                                       index: index,
                                       onTap: () => onOfficeTap(office),
-                                      onDirectionsTap: () => onOfficeTap(office),
+                                      onDirectionsTap: () =>
+                                          onOfficeTap(office),
                                     ),
                                   ],
                                 );
                               },
-                              childCount: offices.length + 1, // +1 para el espacio adicional
+                              childCount: offices.length +
+                                  1, // +1 para el espacio adicional o el botón
                             ),
                           ),
                         ),

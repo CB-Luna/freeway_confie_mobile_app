@@ -331,12 +331,28 @@ class LocationController extends ChangeNotifier {
       (a, b) => a.distance.compareTo(b.distance),
     );
 
-    _updateState(
-      offices: updatedOffices,
-      nearbyOffices: nearbyOffices,
-      // Si estamos mostrando todas las oficinas, mantener ese estado
-      showAllOffices: state.showAllOffices,
-    );
+    // Si hay una oficina seleccionada, no actualizar las oficinas cercanas
+    if (state.selectedOfficeId != null) {
+      // Encontrar la oficina seleccionada
+      final selectedOffice = updatedOffices.firstWhere(
+        (office) => office.locationId == state.selectedOfficeId,
+        orElse: () => updatedOffices.first,
+      );
+
+      _updateState(
+        offices: updatedOffices,
+        nearbyOffices: [selectedOffice],
+        // Si estamos mostrando todas las oficinas, mantener ese estado
+        showAllOffices: state.showAllOffices,
+      );
+    } else {
+      _updateState(
+        offices: updatedOffices,
+        nearbyOffices: nearbyOffices,
+        // Si estamos mostrando todas las oficinas, mantener ese estado
+        showAllOffices: state.showAllOffices,
+      );
+    }
 
     // Actualizar el círculo de cobertura para reflejar el radio de búsqueda
     _updateCoverageCircle();
@@ -409,14 +425,23 @@ class LocationController extends ChangeNotifier {
   void _updateOfficeMarkers() {
     if (state.offices.isEmpty) return;
 
+    // Limpiar los marcadores existentes
     final currentMarkers = Set<Marker>.from(state.markers);
     currentMarkers.removeWhere(
       (marker) => marker.markerId.value.startsWith('office_'),
     );
 
+    // Variable para almacenar la oficina seleccionada
+    Office? selectedOffice;
+
     for (var i = 0; i < state.offices.length; i++) {
       final office = state.offices[i];
       final isSelected = state.selectedOfficeId == office.locationId;
+
+      // Si esta oficina está seleccionada, guardarla para actualizar el estado después
+      if (isSelected) {
+        selectedOffice = office;
+      }
 
       // Tamaño del marcador: más grande si está seleccionado
       final markerSize = isSelected ? 60.0 : 40.0;
@@ -429,7 +454,7 @@ class LocationController extends ChangeNotifier {
           snippet: office.streetAddress,
         ),
         icon: AssetMapBitmap(
-          'assets/prefix.png',
+          'assets/location/freeway_marker.png',
           width: markerSize.toDouble(),
           height: markerSize.toDouble(),
         ),
@@ -440,19 +465,26 @@ class LocationController extends ChangeNotifier {
           goToOffice(office);
         },
       );
-      // Agrego oficina seleccionada a lista de oficinas
-      if (isSelected) {
-        _updateState(
-          selectedOfficeId: office.locationId,
-          nearbyOffices: [office],
-          showAllOffices: false,
-        );
-      }
 
       currentMarkers.add(marker);
     }
 
-    _updateState(markers: currentMarkers);
+    // Actualizar el estado con la oficina seleccionada fuera del bucle
+    if (selectedOffice != null && state.selectedOfficeId != null) {
+      // Solo actualizar las nearbyOffices si no estamos mostrando todas las oficinas
+      if (!state.showAllOffices) {
+        _updateState(
+          markers: currentMarkers,
+          nearbyOffices: [selectedOffice],
+          showAllOffices: false,
+        );
+      } else {
+        // Si estamos mostrando todas las oficinas, solo actualizar los marcadores
+        _updateState(markers: currentMarkers);
+      }
+    } else {
+      _updateState(markers: currentMarkers);
+    }
   }
 
   void updateMapPosition() {
@@ -476,7 +508,11 @@ class LocationController extends ChangeNotifier {
 
   void goToOffice(Office office) {
     // Actualizar el ID de la oficina seleccionada
-    _updateState(selectedOfficeId: office.locationId);
+    _updateState(
+      selectedOfficeId: office.locationId,
+      showAllOffices:
+          false, // Asegurarnos de que no estamos mostrando todas las oficinas
+    );
 
     // Actualizar los marcadores para reflejar la selección
     _updateOfficeMarkers();
@@ -608,18 +644,22 @@ class LocationController extends ChangeNotifier {
 
   // Método para mostrar todas las oficinas
   void showAllOffices() {
-    // Restablecer la oficina seleccionada
+    // Obtener todas las oficinas disponibles
+    final allOffices = state.offices;
+
+    // Restablecer la oficina seleccionada y actualizar las oficinas cercanas
     _updateState(
       showAllOffices: true,
       selectedOfficeId: null,
+      nearbyOffices: allOffices, // Mostrar todas las oficinas en la lista
     );
 
     // Actualizar los marcadores
     _updateOfficeMarkers();
 
     // Ajustar el zoom para mostrar todas las oficinas
-    if (mapController != null && state.offices.isNotEmpty) {
-      final bounds = _getBoundsForOffices(state.offices);
+    if (mapController != null && allOffices.isNotEmpty) {
+      final bounds = _getBoundsForOffices(allOffices);
       mapController!.animateCamera(
         CameraUpdate.newLatLngBounds(bounds, 50.0),
       );
