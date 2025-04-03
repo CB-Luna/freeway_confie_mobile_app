@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart' show launchUrl;
+import 'package:url_launcher/url_launcher.dart' show launchUrl, canLaunchUrl, LaunchMode;
 
 import '../../../data/models/office/office.dart';
 import 'no_nearby_offices_view.dart';
@@ -306,7 +306,36 @@ class OfficeListItem extends StatelessWidget {
 
                 // Botón para abrir en Maps (GoogleMaps o Apple Maps)
                 OutlinedButton.icon(
-                  onPressed: () {},
+                  onPressed: () async {
+                    // Obtener la latitud y longitud de la oficina
+                    final lat = office.latitude;
+                    final lng = office.longitude;
+                    final name = Uri.encodeComponent(office.name);
+                    
+                    // Crear la URL para abrir en mapas según la plataforma
+                    String url;
+                    if (Theme.of(context).platform == TargetPlatform.iOS) {
+                      // URL para Apple Maps (iOS)
+                      url = 'https://maps.apple.com/?q=$name&ll=$lat,$lng';
+                    } else {
+                      // URL para Google Maps (Android y otros)
+                      url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                    }
+                    
+                    // Abrir la URL
+                    final uri = Uri.parse(url);
+                    if (await canLaunchUrl(uri)) {
+                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                    } else {
+                      // Mostrar un mensaje de error si no se puede abrir la URL
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Could not open maps application'),
+                          duration: Duration(seconds: 2),
+                        ),
+                      );
+                    }
+                  },
                   icon: const Icon(
                     Icons.map,
                     color: Color(0xFF0A4DA2),
