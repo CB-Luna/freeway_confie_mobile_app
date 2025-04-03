@@ -261,7 +261,8 @@ class _LocationDetailsViewContentState
               offices: officesToDisplay,
               scrollController: scrollController,
               onOfficeTap: (office) {
-                controller.goToOffice(office);
+                // Usar navigateToOffice para centrar la vista en la oficina seleccionada
+                controller.navigateToOffice(office);
                 // Colapsar la lista al mínimo cuando se selecciona una oficina
                 _scrollController.animateTo(
                   _minChildSize,

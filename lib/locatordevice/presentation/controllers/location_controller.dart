@@ -468,7 +468,15 @@ class LocationController extends ChangeNotifier {
 
     // Actualizar los marcadores para reflejar la selección
     _updateOfficeMarkers();
+  }
 
+  // Nuevo método para navegar a la oficina y ajustar la cámara
+  // Este método se usará cuando se seleccione una oficina desde la lista
+  void navigateToOffice(Office office) {
+    // Primero seleccionamos la oficina (actualiza marcadores)
+    goToOffice(office);
+    
+    // Luego ajustamos la cámara para centrar la oficina
     if (mapController != null) {
       final cameraPosition = CameraPosition(
         target: LatLng(office.latitude, office.longitude),
