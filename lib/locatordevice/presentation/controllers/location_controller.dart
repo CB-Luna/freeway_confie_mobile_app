@@ -428,8 +428,11 @@ class LocationController extends ChangeNotifier {
           title: office.name,
           snippet: office.streetAddress,
         ),
-        icon: AssetMapBitmap('assets/prefix.png',
-            width: markerSize.toDouble(), height: markerSize.toDouble()),
+        icon: AssetMapBitmap(
+          'assets/prefix.png',
+          width: markerSize.toDouble(),
+          height: markerSize.toDouble(),
+        ),
         zIndex:
             isSelected ? 2 : 1, // Mayor zIndex para el marcador seleccionado
         onTap: () {
@@ -437,6 +440,15 @@ class LocationController extends ChangeNotifier {
           goToOffice(office);
         },
       );
+      // Agrego oficina seleccionada a lista de oficinas
+      if (isSelected) {
+        _updateState(
+          selectedOfficeId: office.locationId,
+          nearbyOffices: [office],
+          showAllOffices: false,
+        );
+      }
+
       currentMarkers.add(marker);
     }
 
@@ -475,7 +487,7 @@ class LocationController extends ChangeNotifier {
   void navigateToOffice(Office office) {
     // Primero seleccionamos la oficina (actualiza marcadores)
     goToOffice(office);
-    
+
     // Luego ajustamos la cámara para centrar la oficina
     if (mapController != null) {
       final cameraPosition = CameraPosition(
