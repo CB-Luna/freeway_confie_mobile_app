@@ -302,6 +302,32 @@ class OfficeListItem extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(width: 12),
+
+                // Botón para abrir en Maps (GoogleMaps o Apple Maps)
+                OutlinedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(
+                    Icons.map,
+                    color: Color(0xFF0A4DA2),
+                  ),
+                  label: const Text(
+                    'View in Maps',
+                    style: TextStyle(color: Color(0xFF0A4DA2)),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(
+                      color: Color(0xFF0A4DA2),
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
