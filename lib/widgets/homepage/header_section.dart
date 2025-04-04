@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
@@ -25,16 +26,16 @@ class HeaderSection extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: 60,
-      decoration: const BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: AppTheme.getCardColor(context),
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(30),
           bottomRight: Radius.circular(30),
         ),
         boxShadow: [
           BoxShadow(
-            color: Color.fromRGBO(0, 0, 0, 0.05),
-            offset: Offset(0, 2),
+            color: AppTheme.getBoxShadowColor(context),
+            offset: const Offset(0, 2),
             blurRadius: 4,
           ),
         ],
@@ -97,8 +98,8 @@ class HeaderSection extends StatelessWidget {
                       top: 2,
                       child: Container(
                         padding: const EdgeInsets.all(4),
-                        decoration: const BoxDecoration(
-                          color: Colors.red,
+                        decoration: BoxDecoration(
+                          color: AppTheme.getRedColor(context),
                           shape: BoxShape.circle,
                         ),
                         constraints: const BoxConstraints(
@@ -111,7 +112,7 @@ class HeaderSection extends StatelessWidget {
                               : notificationCount.toString(),
                           textAlign: TextAlign.center,
                           style: const TextStyle(
-                            color: Colors.white,
+                            color: AppTheme.white,
                             fontSize: 10,
                             fontWeight: FontWeight.w600,
                           ),
@@ -155,9 +156,7 @@ class HeaderSection extends StatelessWidget {
               // Theme toggle
               Container(
                 decoration: BoxDecoration(
-                  color: themeProvider.isDarkMode
-                      ? Colors.blue.withAlpha(51)
-                      : Colors.grey.withAlpha(26),
+                  color: AppTheme.getBrightnessColor(context),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: IconButton(

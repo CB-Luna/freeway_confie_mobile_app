@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
+
 import '../../pages/roadsideautoclub/quote_plans_page.dart';
 
 class RoadsideHelp extends StatelessWidget {
@@ -13,7 +15,7 @@ class RoadsideHelp extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15),
         ),
-        color: Colors.white,
+        color: AppTheme.getCardColor(context),
         child: InkWell(
           onTap: () {
             Navigator.push(
@@ -28,7 +30,7 @@ class RoadsideHelp extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -38,13 +40,14 @@ class RoadsideHelp extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
+                          color: AppTheme.getTextGreyColor(context),
                         ),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
                         'Add Freeway Auto Club',
                         style: TextStyle(
-                          color: Color(0xFF0047BB),
+                          color: AppTheme.getPrimaryColor(context),
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
@@ -69,9 +72,9 @@ class RoadsideHelp extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(width: 22),
-                    const Icon(
+                    Icon(
                       Icons.arrow_forward_ios,
-                      color: Colors.grey,
+                      color: AppTheme.getDetailsGreyColor(context),
                       size: 16,
                     ),
                   ],

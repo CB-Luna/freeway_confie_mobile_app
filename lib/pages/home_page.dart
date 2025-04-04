@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../locatordevice/locator_device_module.dart';
@@ -107,7 +108,7 @@ class _HomePageState extends State<HomePage> {
         .currentUser!; // Ahora es seguro usar ! porque ya verificamos
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5FCFF),
+      backgroundColor: AppTheme.getBackgroundColor(context),
       body: SafeArea(
         child: Stack(
           children: [
@@ -160,13 +161,13 @@ class _HomePageState extends State<HomePage> {
                     Center(
                       child: Text(
                         'Hello, ${user.fullName}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontSize: 20,
                           fontWeight: FontWeight.w700,
                           height: 24 / 20,
                           letterSpacing: 0,
-                          color: Colors.black,
+                          color: AppTheme.getTitleTextColor(context),
                         ),
                       ),
                     ),
@@ -192,15 +193,15 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 12),
 
                     // Add Products Section
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.0),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             'Add Products',
                             style: TextStyle(
-                              color: Color(0xFF414648),
+                              color: AppTheme.getSubtitleTextColor(context),
                               fontFamily: 'Open Sans',
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -208,8 +209,8 @@ class _HomePageState extends State<HomePage> {
                               letterSpacing: 0,
                             ),
                           ),
-                          SizedBox(height: 4),
-                          ProductList(),
+                          const SizedBox(height: 4),
+                          const ProductList(),
                         ],
                       ),
                     ),

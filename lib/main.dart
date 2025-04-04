@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/locatordevice/presentation/pages/location_details_view.dart';
 import 'package:provider/provider.dart';
 
 import 'pages/add_insurance.dart';
 import 'pages/home_page.dart';
-import 'pages/location_page.dart';
 import 'pages/login_page.dart';
 import 'pages/profile_page.dart';
 import 'pages/splash_screen.dart';
@@ -71,7 +71,7 @@ class MyApp extends StatelessWidget {
               '/submit-claim': (context) => const SubmitClaimPage(),
               '/profile': (context) => const ProfilePage(),
               '/add-insurance': (context) => const AddInsurancePage(),
-              '/location': (context) => const LocationPage(),
+              '/location': (context) => const LocationDetailsView(),
             },
           );
         },

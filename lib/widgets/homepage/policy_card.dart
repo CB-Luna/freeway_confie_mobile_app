@@ -31,7 +31,7 @@ class PolicyCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      color: Colors.white,
+      color: AppTheme.getCardColor(context),
       child: Container(
         width: MediaQuery.of(context).size.width - 48,
         height: 180,
@@ -53,10 +53,10 @@ class PolicyCard extends StatelessWidget {
                   children: [
                     Text(
                       policyType,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
+                        color: AppTheme.getPrimaryColor(context),
                       ),
                     ),
                     Container(
@@ -65,11 +65,11 @@ class PolicyCard extends StatelessWidget {
                         plateNumber,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
-                          color: AppTheme.primaryColor,
+                          color: AppTheme.getPrimaryColor(context),
                         ),
                       ),
                     ),
@@ -80,7 +80,7 @@ class PolicyCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.green[50],
+                    color: AppTheme.getBackgroundGreenColor(context),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
@@ -88,14 +88,18 @@ class PolicyCard extends StatelessWidget {
                     children: [
                       Icon(
                         Icons.check_circle,
-                        color: isActive ? Colors.green : Colors.red,
+                        color: isActive
+                            ? AppTheme.getGreenColor(context)
+                            : AppTheme.getRedColor(context),
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         isActive ? 'Active' : 'Inactive',
                         style: TextStyle(
-                          color: isActive ? Colors.green : Colors.red,
+                          color: isActive
+                              ? AppTheme.getGreenColor(context)
+                              : AppTheme.getRedColor(context),
                           fontWeight: FontWeight.w500,
                         ),
                       ),
@@ -124,17 +128,17 @@ class PolicyCard extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Image.asset(
-                        'assets/home/icons/cardgreen.png',
-                        width: 16,
-                        height: 16,
+                      Icon(
+                        Icons.credit_card,
+                        color: AppTheme.getGreenColor(context),
+                        size: 16,
                       ),
                       const SizedBox(width: 8),
-                      const Text(
+                      Text(
                         'Next Payment',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Color(0xFF414648),
+                          color: AppTheme.getTextGreyColor(context),
                         ),
                       ),
                       const SizedBox(width: 4),
@@ -142,11 +146,11 @@ class PolicyCard extends StatelessWidget {
                         child: Text(
                           nextPaymentDate,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Open Sans',
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF414648),
+                            color: AppTheme.getTextGreyColor(context),
                           ),
                         ),
                       ),
@@ -173,8 +177,8 @@ class PolicyCard extends StatelessWidget {
                       );
                     },
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(
-                        color: Color(0xFFC74E10),
+                      side: BorderSide(
+                        color: AppTheme.getOrangeColor(context),
                         width: 1,
                       ),
                       shape: RoundedRectangleBorder(
@@ -184,7 +188,7 @@ class PolicyCard extends StatelessWidget {
                       minimumSize: const Size(90, 38),
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
-                    child: const Text(
+                    child: Text(
                       'ID Card',
                       textAlign: TextAlign.center,
                       style: TextStyle(
@@ -193,7 +197,7 @@ class PolicyCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         height: 18 / 14, // line-height: 18px
                         letterSpacing: 0,
-                        color: Color(0xFFC74E10),
+                        color: AppTheme.getOrangeColor(context),
                       ),
                     ),
                   ),
@@ -207,7 +211,7 @@ class PolicyCard extends StatelessWidget {
                       Navigator.pushNamed(context, '/submit-claim');
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF0047BB),
+                      backgroundColor: AppTheme.getPrimaryColor(context),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -222,7 +226,7 @@ class PolicyCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         height: 18 / 14, // line-height: 18px
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ),
                     ),
                   ),
@@ -241,7 +245,7 @@ class PolicyCard extends StatelessWidget {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF64A520),
+                      backgroundColor: AppTheme.getGreenColor(context),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -256,7 +260,7 @@ class PolicyCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                         height: 18 / 14, // line-height: 18px
                         letterSpacing: 0,
-                        color: Colors.white,
+                        color: AppTheme.white,
                       ),
                     ),
                   ),

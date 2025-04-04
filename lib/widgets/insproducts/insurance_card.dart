@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import 'vehicle_insurance_grid.dart';
 
@@ -10,7 +11,10 @@ class InsuranceCard extends StatelessWidget {
   final double imageHeight;
 
   const InsuranceCard({
-    required this.title, required this.imagePath, required this.route, super.key,
+    required this.title,
+    required this.imagePath,
+    required this.route,
+    super.key,
     this.imageWidth = 100, // valor por defecto
     this.imageHeight = 100, // valor por defecto
   });
@@ -25,7 +29,8 @@ class InsuranceCard extends StatelessWidget {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => const VehicleInsuranceGrid(),),
+                builder: (context) => const VehicleInsuranceGrid(),
+              ),
             );
           } else {
             Navigator.pushNamed(context, route);
@@ -35,11 +40,11 @@ class InsuranceCard extends StatelessWidget {
           width: 390, // Ancho ajustado
           height: 86, // Alto ajustado
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppTheme.getCardColor(context),
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withAlpha(13), // 0.05 opacity
+                color: AppTheme.getBoxShadowColor(context), // 0.05 opacity
                 blurRadius: 8,
                 offset: const Offset(0, 4),
               ),
@@ -53,11 +58,11 @@ class InsuranceCard extends StatelessWidget {
                   flex: 3, // Aumentado para dar más espacio al texto
                   child: Text(
                     title,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'Open Sans',
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
-                      color: Colors.black,
+                      color: AppTheme.getTitleTextColor(context),
                     ),
                     softWrap: true, // Permite envolver el texto
                     overflow: TextOverflow.visible, // Muestra todo el texto

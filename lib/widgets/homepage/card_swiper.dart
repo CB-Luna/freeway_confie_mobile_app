@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
@@ -204,8 +205,8 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: currentIndex == index
-                    ? const Color(0xFF0047BB) // Cambiado a azul
-                    : Colors.black.withAlpha(13),
+                    ? AppTheme.getIndicatorCurrentIndexCardColor(context)
+                    : AppTheme.getIndicatorIndexCardColor(context),
               ),
             ),
           ),

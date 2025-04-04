@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
+
 import '../contactcenter/request_call.dart';
 
 class ContactAgent extends StatelessWidget {
@@ -10,16 +12,12 @@ class ContactAgent extends StatelessWidget {
       margin: const EdgeInsets.symmetric(horizontal: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF9FDFF),
+        color: AppTheme.getCardColor(context),
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: const Color(0xFFE8E8E8),
-          width: 1,
-        ),
         boxShadow: [
-          const BoxShadow(
-            color: Color(0x12000000),
-            offset: Offset(0, 2),
+          BoxShadow(
+            color: AppTheme.getBoxShadowColor(context),
+            offset: const Offset(0, 2),
             blurRadius: 13,
             spreadRadius: 0,
           ),
@@ -36,13 +34,13 @@ class ContactAgent extends StatelessWidget {
                 height: 36,
               ),
               const SizedBox(width: 16),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Need Changes?',
                     style: TextStyle(
-                      color: Color(0xFFC74E10),
+                      color: AppTheme.getOrangeColor(context),
                       fontFamily: 'Open Sans',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -53,7 +51,7 @@ class ContactAgent extends StatelessWidget {
                   Text(
                     'Contact My Agent',
                     style: TextStyle(
-                      color: Color(0xFF0047BB),
+                      color: AppTheme.getPrimaryColor(context),
                       fontFamily: 'Open Sans',
                       fontSize: 14,
                       fontWeight: FontWeight.bold,
@@ -75,7 +73,7 @@ class ContactAgent extends StatelessWidget {
               );
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF0047BB),
+              backgroundColor: AppTheme.getPrimaryColor(context),
               elevation: 0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -89,7 +87,7 @@ class ContactAgent extends StatelessWidget {
               'Call Now',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.white,
+                color: AppTheme.white,
                 fontFamily: 'Open Sans',
                 fontSize: 14,
                 fontWeight: FontWeight.w700,

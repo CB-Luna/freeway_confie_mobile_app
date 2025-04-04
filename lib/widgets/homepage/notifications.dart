@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../locatordevice/presentation/widgets/loading_view.dart';
-import '../../models/notification_model.dart';
 import '../../providers/notification_provider.dart';
 import 'notification_item_content.dart';
 
@@ -29,7 +29,7 @@ class NotificationsWidget extends StatelessWidget {
 
         if (notificationProvider.isLoading) {
           debugPrint('NotificationsWidget - Mostrando estado de carga');
-          return _buildLoadingState();
+          return _buildLoadingState(context);
         }
 
         if (notificationProvider.errorMessage != null) {
@@ -40,51 +40,64 @@ class NotificationsWidget extends StatelessWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 12.0),
-                child: Text(
-                  'Notifications',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.normal,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 12.0),
-                padding: const EdgeInsets.all(12.0),
-                decoration: BoxDecoration(
-                  color: Colors.red.withAlpha(26), // 0.1 de opacidad
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
-                    color: Colors.red.withAlpha(51),
-                  ), // 0.2 de opacidad
-                ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Error al cargar notificaciones',
+                    Text(
+                      'Notifications',
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.red,
+                        color: AppTheme.getSubtitleTextColor(context),
+                        fontFamily: 'Open Sans',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        height: 22 / 14,
+                        letterSpacing: 0,
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      'Usando datos de ejemplo. Error: ${notificationProvider.errorMessage}',
-                      style: const TextStyle(fontSize: 12),
-                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 8),
-              // Mostrar notificaciones de ejemplo
-              ...notificationProvider.notifications.map(
-                (notification) => _buildNotificationCard(context, notification),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                width: MediaQuery.of(context).size.width * 0.9,
+                decoration: BoxDecoration(
+                  color: AppTheme.getBackgroundRedColor(
+                    context,
+                  ), // 0.1 de opacidad
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: AppTheme.getBorderRedColor(context),
+                  ), // 0.2 de opacidad
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Error al cargar notificaciones',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.getRedColor(context),
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'Usando datos de ejemplo. Error: ${notificationProvider.errorMessage}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.getBodyTextColor(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+              const SizedBox(height: 8),
             ],
           );
         }
@@ -108,15 +121,15 @@ class NotificationsWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Add Products Section
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Notifications',
                     style: TextStyle(
-                      color: Color(0xFF414648),
+                      color: AppTheme.getSubtitleTextColor(context),
                       fontFamily: 'Open Sans',
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -124,20 +137,20 @@ class NotificationsWidget extends StatelessWidget {
                       letterSpacing: 0,
                     ),
                   ),
-                  SizedBox(height: 4),
+                  const SizedBox(height: 4),
                 ],
               ),
             ),
             Container(
               margin: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFFFFF),
+                color: AppTheme.getCardColor(context),
                 borderRadius: BorderRadius.circular(15),
                 boxShadow: [
-                  const BoxShadow(
-                    color: Color(0x0A111111),
+                  BoxShadow(
+                    color: AppTheme.getBoxShadowColor(context),
                     blurRadius: 25,
-                    offset: Offset(0, 4),
+                    offset: const Offset(0, 4),
                   ),
                 ],
               ),
@@ -152,20 +165,24 @@ class NotificationsWidget extends StatelessWidget {
               child: notifications.isEmpty
                   ? _buildEmptyState()
                   : Column(
+                      mainAxisAlignment: isExpanded
+                          ? MainAxisAlignment.start
+                          : MainAxisAlignment.center,
                       children: [
                         // Botón para cerrar la vista expandida (solo visible cuando está expandida)
                         if (isExpanded && onClose != null)
                           GestureDetector(
                             onTap: onClose,
-                            child: const Padding(
-                              padding: EdgeInsets.all(8.0),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Icon(
                                     Icons.keyboard_arrow_up,
                                     size: 25,
-                                    color: Color(0xFF0047BB),
+                                    color:
+                                        AppTheme.getDetailsGreyColor(context),
                                   ),
                                 ],
                               ),
@@ -181,12 +198,11 @@ class NotificationsWidget extends StatelessWidget {
                                 notifications.length,
                                 (index) {
                                   final notification = notifications[index];
-                                  // Alternar colores: primera azul, segunda naranja, y así sucesivamente
-                                  final bool isBlue =
-                                      !notification.title.contains('Welcome');
+                                  // Alternar colores: par azul, impar naranja
+                                  final bool isBlue = index.isEven;
                                   final Color iconColor = isBlue
-                                      ? const Color(0xFF0047BB)
-                                      : const Color(0xFFC74E10);
+                                      ? AppTheme.getBlueColor(context)
+                                      : AppTheme.getOrangeColor(context);
 
                                   return Column(
                                     children: [
@@ -206,15 +222,18 @@ class NotificationsWidget extends StatelessWidget {
                                         Center(
                                           child: Padding(
                                             padding: const EdgeInsets.only(
-                                              bottom: 0,
+                                              bottom: 5,
                                             ),
                                             child: Container(
                                               width: 320,
-                                              decoration: const BoxDecoration(
+                                              decoration: BoxDecoration(
                                                 border: Border(
                                                   bottom: BorderSide(
                                                     width: 0.5,
-                                                    color: Color(0xFFC4C4C4),
+                                                    color: AppTheme
+                                                        .getDetailsGreyColor(
+                                                      context,
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -238,18 +257,21 @@ class NotificationsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 14.0),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: Text(
             'Notifications',
             style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.normal,
-              color: Colors.black,
+              color: AppTheme.getSubtitleTextColor(context),
+              fontFamily: 'Open Sans',
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              height: 22 / 14,
+              letterSpacing: 0,
             ),
           ),
         ),
@@ -258,13 +280,13 @@ class NotificationsWidget extends StatelessWidget {
           margin: const EdgeInsets.symmetric(horizontal: 12),
           height: 200,
           decoration: BoxDecoration(
-            color: const Color(0xFFFFFFFF),
+            color: AppTheme.getCardColor(context),
             borderRadius: BorderRadius.circular(15),
             boxShadow: [
-              const BoxShadow(
-                color: Color(0x0A111111),
+              BoxShadow(
+                color: AppTheme.getBoxShadowColor(context),
                 blurRadius: 25,
-                offset: Offset(0, 4),
+                offset: const Offset(0, 4),
               ),
             ],
           ),
@@ -283,7 +305,7 @@ class NotificationsWidget extends StatelessWidget {
         child: Text(
           'No notifications available',
           style: TextStyle(
-            color: Color(0xFF828282),
+            color: AppTheme.grey,
             fontSize: 14,
           ),
         ),
@@ -311,109 +333,6 @@ class NotificationsWidget extends StatelessWidget {
       iconColor: iconColor,
       notificationId: notificationId,
       isBlue: isBlue,
-    );
-  }
-
-  Widget _buildNotificationCard(
-    BuildContext context,
-    NotificationModel notification,
-  ) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0),
-      decoration: BoxDecoration(
-        color: notification.isBlue
-            ? const Color(0xFFE6F0FF)
-            : const Color(0xFFFFF4E6),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: notification.isBlue
-                    ? const Color(0xFF0047BB)
-                    : const Color(0xFFFF6B00),
-                shape: BoxShape.circle,
-              ),
-              child: Center(
-                child: Icon(
-                  notification.isBlue
-                      ? Icons.notifications
-                      : Icons.warning_amber_rounded,
-                  color: Colors.white,
-                  size: 20,
-                ),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    notification.title,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    notification.policyNumber,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.grey,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.location_on,
-                        size: 12,
-                        color: Colors.grey,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        notification.location,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  notification.date,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  notification.time,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

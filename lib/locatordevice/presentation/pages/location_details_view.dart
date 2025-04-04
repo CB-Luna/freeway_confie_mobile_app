@@ -55,10 +55,10 @@ class _LocationDetailsViewContentState
     extends State<LocationDetailsViewContent> {
   final DraggableScrollableController _scrollController =
       DraggableScrollableController();
-  
+
   // Valores para el DraggableScrollableSheet
-  double _minChildSize = 0.1;
-  double _maxChildSize = 0.8;
+  final double _minChildSize = 0.1;
+  final double _maxChildSize = 0.8;
 
   @override
   void dispose() {
@@ -74,7 +74,7 @@ class _LocationDetailsViewContentState
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
-    } 
+    }
     // Si está expandido, colapsarlo
     else if (_scrollController.size >= 0.4) {
       _scrollController.animateTo(
@@ -107,7 +107,7 @@ class _LocationDetailsViewContentState
           ),
           body: _buildBody(context, controller),
           bottomNavigationBar: Transform.translate(
-            offset: const Offset(0, -20),
+            offset: const Offset(0, 0),
             child: CircleNavBar(
               selectedPos: 2,
               onTap: (index) {
@@ -236,10 +236,10 @@ class _LocationDetailsViewContentState
         // Lista de oficinas
         DraggableScrollableSheet(
           // Ajustar el tamaño inicial según si se muestra el mensaje de no hay oficinas cercanas
-          initialChildSize:
-              !controller.hasNearbyOffices() && !state.showAllOffices
-                  ? 0.35  // Reducido de 0.5 a 0.35 para permitir más flexibilidad
-                  : 0.25,
+          initialChildSize: !controller.hasNearbyOffices() &&
+                  !state.showAllOffices
+              ? 0.35 // Reducido de 0.5 a 0.35 para permitir más flexibilidad
+              : 0.25,
           minChildSize: _minChildSize,
           // Aumentar el tamaño máximo para mostrar todo el contenido
           maxChildSize: _maxChildSize,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class NoNearbyOfficesView extends StatelessWidget {
   final VoidCallback onExpandSearchRadius;
@@ -55,14 +56,15 @@ class NoNearbyOfficesView extends StatelessWidget {
         // const SizedBox(height: 12),
 
         // Mensaje informativo
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
             "No nearby locations found, but we've got you covered! You can:",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
+              color: AppTheme.getTextGreyColor(context),
             ),
           ),
         ),
@@ -71,17 +73,17 @@ class NoNearbyOfficesView extends StatelessWidget {
         // Botón para expandir el radio de búsqueda
         OutlinedButton.icon(
           onPressed: onExpandSearchRadius,
-          icon: const Icon(
+          icon: Icon(
             Icons.search,
-            color: Color(0xFF0A4DA2),
+            color: AppTheme.getPrimaryColor(context),
           ),
-          label: const Text(
+          label: Text(
             'Expand your search radius',
-            style: TextStyle(color: Color(0xFF0A4DA2)),
+            style: TextStyle(color: AppTheme.getPrimaryColor(context)),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(
-              color: Color(0xFF0A4DA2),
+            side: BorderSide(
+              color: AppTheme.getPrimaryColor(context),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -97,17 +99,17 @@ class NoNearbyOfficesView extends StatelessWidget {
         // Botón para ver todas las oficinas
         OutlinedButton.icon(
           onPressed: onViewAllOffices,
-          icon: const Icon(
+          icon: Icon(
             Icons.location_on_outlined,
-            color: Color(0xFF0A4DA2),
+            color: AppTheme.getPrimaryColor(context),
           ),
-          label: const Text(
+          label: Text(
             'View All our Offices',
-            style: TextStyle(color: Color(0xFF0A4DA2)),
+            style: TextStyle(color: AppTheme.getPrimaryColor(context)),
           ),
           style: OutlinedButton.styleFrom(
-            side: const BorderSide(
-              color: Color(0xFF0A4DA2),
+            side: BorderSide(
+              color: AppTheme.getPrimaryColor(context),
             ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
@@ -127,12 +129,12 @@ class NoNearbyOfficesView extends StatelessWidget {
           },
           icon: const Icon(
             Icons.phone_in_talk_outlined,
-            color: Colors.white,
+            color: AppTheme.white,
           ),
           label: const Text('Help'),
           style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF0A4DA2),
-            foregroundColor: Colors.white,
+            backgroundColor: AppTheme.getPrimaryColor(context),
+            foregroundColor: AppTheme.white,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -145,15 +147,15 @@ class NoNearbyOfficesView extends StatelessWidget {
         const SizedBox(height: 16),
 
         // Mensaje de cobertura nacional
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
             "Freeway serves all 50 states—wherever you are, we're here for your insurance needs!",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w500,
-              color: Colors.grey,
+              color: AppTheme.getTextGreyColor(context),
             ),
           ),
         ),

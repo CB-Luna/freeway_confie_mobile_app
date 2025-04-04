@@ -9,7 +9,9 @@ class PolicyInactiveCard extends StatelessWidget {
   final Vehicle? vehicle;
 
   const PolicyInactiveCard({
-    required this.user, required this.policyNumber, super.key,
+    required this.user,
+    required this.policyNumber,
+    super.key,
     this.vehicle,
   });
 
@@ -26,7 +28,7 @@ class PolicyInactiveCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(15),
       ),
-      color: Colors.white,
+      color: AppTheme.getCardColor(context),
       child: Container(
         width: MediaQuery.of(context).size.width - 48,
         height: 180,
@@ -108,7 +110,7 @@ class PolicyInactiveCard extends StatelessWidget {
                   // Acción para renovar la póliza
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppTheme.green,
+                  backgroundColor: AppTheme.getGreenColor(context),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

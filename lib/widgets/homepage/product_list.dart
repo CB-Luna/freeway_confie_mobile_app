@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class ProductList extends StatelessWidget {
   const ProductList({super.key});
@@ -7,17 +8,17 @@ class ProductList extends StatelessWidget {
     ProductItem(
       title: 'Roadside\nAssistance',
       imagePath: 'assets/home/icons/icon-roadside.png',
-      backgroundColor: Color(0xFFEFF6FF),
+      backgroundColor: AppTheme.backgroundBlueColor,
     ),
     ProductItem(
       title: 'Motorcycle\nInsurance',
       imagePath: 'assets/home/icons/icon-motorcycle.png',
-      backgroundColor: Color(0xFFF7FFF2),
+      backgroundColor: AppTheme.backgroundGreenColor,
     ),
     ProductItem(
       title: 'Renters\nInsurance',
       imagePath: 'assets/home/icons/icon-renters.png',
-      backgroundColor: Color(0xFFFFF0DF),
+      backgroundColor: AppTheme.backgroundOrangeColor,
     ),
   ];
 
@@ -58,10 +59,10 @@ class ProductCard extends StatelessWidget {
         color: product.backgroundColor,
         borderRadius: BorderRadius.circular(10),
         boxShadow: [
-          const BoxShadow(
-            color: Color(0x0F000000),
+          BoxShadow(
+            color: AppTheme.getBoxShadowColor(context),
             blurRadius: 4,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -88,7 +89,7 @@ class ProductCard extends StatelessWidget {
                   fontWeight: FontWeight.w600,
                   height: 18 / 14, // line-height: 18px
                   letterSpacing: 0,
-                  color: Colors.black87,
+                  color: AppTheme.black,
                 ),
               ),
             ),

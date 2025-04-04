@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class TabData {
   final IconData icon;
@@ -13,7 +14,10 @@ class CircleNavBar extends StatefulWidget {
   final Function(int) onTap;
 
   const CircleNavBar({
-    required this.tabItems, required this.selectedPos, required this.onTap, super.key,
+    required this.tabItems,
+    required this.selectedPos,
+    required this.onTap,
+    super.key,
   });
 
   @override
@@ -46,16 +50,16 @@ class _CircleNavBarState extends State<CircleNavBar>
       width: 410,
       height: 65,
       margin: const EdgeInsets.only(top: 12),
-      decoration: const BoxDecoration(
-        color: Color(0xFFFFFFFF),
-        borderRadius: BorderRadius.only(
+      decoration: BoxDecoration(
+        color: AppTheme.getCardColor(context),
+        borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(30),
           topRight: Radius.circular(30),
         ),
         boxShadow: [
           BoxShadow(
-            color: Color(0x1F111111),
-            offset: Offset(0, 4),
+            color: AppTheme.getBoxShadowColor(context),
+            offset: const Offset(0, 4),
             blurRadius: 15,
             spreadRadius: 0,
           ),
@@ -111,20 +115,16 @@ class _CircleNavBarState extends State<CircleNavBar>
                     height: isSelected ? 33 : 24,
                     decoration: BoxDecoration(
                       color: isSelected
-                          ? const Color(0xFF0A4DA2)
+                          ? AppTheme.getBlueColor(context)
                           : Colors.transparent,
                       shape: BoxShape.circle,
                       boxShadow: isSelected
                           ? [
                               BoxShadow(
-                                color: const Color(0xFF0A4DA2).withAlpha(51),
+                                color: AppTheme.getIconColor(context)
+                                    .withAlpha(51),
                                 blurRadius: 8,
                                 spreadRadius: 4,
-                              ),
-                              BoxShadow(
-                                color: const Color(0xFFF5FCFF).withAlpha(153),
-                                blurRadius: 12,
-                                spreadRadius: 2,
                               ),
                             ]
                           : null,
@@ -132,7 +132,9 @@ class _CircleNavBarState extends State<CircleNavBar>
                     child: Icon(
                       widget.tabItems[index].icon,
                       size: isSelected ? 28 : 24,
-                      color: isSelected ? Colors.white : const Color(0xFF0A4DA2),
+                      color: isSelected
+                          ? AppTheme.white
+                          : AppTheme.getIconColor(context),
                     ),
                   ),
                 ),
@@ -143,8 +145,10 @@ class _CircleNavBarState extends State<CircleNavBar>
               widget.tabItems[index].title,
               style: TextStyle(
                 color: isSelected
-                    ? const Color(0xFFF26522) // Color naranja para opción seleccionada
-                    : const Color(0xFF0A4DA2),
+                    ? AppTheme.getOrangeColor(
+                        context,
+                      ) // Color naranja para opción seleccionada
+                    : AppTheme.getIconColor(context),
                 fontSize: 11,
                 fontFamily: 'Poppins',
                 fontWeight: FontWeight.w500,

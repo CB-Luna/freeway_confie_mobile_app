@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart' show launchUrl, canLaunchUrl, LaunchMode;
+import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart'
+    show launchUrl, canLaunchUrl, LaunchMode;
 
 import '../../../data/models/office/office.dart';
 import 'no_nearby_offices_view.dart';
@@ -26,14 +28,14 @@ class OfficeList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppTheme.getCardColor(context),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(20),
           topRight: Radius.circular(20),
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(51),
+            color: AppTheme.getBoxShadowColor(context),
             blurRadius: 10,
             spreadRadius: 2,
           ),
@@ -49,7 +51,7 @@ class OfficeList extends StatelessWidget {
               width: 40,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[300],
+                color: AppTheme.getDetailsGreyColor(context),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
@@ -73,13 +75,14 @@ class OfficeList extends StatelessWidget {
             ),
           ] else ...[
             // Título
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
                 'Nearest Office',
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
+                  color: AppTheme.getTextGreyColor(context),
                 ),
               ),
             ),
@@ -111,18 +114,16 @@ class OfficeList extends StatelessWidget {
                                       child: Center(
                                         child: TextButton.icon(
                                           onPressed: onViewAllOffices,
-                                          icon: const Icon(
+                                          icon: Icon(
                                             Icons.search,
-                                            color: Color(
-                                              0xFF0A4DA2,
-                                            ),
+                                            color:
+                                                Theme.of(context).primaryColor,
                                           ),
-                                          label: const Text(
+                                          label: Text(
                                             'Find other offices',
                                             style: TextStyle(
-                                              color: Color(
-                                                0xFF0A4DA2,
-                                              ),
+                                              color: Theme.of(context)
+                                                  .primaryColor,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
@@ -191,18 +192,18 @@ class OfficeListItem extends StatelessWidget {
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
+          Text(
             'Open Now • Closes at 7pm',
             style: TextStyle(
-              color: Colors.green,
+              color: AppTheme.getGreenColor(context),
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
           ),
           Text(
             '${office.distance.toStringAsFixed(2)} miles',
-            style: const TextStyle(
-              color: Colors.blue,
+            style: TextStyle(
+              color: AppTheme.getBlueColor(context),
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -214,9 +215,10 @@ class OfficeListItem extends StatelessWidget {
         children: [
           Text(
             office.streetAddress,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,
+              color: AppTheme.getTitleTextColor(context),
             ),
           ),
           Row(
@@ -224,19 +226,20 @@ class OfficeListItem extends StatelessWidget {
             children: [
               Text(
                 office.name,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.normal,
+                  color: AppTheme.getTextGreyColor(context),
                 ),
               ),
-              const Row(
+              Row(
                 children: [
                   Icon(
                     Icons.star,
-                    color: Color(0xFFFFC73C),
+                    color: AppTheme.getYellowColor(context),
                     size: 18,
                   ),
-                  Text(
+                  const Text(
                     '4.5',
                     style: TextStyle(
                       fontSize: 14,
@@ -259,14 +262,13 @@ class OfficeListItem extends StatelessWidget {
                   },
                   icon: const Icon(
                     Icons.phone_in_talk_outlined,
-                    color: Colors.white,
+                    color: AppTheme.white,
                   ),
                   label: const Text('Call Office'),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(
-                      0xFF0A4DA2,
-                    ), // Azul oscuro
-                    foregroundColor: Colors.white,
+                    backgroundColor:
+                        AppTheme.getPrimaryColor(context), // Azul oscuro
+                    foregroundColor: AppTheme.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -281,17 +283,17 @@ class OfficeListItem extends StatelessWidget {
                 // Botón para obtener direcciones
                 OutlinedButton.icon(
                   onPressed: onDirectionsTap,
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.directions,
-                    color: Color(0xFF0A4DA2),
+                    color: AppTheme.getPrimaryColor(context),
                   ),
-                  label: const Text(
+                  label: Text(
                     'Get Directions',
-                    style: TextStyle(color: Color(0xFF0A4DA2)),
+                    style: TextStyle(color: AppTheme.getPrimaryColor(context)),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                      color: Color(0xFF0A4DA2),
+                    side: BorderSide(
+                      color: AppTheme.getPrimaryColor(context),
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -311,7 +313,7 @@ class OfficeListItem extends StatelessWidget {
                     final lat = office.latitude;
                     final lng = office.longitude;
                     final name = Uri.encodeComponent(office.name);
-                    
+
                     // Crear la URL para abrir en mapas según la plataforma
                     String url;
                     if (Theme.of(context).platform == TargetPlatform.iOS) {
@@ -319,13 +321,17 @@ class OfficeListItem extends StatelessWidget {
                       url = 'https://maps.apple.com/?q=$name&ll=$lat,$lng';
                     } else {
                       // URL para Google Maps (Android y otros)
-                      url = 'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                      url =
+                          'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
                     }
-                    
+
                     // Abrir la URL
                     final uri = Uri.parse(url);
                     if (await canLaunchUrl(uri)) {
-                      await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        uri,
+                        mode: LaunchMode.externalApplication,
+                      );
                     } else {
                       // Mostrar un mensaje de error si no se puede abrir la URL
                       ScaffoldMessenger.of(context).showSnackBar(
@@ -336,17 +342,17 @@ class OfficeListItem extends StatelessWidget {
                       );
                     }
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.map,
-                    color: Color(0xFF0A4DA2),
+                    color: AppTheme.getPrimaryColor(context),
                   ),
-                  label: const Text(
+                  label: Text(
                     'View in Maps',
-                    style: TextStyle(color: Color(0xFF0A4DA2)),
+                    style: TextStyle(color: AppTheme.getPrimaryColor(context)),
                   ),
                   style: OutlinedButton.styleFrom(
-                    side: const BorderSide(
-                      color: Color(0xFF0A4DA2),
+                    side: BorderSide(
+                      color: AppTheme.getPrimaryColor(context),
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),

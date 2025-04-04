@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/notification_provider.dart';
@@ -93,8 +94,8 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                     height: 40,
                     decoration: BoxDecoration(
                       color: widget.isBlue
-                          ? const Color(0xFFE6EEFF)
-                          : const Color(0xFFFFF1E9),
+                          ? AppTheme.getBackgroundBlueColor(context)
+                          : AppTheme.getBackgroundOrangeColor(context),
                       shape: BoxShape.circle,
                     ),
                     child: Center(
@@ -143,14 +144,14 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                         // Detalles (ubicación, fecha, hora)
                         Text(
                           '${widget.location} | ${widget.date} | ${widget.time}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w300,
                             fontStyle: FontStyle.italic,
                             fontSize: 12,
                             height: 16 / 12,
                             letterSpacing: 0,
-                            color: Color(0xFF414648),
+                            color: AppTheme.getTextGreyColor(context),
                           ),
                         ),
                       ],
@@ -187,8 +188,8 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                   backgroundColor: Colors.transparent,
                   valueColor: AlwaysStoppedAnimation<Color>(
                     widget.isBlue
-                        ? const Color(0xFF0047BB)
-                        : const Color(0xFFC74E10),
+                        ? AppTheme.getBlueColor(context)
+                        : AppTheme.getOrangeColor(context),
                   ),
                   minHeight: 2,
                 ),
