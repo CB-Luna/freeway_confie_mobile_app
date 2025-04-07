@@ -22,7 +22,48 @@
     "findOffice": "Encontrar Oficina",
     "payments": "Pagos",
     "idCard": "Tarjeta ID",
-    "viewAll": "Ver Todo"
+    "viewAll": "Ver Todo",
+    "greeting": "Hola, {0}",
+    "loadingPolicies": "Cargando pólizas...",
+    "noCardsAvailable": "No hay tarjetas disponibles",
+    "addProducts": "Agregar Productos",
+    "roadsideHelp": {
+      "needHelp": "¿Necesitas Asistencia en Carretera?",
+      "addAutoClub": "Agregar Freeway Auto Club"
+    },
+    "contactAgent": {
+      "needChanges": "¿Necesitas Cambios?",
+      "contactMyAgent": "Contacta a Mi Agente",
+      "callNow": "Llamar Ahora"
+    },
+    "products": {
+      "roadsideAssistance": "Asistencia\nen Carretera",
+      "motorcycleInsurance": "Seguro de\nMotocicleta",
+      "rentersInsurance": "Seguro de\nInquilino"
+    },
+    "navigation": {
+      "myProducts": "Mis Productos",
+      "addInsurance": "+ Agregar Seguro",
+      "location": "Ubicación"
+    },
+    "errors": {
+      "invalidCustomerId": "Error: ID de cliente inválido"
+    },
+    "policyCard": {
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "nextPayment": "Próximo Pago",
+      "idCard": "Tarjeta ID",
+      "submitClaim": "Enviar Reclamo",
+      "payNow": "Pagar"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "loading": "Cargando notificaciones...",
+      "empty": "No hay notificaciones disponibles",
+      "error": "Error al cargar notificaciones",
+      "usingDemoData": "Usando datos de ejemplo. Error: {0}"
+    }
   },
   "profile": {
     "settings": "Configuración",

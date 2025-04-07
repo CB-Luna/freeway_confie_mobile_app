@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import '../../pages/roadsideautoclub/quote_plans_page.dart';
@@ -36,7 +37,7 @@ class RoadsideHelp extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'Need Roadside Help?',
+                        context.translate('home.roadsideHelp.needHelp'),
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -45,7 +46,7 @@ class RoadsideHelp extends StatelessWidget {
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        'Add Freeway Auto Club',
+                        context.translate('home.roadsideHelp.addAutoClub'),
                         style: TextStyle(
                           color: AppTheme.getPrimaryColor(context),
                           fontFamily: 'Open Sans',

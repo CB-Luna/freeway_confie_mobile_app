@@ -22,7 +22,48 @@
     "findOffice": "Find Office",
     "payments": "Payments",
     "idCard": "ID Card",
-    "viewAll": "View All"
+    "viewAll": "View All",
+    "greeting": "Hello, {0}",
+    "loadingPolicies": "Loading policies...",
+    "noCardsAvailable": "No cards available",
+    "addProducts": "Add Products",
+    "roadsideHelp": {
+      "needHelp": "Need Roadside Help?",
+      "addAutoClub": "Add Freeway Auto Club"
+    },
+    "contactAgent": {
+      "needChanges": "Need Changes?",
+      "contactMyAgent": "Contact My Agent",
+      "callNow": "Call Now"
+    },
+    "products": {
+      "roadsideAssistance": "Roadside\nAssistance",
+      "motorcycleInsurance": "Motorcycle\nInsurance",
+      "rentersInsurance": "Renters\nInsurance"
+    },
+    "navigation": {
+      "myProducts": "My Products",
+      "addInsurance": "+ Add Insurance",
+      "location": "Location"
+    },
+    "errors": {
+      "invalidCustomerId": "Error: Invalid customer ID"
+    },
+    "policyCard": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "nextPayment": "Next Payment",
+      "idCard": "ID Card",
+      "submitClaim": "Submit a Claim",
+      "payNow": "Pay Now"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "loading": "Loading notifications...",
+      "empty": "No notifications available",
+      "error": "Error loading notifications",
+      "usingDemoData": "Using demo data. Error: {0}"
+    }
   },
   "profile": {
     "settings": "Settings",

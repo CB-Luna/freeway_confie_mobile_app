@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -54,9 +55,9 @@ class _HomePageState extends State<HomePage> {
             'HomePage - ADVERTENCIA: customerId inválido: $customerId',
           );
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Error: ID de cliente inválido'),
-              duration: Duration(seconds: 3),
+            SnackBar(
+              content: Text(context.translate('home.errors.invalidCustomerId')),
+              duration: const Duration(seconds: 3),
             ),
           );
           return;
@@ -97,9 +98,10 @@ class _HomePageState extends State<HomePage> {
             .pushNamedAndRemoveUntil('/login', (route) => false);
       });
       // Mostrar un indicador de carga mientras se redirige
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: LoadingView(message: 'Loading...'),
+          child:
+              LoadingView(message: context.translate('home.loadingPolicies')),
         ),
       );
     }
@@ -160,7 +162,10 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 5),
                     Center(
                       child: Text(
-                        'Hello, ${user.fullName}',
+                        context.translateWithArgs(
+                          'home.greeting',
+                          args: [user.fullName],
+                        ),
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontSize: 20,
@@ -199,7 +204,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Add Products',
+                            context.translate('home.addProducts'),
                             style: TextStyle(
                               color: AppTheme.getSubtitleTextColor(context),
                               fontFamily: 'Open Sans',
@@ -270,9 +275,18 @@ class _HomePageState extends State<HomePage> {
                   }
                 },
                 tabItems: [
-                  TabData(Icons.home_outlined, 'My Products'),
-                  TabData(Icons.verified_user_outlined, '+ Add Insurance'),
-                  TabData(Icons.location_on_outlined, 'Location'),
+                  TabData(
+                    Icons.home_outlined,
+                    context.translate('home.navigation.myProducts'),
+                  ),
+                  TabData(
+                    Icons.verified_user_outlined,
+                    context.translate('home.navigation.addInsurance'),
+                  ),
+                  TabData(
+                    Icons.location_on_outlined,
+                    context.translate('home.navigation.location'),
+                  ),
                 ],
               ),
             ),

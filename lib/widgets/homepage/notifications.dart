@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +47,7 @@ class NotificationsWidget extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Notifications',
+                      context.translate('home.notifications.title'),
                       style: TextStyle(
                         color: AppTheme.getSubtitleTextColor(context),
                         fontFamily: 'Open Sans',
@@ -79,7 +80,7 @@ class NotificationsWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Error al cargar notificaciones',
+                        context.translate('home.notifications.error'),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: AppTheme.getRedColor(context),
@@ -87,7 +88,10 @@ class NotificationsWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Usando datos de ejemplo. Error: ${notificationProvider.errorMessage}',
+                        context.translateWithArgs(
+                          'home.notifications.usingDemoData', 
+                          args: [notificationProvider.errorMessage ?? '']
+                        ),
                         style: TextStyle(
                           fontSize: 12,
                           color: AppTheme.getBodyTextColor(context),
@@ -127,7 +131,7 @@ class NotificationsWidget extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Notifications',
+                    context.translate('home.notifications.title'),
                     style: TextStyle(
                       color: AppTheme.getSubtitleTextColor(context),
                       fontFamily: 'Open Sans',
@@ -163,7 +167,7 @@ class NotificationsWidget extends StatelessWidget {
                           ? 102 // Altura para 1 notificación
                           : 102, // Altura para estado vacío
               child: notifications.isEmpty
-                  ? _buildEmptyState()
+                  ? _buildEmptyState(context)
                   : Column(
                       mainAxisAlignment: isExpanded
                           ? MainAxisAlignment.start
@@ -264,7 +268,7 @@ class NotificationsWidget extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14.0),
           child: Text(
-            'Notifications',
+            context.translate('home.notifications.title'),
             style: TextStyle(
               color: AppTheme.getSubtitleTextColor(context),
               fontFamily: 'Open Sans',
@@ -290,21 +294,23 @@ class NotificationsWidget extends StatelessWidget {
               ),
             ],
           ),
-          child: const Center(
-            child: LoadingView(message: 'Loading notifications...'),
+          child: Center(
+            child: LoadingView(
+              message: context.translate('home.notifications.loading'),
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
+  Widget _buildEmptyState(BuildContext context) {
+    return Center(
       child: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: Text(
-          'No notifications available',
-          style: TextStyle(
+          context.translate('home.notifications.empty'),
+          style: const TextStyle(
             color: AppTheme.grey,
             fontSize: 14,
           ),

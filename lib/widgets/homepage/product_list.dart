@@ -1,34 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class ProductList extends StatelessWidget {
   const ProductList({super.key});
 
-  final List<ProductItem> _products = const [
-    ProductItem(
-      title: 'Roadside\nAssistance',
-      imagePath: 'assets/home/icons/icon-roadside.png',
-      backgroundColor: AppTheme.backgroundBlueColor,
-    ),
-    ProductItem(
-      title: 'Motorcycle\nInsurance',
-      imagePath: 'assets/home/icons/icon-motorcycle.png',
-      backgroundColor: AppTheme.backgroundGreenColor,
-    ),
-    ProductItem(
-      title: 'Renters\nInsurance',
-      imagePath: 'assets/home/icons/icon-renters.png',
-      backgroundColor: AppTheme.backgroundOrangeColor,
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    final List<ProductItem> products = [
+      ProductItem(
+        title: context.translate('home.products.roadsideAssistance'),
+        imagePath: 'assets/home/icons/icon-roadside.png',
+        backgroundColor: AppTheme.backgroundBlueColor,
+      ),
+      ProductItem(
+        title: context.translate('home.products.motorcycleInsurance'),
+        imagePath: 'assets/home/icons/icon-motorcycle.png',
+        backgroundColor: AppTheme.backgroundGreenColor,
+      ),
+      ProductItem(
+        title: context.translate('home.products.rentersInsurance'),
+        imagePath: 'assets/home/icons/icon-renters.png',
+        backgroundColor: AppTheme.backgroundOrangeColor,
+      ),
+    ];
+
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.only(right: 16.0),
       child: Row(
-        children: _products
+        children: products
             .map(
               (product) => Container(
                 width: 160,

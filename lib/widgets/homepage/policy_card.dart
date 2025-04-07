@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 
 import '../../data/models/home_policy/vehicle.dart';
 import '../../pages/id_card_page.dart';
@@ -95,7 +96,9 @@ class PolicyCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        isActive ? 'Active' : 'Inactive',
+                        isActive 
+                          ? context.translate('home.policyCard.active') 
+                          : context.translate('home.policyCard.inactive'),
                         style: TextStyle(
                           color: isActive
                               ? AppTheme.getGreenColor(context)
@@ -135,7 +138,7 @@ class PolicyCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        'Next Payment',
+                        context.translate('home.policyCard.nextPayment'),
                         style: TextStyle(
                           fontSize: 14,
                           color: AppTheme.getTextGreyColor(context),
@@ -189,7 +192,7 @@ class PolicyCard extends StatelessWidget {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     child: Text(
-                      'ID Card',
+                      context.translate('home.policyCard.idCard'),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontFamily: 'Open Sans',
@@ -217,10 +220,10 @@ class PolicyCard extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.fromLTRB(15, 10, 15, 10),
                     ),
-                    child: const Text(
-                      'Submit a Claim',
+                    child: Text(
+                      context.translate('home.policyCard.submitClaim'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Open Sans',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
@@ -251,10 +254,10 @@ class PolicyCard extends StatelessWidget {
                       ),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
-                    child: const Text(
-                      'Pay Now',
+                    child: Text(
+                      context.translate('home.policyCard.payNow'),
                       textAlign: TextAlign.center,
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontFamily: 'Open Sans',
                         fontSize: 14,
                         fontWeight: FontWeight.w700,

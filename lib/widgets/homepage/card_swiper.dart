@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -64,11 +65,11 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
     return Consumer<HomePolicyProvider>(
       builder: (context, policyProvider, child) {
         if (policyProvider.isLoading) {
-          return const SizedBox(
+          return SizedBox(
             height: 170,
             width: double.infinity,
             child: Center(
-              child: LoadingView(message: 'Loading policies...'),
+              child: LoadingView(message: context.translate('home.loadingPolicies')),
             ),
           );
         }
@@ -166,7 +167,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
           height: 180,
           width: double.infinity,
           child: cards.isEmpty
-              ? const Center(child: Text('No hay tarjetas disponibles'))
+              ? Center(child: Text(context.translate('home.noCardsAvailable')))
               : CardSwiper(
                   controller: controller,
                   cardsCount: cards.length,

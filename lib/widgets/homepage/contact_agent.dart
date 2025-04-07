@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import '../contactcenter/request_call.dart';
@@ -38,7 +39,7 @@ class ContactAgent extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Need Changes?',
+                    context.translate('home.contactAgent.needChanges'),
                     style: TextStyle(
                       color: AppTheme.getOrangeColor(context),
                       fontFamily: 'Open Sans',
@@ -49,7 +50,7 @@ class ContactAgent extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Contact My Agent',
+                    context.translate('home.contactAgent.contactMyAgent'),
                     style: TextStyle(
                       color: AppTheme.getPrimaryColor(context),
                       fontFamily: 'Open Sans',
@@ -83,10 +84,10 @@ class ContactAgent extends StatelessWidget {
                 vertical: 12,
               ),
             ),
-            child: const Text(
-              'Call Now',
+            child: Text(
+              context.translate('home.contactAgent.callNow'),
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.white,
                 fontFamily: 'Open Sans',
                 fontSize: 14,
