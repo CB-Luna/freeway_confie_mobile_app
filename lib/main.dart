@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:freeway_app/locatordevice/presentation/pages/location_details_view.dart';
 import 'package:provider/provider.dart';
 
@@ -11,8 +12,10 @@ import 'pages/submit_claim_page.dart';
 import 'providers/auth_provider.dart';
 import 'providers/biometric_provider.dart';
 import 'providers/home_policy_provider.dart';
+import 'providers/language_provider.dart';
 import 'providers/notification_provider.dart';
 import 'providers/theme_provider.dart';
+import 'utils/app_localizations.dart';
 import 'utils/app_restart.dart';
 
 // Clave global para reiniciar la aplicación
@@ -35,6 +38,7 @@ void main() {
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => HomePolicyProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => LanguageProvider()),
         ChangeNotifierProxyProvider<AuthProvider, BiometricProvider>(
           // Crear el BiometricProvider
           create: (_) => BiometricProvider(),
@@ -56,13 +60,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppRestart(
-      child: Consumer<ThemeProvider>(
-        builder: (context, themeProvider, child) {
+      child: Consumer2<ThemeProvider, LanguageProvider>(
+        builder: (context, themeProvider, languageProvider, child) {
           return MaterialApp(
             navigatorKey: navigatorKey,
             title: 'Freeway Insurance',
             theme: themeProvider.currentTheme,
             debugShowCheckedModeBanner: false,
+            locale: languageProvider.currentLocale,
+            supportedLocales: languageProvider.supportedLocales,
+            localizationsDelegates: [
+              AppLocalizationsDelegate(),
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
             initialRoute: '/',
             routes: {
               '/': (context) => const SplashScreen(nextScreen: LoginPage()),

@@ -595,19 +595,8 @@ class LocationController extends ChangeNotifier {
 
   // Método para expandir el radio de búsqueda
   Future<void> expandSearchRadius(BuildContext context) async {
-    // Verificar si ya se alcanzó el límite máximo de 10 millas
-    if (state.searchRadiusInMiles >= 10.0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Maximum search radius of 10 miles reached'),
-          duration: Duration(seconds: 2),
-        ),
-      );
-      return;
-    }
-
-    // Incrementar el radio de búsqueda en 1 milla cada vez
-    final newRadius = state.searchRadiusInMiles + 1.0;
+    // Incrementar el radio de búsqueda en 5 millas cada vez
+    final newRadius = state.searchRadiusInMiles + 5.0;
 
     // Restablecer la oficina seleccionada
     _updateState(

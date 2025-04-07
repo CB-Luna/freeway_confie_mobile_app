@@ -1,0 +1,67 @@
+{
+  "app": {
+    "title": "Freeway Insurance"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "rememberMe": "Recordarme",
+    "loginButton": "Iniciar Sesión",
+    "createAccount": "Crear Cuenta",
+    "twoFactorTitle": "Código de Verificación",
+    "twoFactorMessage": "Por favor, ingresa el código de verificación de 6 dígitos enviado a tu dispositivo",
+    "twoFactorSubmit": "Verificar",
+    "twoFactorResend": "Reenviar Código",
+    "biometricLogin": "Iniciar sesión con biometría"
+  },
+  "home": {
+    "welcome": "Bienvenido",
+    "myInsurance": "Mi Seguro",
+    "findOffice": "Encontrar Oficina",
+    "payments": "Pagos",
+    "idCard": "Tarjeta ID",
+    "viewAll": "Ver Todo"
+  },
+  "profile": {
+    "settings": "Configuración",
+    "password": "Contraseña",
+    "biometric": "Autenticación Biométrica",
+    "languages": "Idiomas",
+    "appInfo": "Información de la App",
+    "notifications": "Activar notificaciones push",
+    "logout": "Cerrar Sesión",
+    "confirmLogout": "¿Estás seguro de que deseas cerrar sesión?",
+    "cancel": "Cancelar",
+    "confirm": "Confirmar",
+    "biometricEnable": "Habilitar {type}",
+    "biometricMessage": "Al habilitar {type}, podrás acceder a la aplicación de forma más rápida y segura. ¿Deseas continuar?",
+    "biometricNotAvailable": "Biometría no disponible",
+    "biometricNotAvailableMessage": "Tu dispositivo no soporta autenticación biométrica.",
+    "biometricEnableFailed": "No se pudo habilitar {type}"
+  },
+  "office": {
+    "findNearby": "Encontrar Oficinas Cercanas",
+    "searchRadius": "Radio de búsqueda ampliado a {radius} millas",
+    "maxRadius": "Se alcanzó el radio máximo de búsqueda de 10 millas",
+    "viewInMaps": "Ver en Mapas",
+    "findOtherOffices": "Encontrar otras oficinas",
+    "couldNotOpenMaps": "No se pudo abrir la aplicación de mapas",
+    "loading": "Cargando..."
+  },
+  "common": {
+    "continue": "Continuar",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "edit": "Editar",
+    "close": "Cerrar",
+    "error": "Error",
+    "success": "Éxito",
+    "loading": "Cargando...",
+    "noResults": "No se encontraron resultados",
+    "tryAgain": "Intentar de nuevo",
+    "language_changed_to": "Idioma cambiado a {0}"
+  }
+}

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/pages/language_selection_page.dart';
+import 'package:freeway_app/providers/language_provider.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -130,10 +133,17 @@ class ProfileSettingsList extends StatelessWidget {
             ),
             const ProfileDivider(),
             ProfileSettingsItem(
-              title: 'Languages',
+              title: context.translate('profile.languages'),
               icon: Icons.language,
+              subtitle: Provider.of<LanguageProvider>(context)
+                  .getCurrentLanguageName(),
               onTap: () {
-                // TODO: Implementar navegación
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const LanguageSelectionPage(),
+                  ),
+                );
               },
             ),
             const ProfileDivider(),

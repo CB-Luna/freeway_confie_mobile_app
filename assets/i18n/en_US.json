@@ -1,0 +1,67 @@
+{
+  "app": {
+    "title": "Freeway Insurance"
+  },
+  "auth": {
+    "login": "Login",
+    "username": "Username",
+    "password": "Password",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember Me",
+    "loginButton": "Login",
+    "createAccount": "Create Account",
+    "twoFactorTitle": "Verification Code",
+    "twoFactorMessage": "Please enter the 6-digit verification code sent to your device",
+    "twoFactorSubmit": "Verify",
+    "twoFactorResend": "Resend Code",
+    "biometricLogin": "Login with Biometrics"
+  },
+  "home": {
+    "welcome": "Welcome",
+    "myInsurance": "My Insurance",
+    "findOffice": "Find Office",
+    "payments": "Payments",
+    "idCard": "ID Card",
+    "viewAll": "View All"
+  },
+  "profile": {
+    "settings": "Settings",
+    "password": "Password",
+    "biometric": "Biometric Authentication",
+    "languages": "Languages",
+    "appInfo": "App Information",
+    "notifications": "Enable push notifications",
+    "logout": "Logout",
+    "confirmLogout": "Are you sure you want to logout?",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "biometricEnable": "Enable {type}",
+    "biometricMessage": "By enabling {type}, you can access the application faster and more securely. Do you want to continue?",
+    "biometricNotAvailable": "Biometric not available",
+    "biometricNotAvailableMessage": "Your device does not support biometric authentication.",
+    "biometricEnableFailed": "Could not enable {type}"
+  },
+  "office": {
+    "findNearby": "Find Nearby Offices",
+    "searchRadius": "Search radius expanded to {radius} miles",
+    "maxRadius": "Maximum search radius of 10 miles reached",
+    "viewInMaps": "View in Maps",
+    "findOtherOffices": "Find other offices",
+    "couldNotOpenMaps": "Could not open maps application",
+    "loading": "Loading..."
+  },
+  "common": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "noResults": "No results found",
+    "tryAgain": "Try Again",
+    "language_changed_to": "Language changed to {0}"
+  }
+}
