@@ -65,6 +65,18 @@
       "usingDemoData": "Using demo data. Error: {0}"
     }
   },
+  "idCard": {
+    "title": "ID Card",
+    "back": "Back",
+    "addToWallet": "Add to Apple Wallet",
+    "notProofOfCoverage": "This is not proof of coverage (Legal to provide final text)",
+    "namedInsured": "NAMED INSURED",
+    "carrier": "CARRIER",
+    "policyNumber": "POLICY NUMBER",
+    "state": "STATE",
+    "effectiveDate": "EFFECTIVE DATE",
+    "expirationDate": "EXPIRATION DATE"
+  },
   "profile": {
     "settings": "Settings",
     "password": "Password",
@@ -97,15 +109,19 @@
     "loading": "Loading..."
   },
   "common": {
-    "continue": "Continue",
+    "ok": "OK",
     "cancel": "Cancel",
+    "yes": "Yes",
+    "no": "No",
+    "error": "Error",
+    "success": "Success",
+    "loading": "Loading...",
+    "notAuthenticated": "You need to be logged in to view this content",
+    "continue": "Continue",
     "save": "Save",
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
-    "error": "Error",
-    "success": "Success",
-    "loading": "Loading...",
     "noResults": "No results found",
     "tryAgain": "Try Again",
     "language_changed_to": "Language changed to {0}"

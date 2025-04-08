@@ -65,6 +65,18 @@
       "usingDemoData": "Usando datos de ejemplo. Error: {0}"
     }
   },
+  "idCard": {
+    "title": "Tarjeta ID",
+    "back": "Atrás",
+    "addToWallet": "Añadir a Apple Wallet",
+    "notProofOfCoverage": "Esto no es prueba de cobertura (Texto legal a proporcionar)",
+    "namedInsured": "ASEGURADO",
+    "carrier": "ASEGURADORA",
+    "policyNumber": "NÚMERO DE PÓLIZA",
+    "state": "ESTADO",
+    "effectiveDate": "FECHA DE INICIO",
+    "expirationDate": "FECHA DE VENCIMIENTO"
+  },
   "profile": {
     "settings": "Configuración",
     "password": "Contraseña",
@@ -97,15 +109,19 @@
     "loading": "Cargando..."
   },
   "common": {
-    "continue": "Continuar",
+    "ok": "OK",
     "cancel": "Cancelar",
+    "yes": "Sí",
+    "no": "No",
+    "error": "Error",
+    "success": "Éxito",
+    "loading": "Cargando...",
+    "notAuthenticated": "Necesitas iniciar sesión para ver este contenido",
+    "continue": "Continuar",
     "save": "Guardar",
     "delete": "Eliminar",
     "edit": "Editar",
     "close": "Cerrar",
-    "error": "Error",
-    "success": "Éxito",
-    "loading": "Cargando...",
     "noResults": "No se encontraron resultados",
     "tryAgain": "Intentar de nuevo",
     "language_changed_to": "Idioma cambiado a {0}"

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
+import 'package:freeway_app/providers/auth_provider.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/circle_nav_bar.dart';
+import 'package:freeway_app/widgets/id_card/id_card_widget.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 class IdCardPage extends StatefulWidget {
   const IdCardPage({super.key});
@@ -16,6 +20,33 @@ class _IdCardPageState extends State<IdCardPage> {
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final user = authProvider.currentUser;
+
+    // Si no hay usuario autenticado, mostrar un mensaje
+    if (user == null) {
+      return Scaffold(
+        backgroundColor: AppTheme.getBackgroundHeaderColor(context),
+        appBar: AppBar(
+          backgroundColor: AppTheme.getBackgroundHeaderColor(context),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: AppTheme.white),
+            onPressed: () => Navigator.pop(context),
+          ),
+          title: Text(
+            context.translate('idCard.title'),
+            style: const TextStyle(color: AppTheme.white),
+          ),
+        ),
+        body: Center(
+          child: Text(
+            context.translate('common.notAuthenticated'),
+            style: const TextStyle(fontSize: 18),
+          ),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppTheme.getBackgroundHeaderColor(context),
       appBar: AppBar(
@@ -31,15 +62,15 @@ class _IdCardPageState extends State<IdCardPage> {
           ),
         ),
         leadingWidth: 56,
-        title: const Stack(
+        title: Stack(
           alignment: Alignment.center,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'ID Card',
-                  style: TextStyle(
+                  context.translate('idCard.title'),
+                  style: const TextStyle(
                     color: AppTheme.white,
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -50,8 +81,8 @@ class _IdCardPageState extends State<IdCardPage> {
             Positioned(
               left: 0,
               child: Text(
-                'Back',
-                style: TextStyle(
+                context.translate('idCard.back'),
+                style: const TextStyle(
                   color: AppTheme.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w500,
@@ -123,29 +154,21 @@ class _IdCardPageState extends State<IdCardPage> {
                   Positioned(
                     top: 95,
                     left: (MediaQuery.of(context).size.width - 309) / 2,
-                    child: Container(
-                      width: 309,
-                      height: 394,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(14),
-                        child: Image.asset(
-                          'assets/home/idcardicons/card_id.png',
-                          fit: BoxFit.cover,
-                        ),
-                      ),
+                    child: IdCardWidget(
+                      user: user,
+                      // Ejemplo de fechas, en una implementación real vendrían de la API
+                      effectiveDate: DateTime(2023, 6, 18),
+                      expirationDate: DateTime(2026, 12, 18),
                     ),
                   ),
                   Positioned(
                     top:
-                        504, // 95 (card top) + 394 (card height) + 15 (spacing)
+                        534, // 95 (card top) + 430 (card height) + 15 (spacing)
                     left: 0,
                     right: 0,
                     child: Center(
                       child: Text(
-                        'This is not proof of coverage (Legal to provide final text)',
+                        context.translate('idCard.notProofOfCoverage'),
                         style: TextStyle(
                           color: AppTheme.getTextGreyColor(context),
                           fontSize: 12,
@@ -183,9 +206,18 @@ class _IdCardPageState extends State<IdCardPage> {
             }
           },
           tabItems: [
-            TabData(Icons.home_outlined, 'My Products'),
-            TabData(Icons.verified_user_outlined, 'Add Insurance'),
-            TabData(Icons.location_on_outlined, 'Location'),
+            TabData(
+              Icons.home_outlined,
+              context.translate('home.navigation.myProducts'),
+            ),
+            TabData(
+              Icons.verified_user_outlined,
+              context.translate('home.navigation.addInsurance'),
+            ),
+            TabData(
+              Icons.location_on_outlined,
+              context.translate('home.navigation.location'),
+            ),
           ],
         ),
       ),
