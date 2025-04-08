@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class ZipCodeDialog extends StatefulWidget {
@@ -98,7 +99,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
             const SizedBox(height: 20),
             // Título
             Text(
-              'Enter your ZipCode',
+              context.translate('vehicleInsurance.location.zipCodeDialogTitle'),
               style: TextStyle(
                 fontFamily: 'Open Sans',
                 fontSize: 20,
@@ -110,7 +111,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
             const SizedBox(height: 10),
             // Subtítulo
             Text(
-              'Enter your ZIP code to continue with the process',
+              context.translate('vehicleInsurance.location.zipCodeDialogMessage'),
               style: TextStyle(
                 fontFamily: 'Open Sans',
                 fontSize: 14,
@@ -130,7 +131,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                 keyboardType: TextInputType.number,
                 maxLength: 5,
                 decoration: InputDecoration(
-                  labelText: 'ZipCode',
+                  labelText: context.translate('vehicleInsurance.location.zipCodeHint'),
                   border: InputBorder.none,
                   counterText: '',
                   focusedBorder: OutlineInputBorder(
@@ -165,9 +166,9 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                 disabledBackgroundColor:
                     AppTheme.getPrimaryColor(context).withValues(alpha: 0.5),
               ),
-              child: const Text(
-                'Continue',
-                style: TextStyle(
+              child: Text(
+                context.translate('vehicleInsurance.location.continueButton'),
+                style: const TextStyle(
                   fontFamily: 'Open Sans',
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

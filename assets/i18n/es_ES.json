@@ -179,6 +179,40 @@
     "couldNotOpenMaps": "No se pudo abrir la aplicación de mapas",
     "loading": "Cargando..."
   },
+  "addInsurance": {
+    "title": "Más Formas de Obtener Cobertura",
+    "vehicleInsurance": "Seguro de Vehículo",
+    "propertyInsurance": "Seguro de Propiedad",
+    "personalProtection": "Protección Personal",
+    "businessInsurance": "Seguro de Negocio",
+    "additionalProducts": "Productos Adicionales",
+    "ancillaryProducts": "Productos Auxiliares"
+  },
+  "vehicleInsurance": {
+    "back": "Atrás",
+    "title": "Selecciona un producto para iniciar tu cotización",
+    "auto": "Auto",
+    "motorcycle": "Motocicleta",
+    "motorhome": "Casa Rodante",
+    "rvMotorhome": "RV/\nCasa Rodante",
+    "atv": "ATV",
+    "snowmobile": "Motonieve",
+    "sr22Insurance": "Seguro\nSR-22",
+    "classicCar": "Auto Clásico",
+    "location": {
+      "gettingLocation": "Obteniendo tu ubicación...",
+      "zipCodeDialogTitle": "Ingresa tu código postal",
+      "zipCodeDialogMessage": "Por favor, ingresa tu código postal para obtener cotizaciones precisas para tu área.",
+      "zipCodeHint": "Código Postal",
+      "continueButton": "Continuar",
+      "invalidZipCode": "Por favor, ingresa un código postal válido",
+      "webDialogTitle": "¿Deseas visitar nuestro sitio web?",
+      "webDialogMessage": "Serás redirigido a nuestro sitio web para completar tu cotización de seguro de auto para {0}, {1}.",
+      "visitWebsite": "Visitar Sitio Web",
+      "invalidUrl": "No hay cobertura de seguro para este zipcode.",
+      "cancel": "Cancelar"
+    }
+  },
   "common": {
     "ok": "OK",
     "cancel": "Cancelar",

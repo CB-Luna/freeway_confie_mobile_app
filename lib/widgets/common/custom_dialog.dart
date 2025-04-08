@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 
 /// Un diálogo personalizado reutilizable que se puede usar en toda la aplicación.
 /// 
@@ -9,20 +10,16 @@ class CustomDialog {
   /// Parámetros:
   /// - [context]: El contexto de construcción actual.
   /// - [title]: El título del diálogo.
-  /// - [content]: El contenido o mensaje del diálogo.
-  /// - [cancelText]: El texto para el botón de cancelar (opcional, por defecto es 'Cancel').
-  /// - [confirmText]: El texto para el botón de confirmar (opcional, por defecto es 'Confirm').
-  /// - [onCancel]: Función a ejecutar cuando se presiona el botón cancelar.
-  /// - [onConfirm]: Función a ejecutar cuando se presiona el botón confirmar.
+  /// - [message]: El contenido o mensaje del diálogo.
+  /// - [positiveButtonText]: El texto para el botón positivo (por defecto es 'OK').
+  /// - [negativeButtonText]: El texto para el botón negativo (opcional).
   /// - [barrierDismissible]: Si el diálogo se puede cerrar tocando fuera de él (opcional, por defecto es false).
   static Future<bool?> show({
     required BuildContext context,
     required String title,
-    required String content,
-    String cancelText = 'Cancel',
-    String confirmText = 'Confirm',
-    VoidCallback? onCancel,
-    VoidCallback? onConfirm,
+    required String message,
+    String positiveButtonText = 'OK',
+    String? negativeButtonText,
     bool barrierDismissible = false,
   }) async {
     return showDialog<bool>(
@@ -44,7 +41,7 @@ class CustomDialog {
             textAlign: TextAlign.center,
           ),
           content: Text(
-            content,
+            message,
             style: const TextStyle(
               fontFamily: 'Open Sans',
               fontSize: 14,
@@ -54,55 +51,40 @@ class CustomDialog {
           ),
           actionsPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           actions: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(false);
-                      if (onCancel != null) {
-                        onCancel();
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: Text(
-                      cancelText,
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontFamily: 'Open Sans',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
+            if (negativeButtonText != null)
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(false);
+                },
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                ),
+                child: Text(
+                  negativeButtonText,
+                  style: const TextStyle(
+                    color: Colors.grey,
+                    fontFamily: 'Open Sans',
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
                   ),
                 ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextButton(
-                    onPressed: () {
-                      Navigator.of(context).pop(true);
-                      if (onConfirm != null) {
-                        onConfirm();
-                      }
-                    },
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: Text(
-                      confirmText,
-                      style: const TextStyle(
-                        color: Color(0xFF0046B9),
-                        fontFamily: 'Open Sans',
-                        fontWeight: FontWeight.w600,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
+              ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              style: TextButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text(
+                positiveButtonText,
+                style: const TextStyle(
+                  color: Color(0xFF0046B9),
+                  fontFamily: 'Open Sans',
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
                 ),
-              ],
+              ),
             ),
           ],
         );

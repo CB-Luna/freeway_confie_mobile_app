@@ -196,5 +196,39 @@
     "noResults": "No results found",
     "tryAgain": "Try Again",
     "language_changed_to": "Language changed to {0}"
+  },
+  "addInsurance": {
+    "title": "More Ways to Get Covered",
+    "vehicleInsurance": "Vehicle Insurance",
+    "propertyInsurance": "Property Insurance",
+    "personalProtection": "Personal Protection",
+    "businessInsurance": "Business Insurance",
+    "additionalProducts": "Additional Products",
+    "ancillaryProducts": "Ancillary Products"
+  },
+  "vehicleInsurance": {
+    "back": "Back",
+    "title": "Select a product to start your quote",
+    "auto": "Auto",
+    "motorcycle": "Motorcycle",
+    "motorhome": "Motorhome",
+    "rvMotorhome": "RV/\nMotorhome",
+    "atv": "ATV",
+    "snowmobile": "Snowmobile",
+    "sr22Insurance": "SR-22\nInsurance",
+    "classicCar": "Classic Car",
+    "location": {
+      "gettingLocation": "Getting your location...",
+      "zipCodeDialogTitle": "Enter your ZIP code",
+      "zipCodeDialogMessage": "Please enter your ZIP code to get accurate quotes for your area.",
+      "zipCodeHint": "ZIP Code",
+      "continueButton": "Continue",
+      "invalidZipCode": "Please enter a valid ZIP code",
+      "webDialogTitle": "Would you like to visit our website?",
+      "webDialogMessage": "You'll be redirected to our website to complete your auto insurance quote for {0}, {1}.",
+      "visitWebsite": "Visit Website",
+      "invalidUrl": "No coverage for this zipcode.",
+      "cancel": "Cancel"
+    }
   }
 }

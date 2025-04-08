@@ -70,7 +70,7 @@ class MyApp extends StatelessWidget {
             locale: languageProvider.currentLocale,
             supportedLocales: languageProvider.supportedLocales,
             localizationsDelegates: [
-              AppLocalizationsDelegate(),
+              const AppLocalizationsDelegate(),
               GlobalMaterialLocalizations.delegate,
               GlobalWidgetsLocalizations.delegate,
               GlobalCupertinoLocalizations.delegate,

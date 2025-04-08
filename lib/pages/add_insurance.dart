@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import '../locatordevice/locator_device_module.dart';
@@ -40,7 +41,7 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
                   const SizedBox(height: 16),
                   Center(
                     child: Text(
-                      'More Ways to Get Covered',
+                      context.translate('addInsurance.title'),
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -51,43 +52,43 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
                 ],
               ),
             ),
-            const InsuranceCard(
-              title: 'Vehicle Insurance',
+            InsuranceCard(
+              title: context.translate('addInsurance.vehicleInsurance'),
               imagePath: 'assets/products/4.0x/vehicle.png',
               route: '/vehicle-insurance',
               imageWidth: 220,
               imageHeight: 90,
             ),
-            const InsuranceCard(
-              title: 'Property Insurance',
+            InsuranceCard(
+              title: context.translate('addInsurance.propertyInsurance'),
               imagePath: 'assets/products/4.0x/property.png',
               route: '/property-insurance',
               imageWidth: 150,
               imageHeight: 70,
             ),
-            const InsuranceCard(
-              title: 'Personal Protection',
+            InsuranceCard(
+              title: context.translate('addInsurance.personalProtection'),
               imagePath: 'assets/products/4.0x/personal.png',
               route: '/personal-protection',
               imageWidth: 152,
               imageHeight: 65,
             ),
-            const InsuranceCard(
-              title: 'Business Insurance',
+            InsuranceCard(
+              title: context.translate('addInsurance.businessInsurance'),
               imagePath: 'assets/products/4.0x/business.png',
               route: '/business-insurance',
               imageWidth: 160,
               imageHeight: 60,
             ),
-            const InsuranceCard(
-              title: 'Additional Products',
+            InsuranceCard(
+              title: context.translate('addInsurance.additionalProducts'),
               imagePath: 'assets/products/4.0x/additional.png',
               route: '/additional-products',
               imageWidth: 139,
               imageHeight: 60,
             ),
-            const InsuranceCard(
-              title: 'Ancillary Products',
+            InsuranceCard(
+              title: context.translate('addInsurance.ancillaryProducts'),
               imagePath: 'assets/products/4.0x/ancillary.png',
               route: '/ancillary-products',
               imageWidth: 69,
@@ -119,9 +120,12 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
             }
           },
           tabItems: [
-            TabData(Icons.home_outlined, 'My Products'),
-            TabData(Icons.verified_user_outlined, 'Add Insurance'),
-            TabData(Icons.location_on_outlined, 'Location'),
+            TabData(Icons.home_outlined,
+                context.translate('home.navigation.myProducts')),
+            TabData(Icons.verified_user_outlined,
+                context.translate('home.navigation.addInsurance')),
+            TabData(Icons.location_on_outlined,
+                context.translate('home.navigation.location')),
           ],
         ),
       ),

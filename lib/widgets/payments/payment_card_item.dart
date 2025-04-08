@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class PaymentCardItem extends StatelessWidget {
@@ -26,7 +25,7 @@ class PaymentCardItem extends StatelessWidget {
         height: 80,
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.getPrimaryColor(context).withOpacity(0.1)
+              ? AppTheme.getPrimaryColor(context).withValues(alpha: 0.1)
               : AppTheme.getCardColor(context),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(

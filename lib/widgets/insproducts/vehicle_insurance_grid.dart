@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -40,12 +41,12 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           ),
         ),
         leadingWidth: 56,
-        title: const Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              'Back',
-              style: TextStyle(
+              context.translate('vehicleInsurance.back'),
+              style: const TextStyle(
                 color: AppTheme.white,
                 fontSize: 16,
                 fontWeight: FontWeight.w500,
@@ -63,7 +64,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             children: [
               Center(
                 child: Text(
-                  'Select a product to start your quote',
+                  context.translate('vehicleInsurance.title'),
                   style: TextStyle(
                     color: AppTheme.getTitleTextColor(context),
                     fontSize: 18,
@@ -80,14 +81,46 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
                 mainAxisSpacing: 16.0,
                 crossAxisSpacing: 16.0,
                 children: [
-                  _buildInsuranceItem(context, 'Auto', 'auto'),
-                  _buildInsuranceItem(context, 'Motorcycle', 'motorcycle'),
-                  _buildInsuranceItem(context, 'Motorhome', 'motorhome'),
-                  _buildInsuranceItem(context, 'RV/\nMotorhome', 'motorhome'),
-                  _buildInsuranceItem(context, 'ATV', 'atv'),
-                  _buildInsuranceItem(context, 'Snowmobile', 'snowmobile'),
-                  _buildInsuranceItem(context, 'SR-22\nInsurance', 'SR-22'),
-                  _buildInsuranceItem(context, 'Classic Car', 'Classi-Car'),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.auto'),
+                    'auto',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.motorcycle'),
+                    'motorcycle',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.motorhome'),
+                    'motorhome',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.rvMotorhome'),
+                    'motorhome',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.atv'),
+                    'atv',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.snowmobile'),
+                    'snowmobile',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.sr22Insurance'),
+                    'SR-22',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.classicCar'),
+                    'Classi-Car',
+                  ),
                 ],
               ),
             ],
@@ -116,9 +149,18 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             }
           },
           tabItems: [
-            TabData(Icons.home_outlined, 'My Products'),
-            TabData(Icons.verified_user_outlined, 'Add Insurance'),
-            TabData(Icons.location_on_outlined, 'Location'),
+            TabData(
+              Icons.home_outlined,
+              context.translate('home.navigation.myProducts'),
+            ),
+            TabData(
+              Icons.verified_user_outlined,
+              context.translate('home.navigation.addInsurance'),
+            ),
+            TabData(
+              Icons.location_on_outlined,
+              context.translate('home.navigation.location'),
+            ),
           ],
         ),
       ),
@@ -134,6 +176,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       onTap: () {
         switch (title) {
           case 'Auto':
+          case 'auto':
             // Evitar múltiples llamadas mientras se procesa una solicitud
             if (!_isProcessingAutoInsurance) {
               _handleAutoInsurance(context);
@@ -146,11 +189,11 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
         decoration: BoxDecoration(
           color: AppTheme.getCardColor(context),
           borderRadius: BorderRadius.circular(12),
-          boxShadow: const [
+          boxShadow: [
             BoxShadow(
-              color: Color(0x0A000000),
+              color: AppTheme.getBoxShadowColor(context),
               blurRadius: 4,
-              offset: Offset(0, 2),
+              offset: const Offset(0, 2),
             ),
           ],
         ),
@@ -188,7 +231,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     // Mostrar un indicador de progreso
     final overlay = LoadingView.showOverlay(
       context,
-      message: 'Obteniendo tu ubicación...',
+      message: context.translate('vehicleInsurance.location.gettingLocation'),
       indicatorColor: const Color(0xFF0046B9),
       textColor: Colors.white,
     );
@@ -299,10 +342,20 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       } else if (context.mounted) {
         // Si el código postal no es válido, mostrar un mensaje de error
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Invalid ZIP code. Please try again.')),
+          SnackBar(
+            content: Text(
+              context.translate('vehicleInsurance.location.invalidZipCode'),
+            ),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
+
+    // Restablecer la bandera después de completar el proceso
+    setState(() {
+      _isProcessingAutoInsurance = false;
+    });
   }
 
   // Método para mostrar el diálogo de página web
@@ -312,38 +365,34 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     String placeName,
     String stateAbbreviation,
   ) async {
-    final bool? result = await CustomDialog.show(
+    final result = await CustomDialog.show(
       context: context,
-      title: 'Continue to Auto Insurance Quote',
-      content:
-          'You are about to get a quote for auto insurance in $placeName, $stateAbbreviation ($zipCode). Would you like to proceed?',
-      confirmText: 'Continue',
-      cancelText: 'Cancel',
-      onConfirm: () async {
-        // Abrir la URL en el navegador
-        final Uri url = Uri.parse(
-          'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya',
-        );
-        try {
-          if (await canLaunchUrl(url)) {
-            await launchUrl(url, mode: LaunchMode.inAppWebView);
-          } else {
-            // Si no se puede abrir en modo inAppWebView, intentar con el navegador externo
-            await launchUrl(url, mode: LaunchMode.externalApplication);
-          }
-        } catch (e) {
-          // Mostrar un mensaje de error si no se puede abrir la URL
-          if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content:
-                    Text('Could not open the website. Please try again later.'),
-                duration: Duration(seconds: 3),
-              ),
-            );
-          }
-        }
-      },
+      title: context.translate('vehicleInsurance.location.webDialogTitle'),
+      message: context
+          .translate('vehicleInsurance.location.webDialogMessage')
+          .replaceAll('{0}', placeName)
+          .replaceAll('{1}', stateAbbreviation),
+      positiveButtonText:
+          context.translate('vehicleInsurance.location.visitWebsite'),
+      negativeButtonText: context.translate('vehicleInsurance.location.cancel'),
     );
+
+    if (result == true && context.mounted) {
+      final url = Uri.parse(
+        'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya',
+      );
+      // if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+      // } else if (context.mounted) {
+      //   ScaffoldMessenger.of(context).showSnackBar(
+      //     SnackBar(
+      //       content: Text(
+      //         context.translate('vehicleInsurance.location.invalidUrl'),
+      //       ),
+      //       backgroundColor: Colors.red,
+      //     ),
+      //   );
+      // }
+    }
   }
 }

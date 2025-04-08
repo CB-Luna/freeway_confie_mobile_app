@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import 'vehicle_insurance_grid.dart';
@@ -25,7 +26,7 @@ class InsuranceCard extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 10.0),
       child: InkWell(
         onTap: () {
-          if (title == 'Vehicle Insurance') {
+          if (title == context.translate('addInsurance.vehicleInsurance')) {
             Navigator.push(
               context,
               MaterialPageRoute(

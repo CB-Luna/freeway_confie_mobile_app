@@ -199,8 +199,8 @@ class _QuotePlanCardState extends State<QuotePlanCard>
               ),
               Text(
                 widget.isMonthly
-                  ? context.translate('quotePlans.monthlySuffix')
-                  : context.translate('quotePlans.annualSuffix'),
+                    ? context.translate('quotePlans.monthlySuffix')
+                    : context.translate('quotePlans.annualSuffix'),
                 style: TextStyle(
                   fontSize: 16,
                   fontFamily: 'Open Sans',
@@ -222,11 +222,10 @@ class _QuotePlanCardState extends State<QuotePlanCard>
           padding: const EdgeInsets.only(bottom: 12),
           child: Row(
             children: [
-              Image.asset(
-                'assets/icons/check.png',
-                width: 24,
-                height: 24,
-                color: AppTheme.getGreenColor(context),
+              Icon(
+                Icons.check_circle_outline,
+                size: 20,
+                color: widget.plan.accentColor,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -244,7 +243,9 @@ class _QuotePlanCardState extends State<QuotePlanCard>
                     ),
                     if (feature.subtitle != null)
                       Text(
-                        context.translate('quotePlans.features.${feature.subtitle}'),
+                        context.translate(
+                          'quotePlans.features.${feature.subtitle}',
+                        ),
                         style: TextStyle(
                           fontSize: 12,
                           fontFamily: 'Open Sans',
@@ -294,14 +295,14 @@ class _QuotePlanCardState extends State<QuotePlanCard>
         height: 48,
         decoration: BoxDecoration(
           color: _isPressed
-              ? widget.plan.primaryColor.withOpacity(0.8)
+              ? widget.plan.primaryColor.withValues(alpha: 0.8)
               : widget.plan.primaryColor,
           borderRadius: BorderRadius.circular(24),
           boxShadow: _isPressed
               ? []
               : [
                   BoxShadow(
-                    color: widget.plan.primaryColor.withOpacity(0.4),
+                    color: widget.plan.primaryColor.withValues(alpha: 0.4),
                     blurRadius: 8,
                     offset: const Offset(0, 4),
                   ),
