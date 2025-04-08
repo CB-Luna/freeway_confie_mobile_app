@@ -171,13 +171,35 @@
     "defaultUser": "Usuario"
   },
   "office": {
-    "findNearby": "Encontrar Oficinas Cercanas",
+    "findNearby": "Buscar Oficinas Cercanas",
     "searchRadius": "Radio de búsqueda ampliado a {radius} millas",
     "maxRadius": "Se alcanzó el radio máximo de búsqueda de 10 millas",
     "viewInMaps": "Ver en Mapas",
-    "findOtherOffices": "Encontrar otras oficinas",
+    "findOtherOffices": "Buscar otras oficinas",
     "couldNotOpenMaps": "No se pudo abrir la aplicación de mapas",
-    "loading": "Cargando..."
+    "loading": "Cargando...",
+    "nearestOffice": "Oficina Más Cercana",
+    "noOfficesAvailable": "No hay oficinas disponibles",
+    "openNow": "Abierto Ahora",
+    "closesAt": "Cierra a las {time}",
+    "callOffice": "Llamar a la Oficina",
+    "getDirections": "Obtener Direcciones",
+    "miles": "millas",
+    "noNearbyLocations": "No se encontraron ubicaciones cercanas, ¡pero te tenemos cubierto! Puedes:",
+    "expandSearchRadius": "Ampliar tu radio de búsqueda",
+    "viewAllOffices": "Ver Todas Nuestras Oficinas",
+    "help": "Ayuda",
+    "nationalCoverage": "Freeway sirve a los 50 estados: ¡dondequiera que estés, estamos aquí para tus necesidades de seguro!",
+    "zipCode": {
+      "geoDetectionNotAvailable": "Detección geográfica no disponible. Por favor, ingresa tu Código Postal.",
+      "enterZipCode": "Ingresa tu Código Postal",
+      "zipCodeHint": "Código Postal",
+      "search": "Buscar",
+      "useMyLocation": "Usar mi ubicación actual",
+      "invalidZipCode": "Por favor, ingresa un código postal válido de 5 dígitos",
+      "searchingNear": "Buscando oficinas cerca del código postal: {zipCode}"
+    },
+    "error": "Error: Faltan dependencias"
   },
   "addInsurance": {
     "title": "Más Formas de Obtener Cobertura",

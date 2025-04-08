@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -19,9 +20,9 @@ class LocationDetailsView extends StatelessWidget {
     final args =
         ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     if (args == null) {
-      return const Scaffold(
+      return Scaffold(
         body: Center(
-          child: Text('Error: Missing dependencies'),
+          child: Text(context.translate('office.error')),
         ),
       );
     }
@@ -118,9 +119,18 @@ class _LocationDetailsViewContentState
                 }
               },
               tabItems: [
-                TabData(Icons.home_outlined, 'My Products'),
-                TabData(Icons.verified_user_outlined, '+ Add Insurance'),
-                TabData(Icons.location_on_outlined, 'Location'),
+                TabData(
+                  Icons.home_outlined,
+                  context.translate('navigation.myProducts'),
+                ),
+                TabData(
+                  Icons.verified_user_outlined,
+                  context.translate('navigation.addInsurance'),
+                ),
+                TabData(
+                  Icons.location_on_outlined,
+                  context.translate('navigation.location'),
+                ),
               ],
             ),
           ),

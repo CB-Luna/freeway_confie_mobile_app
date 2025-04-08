@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 import '../controllers/location_controller.dart';
@@ -7,9 +9,9 @@ class ZipCodeInputView extends StatefulWidget {
   final VoidCallback? onUseCurrentLocation;
 
   const ZipCodeInputView({
-    Key? key,
+    super.key,
     this.onUseCurrentLocation,
-  }) : super(key: key);
+  });
 
   @override
   State<ZipCodeInputView> createState() => _ZipCodeInputViewState();
@@ -38,11 +40,11 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
             padding: const EdgeInsets.all(16.0),
             margin: const EdgeInsets.only(bottom: 24.0),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: AppTheme.white,
               borderRadius: BorderRadius.circular(8.0),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: AppTheme.getBoxShadowColor(context),
                   blurRadius: 4,
                   offset: const Offset(0, 2),
                 ),
@@ -52,15 +54,16 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
               children: [
                 Icon(
                   Icons.error_outline,
-                  color: Colors.red[700],
+                  color: AppTheme.getRedColor(context),
                   size: 24,
                 ),
                 const SizedBox(width: 12),
-                const Expanded(
+                Expanded(
                   child: Text(
-                    'Geo-Detection not available. Please enter your Zip Code.',
+                    context
+                        .translate('office.zipCode.geoDetectionNotAvailable'),
                     style: TextStyle(
-                      color: Colors.red,
+                      color: AppTheme.getRedColor(context),
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -70,12 +73,12 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
           ),
 
           // Título
-          const Text(
-            'Enter your Zip Code',
-            style: TextStyle(
+          Text(
+            context.translate('office.zipCode.enterZipCode'),
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black87,
+              color: AppTheme.black,
             ),
           ),
           const SizedBox(height: 16),
@@ -87,10 +90,10 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
             keyboardType: TextInputType.number,
             maxLength: 5,
             decoration: InputDecoration(
-              hintText: 'Zip Code',
+              hintText: context.translate('office.zipCode.zipCodeHint'),
               counterText: '',
               filled: true,
-              fillColor: Colors.white,
+              fillColor: AppTheme.white,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide.none,
@@ -98,14 +101,14 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
                 borderSide: BorderSide(
-                  color: Colors.grey[300]!,
+                  color: AppTheme.getDetailsGreyColor(context),
                   width: 1.0,
                 ),
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8.0),
-                borderSide: const BorderSide(
-                  color: Color(0xFF0046B9),
+                borderSide: BorderSide(
+                  color: AppTheme.getPrimaryColor(context),
                   width: 2.0,
                 ),
               ),
@@ -119,16 +122,16 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
             child: ElevatedButton(
               onPressed: _searchByZipCode,
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF0046B9),
-                foregroundColor: Colors.white,
+                backgroundColor: AppTheme.getPrimaryColor(context),
+                foregroundColor: AppTheme.white,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8.0),
                 ),
               ),
-              child: const Text(
-                'Search',
-                style: TextStyle(
+              child: Text(
+                context.translate('office.zipCode.search'),
+                style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                 ),
@@ -144,19 +147,19 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
                 widget.onUseCurrentLocation!();
               }
             },
-            icon: const Icon(
+            icon: Icon(
               Icons.my_location,
-              color: Color(0xFF0046B9),
+              color: AppTheme.getIconColor(context),
             ),
-            label: const Text(
-              'Use my current location',
+            label: Text(
+              context.translate('office.zipCode.useMyLocation'),
               style: TextStyle(
-                color: Color(0xFF0046B9),
+                color: AppTheme.getPrimaryColor(context),
                 fontWeight: FontWeight.w600,
               ),
             ),
             style: OutlinedButton.styleFrom(
-              side: const BorderSide(color: Color(0xFF0046B9)),
+              side: BorderSide(color: AppTheme.getPrimaryColor(context)),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24.0),
               ),
@@ -173,14 +176,16 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
 
   void _searchByZipCode() {
     final zipCode = _zipController.text.trim();
-    
+
     // Validar que el código postal tenga 5 dígitos
-    if (zipCode.isEmpty || zipCode.length != 5 || !RegExp(r'^[0-9]{5}$').hasMatch(zipCode)) {
+    if (zipCode.isEmpty ||
+        zipCode.length != 5 ||
+        !RegExp(r'^[0-9]{5}$').hasMatch(zipCode)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please enter a valid 5-digit zip code'),
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.red,
+        SnackBar(
+          content: Text(context.translate('office.zipCode.invalidZipCode')),
+          duration: const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         ),
       );
       return;
@@ -198,12 +203,17 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
     // Mostrar un mensaje al usuario
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text('Searching for offices near zip code: $zipCode'),
+        content: Text(
+          context.translateWithArgs(
+            'office.zipCode.searchingNear',
+            args: [zipCode],
+          ),
+        ),
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.blue,
+        backgroundColor: AppTheme.getBlueColor(context),
       ),
     );
-    
+
     // Llamar al método de búsqueda por código postal
     locationController.searchByZipCode(zipCode);
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 
 class MapButtons extends StatelessWidget {
   final VoidCallback onLocationPressed;
@@ -21,6 +22,7 @@ class MapButtons extends StatelessWidget {
             heroTag: 'currentLocation',
             backgroundColor: Colors.white,
             onPressed: onLocationPressed,
+            tooltip: context.translate('office.findNearby'),
             child: const Icon(Icons.my_location, color: Colors.blue),
           ),
           const SizedBox(height: 16),
@@ -28,6 +30,7 @@ class MapButtons extends StatelessWidget {
             heroTag: 'toggleList',
             backgroundColor: Colors.white,
             onPressed: onToggleListPressed,
+            tooltip: context.translate('office.viewAllOffices'),
             child: const Icon(Icons.list, color: Colors.blue),
           ),
         ],

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class NoNearbyOfficesView extends StatelessWidget {
@@ -59,7 +60,7 @@ class NoNearbyOfficesView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "No nearby locations found, but we've got you covered! You can:",
+            context.translate('office.noNearbyLocations'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,
@@ -78,7 +79,7 @@ class NoNearbyOfficesView extends StatelessWidget {
             color: AppTheme.getPrimaryColor(context),
           ),
           label: Text(
-            'Expand your search radius',
+            context.translate('office.expandSearchRadius'),
             style: TextStyle(color: AppTheme.getPrimaryColor(context)),
           ),
           style: OutlinedButton.styleFrom(
@@ -104,7 +105,7 @@ class NoNearbyOfficesView extends StatelessWidget {
             color: AppTheme.getPrimaryColor(context),
           ),
           label: Text(
-            'View All our Offices',
+            context.translate('office.viewAllOffices'),
             style: TextStyle(color: AppTheme.getPrimaryColor(context)),
           ),
           style: OutlinedButton.styleFrom(
@@ -131,7 +132,7 @@ class NoNearbyOfficesView extends StatelessWidget {
             Icons.phone_in_talk_outlined,
             color: AppTheme.white,
           ),
-          label: const Text('Help'),
+          label: Text(context.translate('office.help')),
           style: ElevatedButton.styleFrom(
             backgroundColor: AppTheme.getPrimaryColor(context),
             foregroundColor: AppTheme.white,
@@ -150,7 +151,7 @@ class NoNearbyOfficesView extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Text(
-            "Freeway serves all 50 states—wherever you are, we're here for your insurance needs!",
+            context.translate('office.nationalCoverage'),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 14,

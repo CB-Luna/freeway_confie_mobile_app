@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart'
     show launchUrl, canLaunchUrl, LaunchMode;
@@ -78,7 +79,7 @@ class OfficeList extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Text(
-                'Nearest Office',
+                context.translate('office.nearestOffice'),
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -92,7 +93,9 @@ class OfficeList extends StatelessWidget {
             // Lista de oficinas
             Expanded(
               child: offices.isEmpty
-                  ? const Center(child: Text('No hay oficinas disponibles'))
+                  ? Center(
+                      child:
+                          Text(context.translate('office.noOfficesAvailable')))
                   : CustomScrollView(
                       controller: scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
@@ -120,7 +123,8 @@ class OfficeList extends StatelessWidget {
                                                 Theme.of(context).primaryColor,
                                           ),
                                           label: Text(
-                                            'Find other offices',
+                                            context.translate(
+                                                'office.findOtherOffices'),
                                             style: TextStyle(
                                               color: Theme.of(context)
                                                   .primaryColor,
@@ -193,7 +197,9 @@ class OfficeListItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            'Open Now • Closes at 7pm',
+            '${context.translate('office.openNow')} • ${context.translateWithArgs('office.closesAt', args: [
+                  '7pm'
+                ])}',
             style: TextStyle(
               color: AppTheme.getGreenColor(context),
               fontWeight: FontWeight.bold,
@@ -201,7 +207,7 @@ class OfficeListItem extends StatelessWidget {
             ),
           ),
           Text(
-            '${office.distance.toStringAsFixed(2)} miles',
+            '${office.distance.toStringAsFixed(2)} ${context.translate('office.miles')}',
             style: TextStyle(
               color: AppTheme.getBlueColor(context),
               fontWeight: FontWeight.bold,
@@ -264,7 +270,7 @@ class OfficeListItem extends StatelessWidget {
                     Icons.phone_in_talk_outlined,
                     color: AppTheme.white,
                   ),
-                  label: const Text('Call Office'),
+                  label: Text(context.translate('office.callOffice')),
                   style: ElevatedButton.styleFrom(
                     backgroundColor:
                         AppTheme.getPrimaryColor(context), // Azul oscuro
@@ -288,7 +294,7 @@ class OfficeListItem extends StatelessWidget {
                     color: AppTheme.getPrimaryColor(context),
                   ),
                   label: Text(
-                    'Get Directions',
+                    context.translate('office.getDirections'),
                     style: TextStyle(color: AppTheme.getPrimaryColor(context)),
                   ),
                   style: OutlinedButton.styleFrom(
@@ -334,6 +340,7 @@ class OfficeListItem extends StatelessWidget {
                       );
                     } else {
                       // Mostrar un mensaje de error si no se puede abrir la URL
+                      if (!context.mounted) return;
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Could not open maps application'),
@@ -347,7 +354,7 @@ class OfficeListItem extends StatelessWidget {
                     color: AppTheme.getPrimaryColor(context),
                   ),
                   label: Text(
-                    'View in Maps',
+                    context.translate('office.viewInMaps'),
                     style: TextStyle(color: AppTheme.getPrimaryColor(context)),
                   ),
                   style: OutlinedButton.styleFrom(

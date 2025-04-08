@@ -177,7 +177,29 @@
     "viewInMaps": "View in Maps",
     "findOtherOffices": "Find other offices",
     "couldNotOpenMaps": "Could not open maps application",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "nearestOffice": "Nearest Office",
+    "noOfficesAvailable": "No offices available",
+    "openNow": "Open Now",
+    "closesAt": "Closes at {time}",
+    "callOffice": "Call Office",
+    "getDirections": "Get Directions",
+    "miles": "miles",
+    "noNearbyLocations": "No nearby locations found, but we've got you covered! You can:",
+    "expandSearchRadius": "Expand your search radius",
+    "viewAllOffices": "View All our Offices",
+    "help": "Help",
+    "nationalCoverage": "Freeway serves all 50 states—wherever you are, we're here for your insurance needs!",
+    "zipCode": {
+      "geoDetectionNotAvailable": "Geo-Detection not available. Please enter your Zip Code.",
+      "enterZipCode": "Enter your Zip Code",
+      "zipCodeHint": "Zip Code",
+      "search": "Search",
+      "useMyLocation": "Use my current location",
+      "invalidZipCode": "Please enter a valid 5-digit zip code",
+      "searchingNear": "Searching for offices near zip code: {zipCode}"
+    },
+    "error": "Error: Missing dependencies"
   },
   "common": {
     "ok": "OK",
