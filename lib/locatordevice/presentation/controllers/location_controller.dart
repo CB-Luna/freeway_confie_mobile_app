@@ -599,6 +599,19 @@ class LocationController extends ChangeNotifier {
     // Incrementar el radio de búsqueda en 1 milla cada vez
     final newRadius = state.searchRadiusInMiles + 1.0;
 
+    // Verificar si el nuevo radio excede el límite máximo de 10 millas
+    if (newRadius > 10.0) {
+      // Mostrar un mensaje al usuario indicando que se ha alcanzado el límite
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(context.translate('office.maxRadius')),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return; // Salir del método sin expandir más el radio
+    }
+
     // Restablecer la oficina seleccionada
     _updateState(
       searchRadiusInMiles: newRadius,
