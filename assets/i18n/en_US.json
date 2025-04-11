@@ -4,7 +4,7 @@
   },
   "auth": {
     "login": "Login",
-    "username": "Username",
+    "username": "Email Address",
     "password": "Password",
     "forgotPassword": "Forgot Password?",
     "rememberMe": "Remember Me",
@@ -17,7 +17,7 @@
     "biometricLogin": "Login with biometrics",
     "welcomeBack": "Welcome back!",
     "signInToAccount": "Sign in to your account",
-    "pleaseEnterUsername": "Please enter your username",
+    "pleaseEnterUsername": "Please enter your email address",
     "pleaseEnterPassword": "Please enter your password",
     "noAccount": "Don't have an account? ",
     "authError": "Authentication error.",

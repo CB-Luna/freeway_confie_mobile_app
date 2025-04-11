@@ -16,6 +16,8 @@ class NotificationItemContent extends StatefulWidget {
   final Color iconColor;
   final String notificationId;
   final bool isBlue;
+  final double screenWidth;
+  final bool isSmallScreen;
 
   const NotificationItemContent({
     required this.policyNumber,
@@ -26,6 +28,8 @@ class NotificationItemContent extends StatefulWidget {
     required this.iconColor,
     required this.notificationId,
     required this.isBlue,
+    required this.screenWidth,
+    required this.isSmallScreen,
     super.key,
   });
 
@@ -51,9 +55,11 @@ class NotificationItemContentState extends State<NotificationItemContent> {
   void startDeleteAnimation() {
     // No iniciar si ya está en proceso de eliminación
     if (isDeleting) return;
-    
-    debugPrint('Iniciando animación de eliminación para notificación: ${widget.notificationId}');
-    
+
+    debugPrint(
+      'Iniciando animación de eliminación para notificación: ${widget.notificationId}',
+    );
+
     setState(() {
       isDeleting = true;
       progressValue = 0.0;
@@ -66,27 +72,28 @@ class NotificationItemContentState extends State<NotificationItemContent> {
         timer.cancel();
         return;
       }
-      
+
       _updateProgress();
     });
   }
-  
+
   // Actualiza el progreso de la animación
   void _updateProgress() {
     if (!mounted || startTime == null) return;
-    
+
     final elapsedTime = DateTime.now().difference(startTime!);
-    final newProgressValue = elapsedTime.inMilliseconds / animationDuration.inMilliseconds;
-    
+    final newProgressValue =
+        elapsedTime.inMilliseconds / animationDuration.inMilliseconds;
+
     if (newProgressValue >= 1.0) {
       // Animación completa
       _animationTimer?.cancel();
-      
+
       if (mounted) {
         setState(() {
           progressValue = 1.0;
         });
-        
+
         // Usar un timer para asegurar que la UI se actualice antes de eliminar
         Timer(const Duration(milliseconds: 50), () {
           if (mounted) {
@@ -108,9 +115,25 @@ class NotificationItemContentState extends State<NotificationItemContent> {
 
   @override
   Widget build(BuildContext context) {
+    // Calcular el ancho del contenedor basado en el tamaño de pantalla
+    final containerWidth = widget.isSmallScreen
+        ? widget.screenWidth * 0.8
+        : // 80% del ancho en pantallas pequeñas
+        min(
+            320.0,
+            widget.screenWidth * 0.75,
+          ); // Máximo 320px o 75% del ancho en pantallas normales
+
+    // Ajustar tamaños de fuente y espaciado según el tamaño de pantalla
+    final titleFontSize = widget.isSmallScreen ? 13.0 : 14.0;
+    final policyFontSize = widget.isSmallScreen ? 11.0 : 12.0;
+    final detailsFontSize = widget.isSmallScreen ? 10.0 : 10.0;
+    final iconSize = widget.isSmallScreen ? 36.0 : 40.0;
+    final padding = widget.isSmallScreen ? 6.0 : 8.0;
+
     return Container(
-      width: 320,
-      margin: const EdgeInsets.only(bottom: 8),
+      width: containerWidth,
+      margin: EdgeInsets.only(bottom: widget.isSmallScreen ? 6.0 : 8.0),
       child: Card(
         elevation: 2,
         shape: RoundedRectangleBorder(
@@ -120,14 +143,14 @@ class NotificationItemContentState extends State<NotificationItemContent> {
           children: [
             // Contenido principal
             Container(
-              padding: const EdgeInsets.all(8),
+              padding: EdgeInsets.all(padding),
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   // Círculo de color con icono (similar al estilo de ElegantNotification)
                   Container(
-                    width: 40,
-                    height: 40,
+                    width: iconSize,
+                    height: iconSize,
                     decoration: BoxDecoration(
                       color: widget.isBlue
                           ? AppTheme.getBackgroundBlueColor(context)
@@ -140,11 +163,11 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                             ? Icons.info_outline
                             : Icons.chat_outlined,
                         color: widget.iconColor,
-                        size: 20,
+                        size: widget.isSmallScreen ? 18.0 : 20.0,
                       ),
                     ),
                   ),
-                  const SizedBox(width: 12),
+                  SizedBox(width: widget.isSmallScreen ? 8.0 : 12.0),
                   // Contenido principal
                   Expanded(
                     child: Column(
@@ -157,26 +180,26 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 12,
-                            height: 16 / 12,
-                            letterSpacing: 0,
+                            fontSize: policyFontSize,
+                            height: 1.3,
                             color: widget.iconColor,
                           ),
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: widget.isSmallScreen ? 1.0 : 2.0),
                         // Título
                         Text(
                           widget.title,
                           style: TextStyle(
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w500,
-                            fontSize: 14,
-                            height: 16 / 14,
-                            letterSpacing: 0,
+                            fontSize: titleFontSize,
+                            height: 1.3,
                             color: widget.iconColor,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        const SizedBox(height: 2),
+                        SizedBox(height: widget.isSmallScreen ? 1.0 : 2.0),
                         // Detalles (ubicación, fecha, hora)
                         Text(
                           '${widget.location} | ${widget.date} | ${widget.time}',
@@ -184,11 +207,11 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                             fontFamily: 'Poppins',
                             fontWeight: FontWeight.w300,
                             fontStyle: FontStyle.italic,
-                            fontSize: 12,
-                            height: 16 / 12,
-                            letterSpacing: 0,
+                            fontSize: detailsFontSize,
                             color: AppTheme.getTextGreyColor(context),
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -197,7 +220,7 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                   GestureDetector(
                     onTap: isDeleting ? null : startDeleteAnimation,
                     child: Container(
-                      padding: const EdgeInsets.all(4),
+                      padding: EdgeInsets.all(widget.isSmallScreen ? 3.0 : 4.0),
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         border: Border.all(color: widget.iconColor, width: 1),
@@ -205,7 +228,7 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                       child: Icon(
                         Icons.close,
                         color: widget.iconColor,
-                        size: 16,
+                        size: widget.isSmallScreen ? 14.0 : 16.0,
                       ),
                     ),
                   ),
@@ -227,12 +250,17 @@ class NotificationItemContentState extends State<NotificationItemContent> {
                         ? AppTheme.getBlueColor(context)
                         : AppTheme.getOrangeColor(context),
                   ),
-                  minHeight: 2,
+                  minHeight: widget.isSmallScreen ? 1.5 : 2.0,
                 ),
               ),
           ],
         ),
       ),
     );
+  }
+
+  // Función auxiliar para obtener el mínimo de dos valores
+  double min(double a, double b) {
+    return a < b ? a : b;
   }
 }

@@ -4,7 +4,7 @@
   },
   "auth": {
     "login": "Iniciar Sesión",
-    "username": "Usuario",
+    "username": "Correo Electrónico",
     "password": "Contraseña",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "rememberMe": "Recordarme",
@@ -17,7 +17,7 @@
     "biometricLogin": "Iniciar sesión con biometría",
     "welcomeBack": "¡Bienvenido de nuevo!",
     "signInToAccount": "Inicia sesión en tu cuenta",
-    "pleaseEnterUsername": "Por favor, ingresa tu nombre de usuario",
+    "pleaseEnterUsername": "Por favor, ingresa tu correo electrónico",
     "pleaseEnterPassword": "Por favor, ingresa tu contraseña",
     "noAccount": "¿No tienes una cuenta? ",
     "authError": "Error de autenticación.",

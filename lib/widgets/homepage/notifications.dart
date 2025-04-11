@@ -19,6 +19,16 @@ class NotificationsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener las dimensiones de la pantalla para cálculos responsivos
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+    final isSmallScreen = screenWidth < 360;
+    
+    // Calcular alturas responsivas basadas en el tamaño de la pantalla
+    final double expandedHeight = screenHeight * 0.5; // 50% de la altura de la pantalla
+    final double multiNotificationHeight = isSmallScreen ? 180 : 210;
+    final double singleNotificationHeight = isSmallScreen ? 90 : 102;
+    
     return Consumer<NotificationProvider>(
       builder: (context, notificationProvider, child) {
         debugPrint(
@@ -30,7 +40,7 @@ class NotificationsWidget extends StatelessWidget {
 
         if (notificationProvider.isLoading) {
           debugPrint('NotificationsWidget - Mostrando estado de carga');
-          return _buildLoadingState(context);
+          return _buildLoadingState(context, screenWidth);
         }
 
         if (notificationProvider.errorMessage != null) {
@@ -49,10 +59,9 @@ class NotificationsWidget extends StatelessWidget {
                     style: TextStyle(
                       color: AppTheme.getSubtitleTextColor(context),
                       fontFamily: 'Open Sans',
-                      fontSize: 14,
+                      fontSize: isSmallScreen ? 13 : 14,
                       fontWeight: FontWeight.w600,
-                      height: 22 / 14,
-                      letterSpacing: 0,
+                      height: 1.5,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -61,7 +70,7 @@ class NotificationsWidget extends StatelessWidget {
               const SizedBox(height: 8),
               Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width,
+                  width: screenWidth - (isSmallScreen ? 32 : 48),
                   child: Card(
                     margin: EdgeInsets.zero,
                     shape: RoundedRectangleBorder(
@@ -69,7 +78,7 @@ class NotificationsWidget extends StatelessWidget {
                     ),
                     color: AppTheme.getCardColor(context),
                     child: Padding(
-                      padding: const EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(isSmallScreen ? 16.0 : 20.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -78,6 +87,7 @@ class NotificationsWidget extends StatelessWidget {
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AppTheme.getRedColor(context),
+                              fontSize: isSmallScreen ? 13 : 14,
                             ),
                           ),
                           const SizedBox(height: 4),
@@ -87,7 +97,7 @@ class NotificationsWidget extends StatelessWidget {
                               args: [notificationProvider.errorMessage ?? ''],
                             ),
                             style: TextStyle(
-                              fontSize: 12,
+                              fontSize: isSmallScreen ? 11 : 12,
                               color: AppTheme.getBodyTextColor(context),
                             ),
                           ),
@@ -129,10 +139,9 @@ class NotificationsWidget extends StatelessWidget {
                   style: TextStyle(
                     color: AppTheme.getSubtitleTextColor(context),
                     fontFamily: 'Open Sans',
-                    fontSize: 14,
+                    fontSize: isSmallScreen ? 13 : 14,
                     fontWeight: FontWeight.w600,
-                    height: 22 / 14,
-                    letterSpacing: 0,
+                    height: 1.5,
                   ),
                 ),
                 const SizedBox(height: 4),
@@ -140,14 +149,15 @@ class NotificationsWidget extends StatelessWidget {
             ),
             Center(
               child: SizedBox(
+                width: screenWidth - (isSmallScreen ? 32 : 48),
                 // Ajustar la altura según la cantidad de notificaciones y si está expandida
                 height: isExpanded
-                    ? 330 // Altura expandida
+                    ? expandedHeight // Altura expandida proporcional a la pantalla
                     : notifications.length > 1
-                        ? 210 // Altura para 2 o más notificaciones
+                        ? multiNotificationHeight // Altura para 2 o más notificaciones
                         : notifications.length == 1
-                            ? 102 // Altura para 1 notificación
-                            : 102, // Altura para estado vacío
+                            ? singleNotificationHeight // Altura para 1 notificación
+                            : singleNotificationHeight, // Altura para estado vacío
                 child: Card(
                   margin: EdgeInsets.zero,
                   shape: RoundedRectangleBorder(
@@ -155,7 +165,7 @@ class NotificationsWidget extends StatelessWidget {
                   ),
                   color: AppTheme.getCardColor(context),
                   child: notifications.isEmpty
-                      ? _buildEmptyState(context)
+                      ? _buildEmptyState(context, isSmallScreen)
                       : Column(
                           mainAxisAlignment: isExpanded
                               ? MainAxisAlignment.start
@@ -181,65 +191,75 @@ class NotificationsWidget extends StatelessWidget {
                                   ),
                                 ),
                               ),
-                            SingleChildScrollView(
-                              physics: isExpanded
-                                  ? const AlwaysScrollableScrollPhysics() // Scroll habilitado cuando está expandido
-                                  : const NeverScrollableScrollPhysics(), // Scroll deshabilitado cuando no está expandido
-                              child: Column(
-                                children: [
-                                  ...List.generate(
-                                    notifications.length,
-                                    (index) {
-                                      final notification = notifications[index];
-                                      // Alternar colores: par azul, impar naranja
-                                      final bool isBlue = !notification.title
-                                          .contains('Welcome');
-                                      final Color iconColor = isBlue
-                                          ? AppTheme.getBlueColor(context)
-                                          : AppTheme.getOrangeColor(context);
+                            Expanded(
+                              child: SingleChildScrollView(
+                                physics: isExpanded
+                                    ? const AlwaysScrollableScrollPhysics() // Scroll habilitado cuando está expandido
+                                    : const NeverScrollableScrollPhysics(), // Scroll deshabilitado cuando no está expandido
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isSmallScreen ? 8.0 : 16.0,
+                                    vertical: 8.0,
+                                  ),
+                                  child: Column(
+                                    children: [
+                                      ...List.generate(
+                                        notifications.length,
+                                        (index) {
+                                          final notification = notifications[index];
+                                          // Alternar colores: par azul, impar naranja
+                                          final bool isBlue = !notification.title
+                                              .contains('Welcome');
+                                          final Color iconColor = isBlue
+                                              ? AppTheme.getBlueColor(context)
+                                              : AppTheme.getOrangeColor(context);
 
-                                      return Column(
-                                        children: [
-                                          Center(
-                                            child: _buildNotificationItem(
-                                              notification.policyNumber,
-                                              notification.title,
-                                              notification.location,
-                                              notification.date,
-                                              notification.time,
-                                              iconColor,
-                                              notification.id,
-                                              isBlue,
-                                            ),
-                                          ),
-                                          if (index < notifications.length - 1)
-                                            Center(
-                                              child: Padding(
-                                                padding: const EdgeInsets.only(
-                                                  bottom: 5,
+                                          return Column(
+                                            children: [
+                                              Center(
+                                                child: _buildNotificationItem(
+                                                  notification.policyNumber,
+                                                  notification.title,
+                                                  notification.location,
+                                                  notification.date,
+                                                  notification.time,
+                                                  iconColor,
+                                                  notification.id,
+                                                  isBlue,
+                                                  screenWidth,
+                                                  isSmallScreen,
                                                 ),
-                                                child: Container(
-                                                  width: 320,
-                                                  decoration: BoxDecoration(
-                                                    border: Border(
-                                                      bottom: BorderSide(
-                                                        width: 0.5,
-                                                        color: AppTheme
-                                                            .getDetailsGreyColor(
-                                                          context,
+                                              ),
+                                              if (index < notifications.length - 1)
+                                                Center(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.only(
+                                                      bottom: 5,
+                                                    ),
+                                                    child: Container(
+                                                      width: isSmallScreen ? 280 : 320,
+                                                      decoration: BoxDecoration(
+                                                        border: Border(
+                                                          bottom: BorderSide(
+                                                            width: 0.5,
+                                                            color: AppTheme
+                                                                .getDetailsGreyColor(
+                                                              context,
+                                                            ),
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ),
-                                          const SizedBox(height: 2),
-                                        ],
-                                      );
-                                    },
+                                              const SizedBox(height: 2),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
                           ],
@@ -253,28 +273,29 @@ class NotificationsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context) {
+  Widget _buildLoadingState(BuildContext context, double screenWidth) {
+    final isSmallScreen = screenWidth < 360;
+    
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14.0),
+          padding: EdgeInsets.symmetric(horizontal: isSmallScreen ? 10.0 : 14.0),
           child: Text(
             context.translate('home.notifications.title'),
             style: TextStyle(
               color: AppTheme.getSubtitleTextColor(context),
               fontFamily: 'Open Sans',
-              fontSize: 14,
+              fontSize: isSmallScreen ? 13 : 14,
               fontWeight: FontWeight.w600,
-              height: 22 / 14,
-              letterSpacing: 0,
+              height: 1.5,
             ),
           ),
         ),
         const SizedBox(height: 4),
         Container(
-          margin: const EdgeInsets.symmetric(horizontal: 12),
-          height: 200,
+          margin: EdgeInsets.symmetric(horizontal: isSmallScreen ? 8.0 : 12.0),
+          height: isSmallScreen ? 180 : 200,
           decoration: BoxDecoration(
             color: AppTheme.getCardColor(context),
             borderRadius: BorderRadius.circular(15),
@@ -296,15 +317,15 @@ class NotificationsWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyState(BuildContext context) {
+  Widget _buildEmptyState(BuildContext context, bool isSmallScreen) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(isSmallScreen ? 12.0 : 16.0),
         child: Text(
           context.translate('home.notifications.empty'),
-          style: const TextStyle(
+          style: TextStyle(
             color: AppTheme.grey,
-            fontSize: 14,
+            fontSize: isSmallScreen ? 13 : 14,
           ),
         ),
       ),
@@ -320,8 +341,10 @@ class NotificationsWidget extends StatelessWidget {
     Color iconColor,
     String notificationId,
     bool isBlue,
+    double screenWidth,
+    bool isSmallScreen,
   ) {
-    // Usar el widget NotificationItemContent desde el archivo separado
+    // Pasar el ancho de la pantalla al widget NotificationItemContent
     return NotificationItemContent(
       key: ValueKey('notification_$notificationId'),
       policyNumber: policyNumber,
@@ -332,6 +355,8 @@ class NotificationsWidget extends StatelessWidget {
       iconColor: iconColor,
       notificationId: notificationId,
       isBlue: isBlue,
+      screenWidth: screenWidth,
+      isSmallScreen: isSmallScreen,
     );
   }
 }
