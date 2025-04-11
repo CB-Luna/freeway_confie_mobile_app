@@ -296,6 +296,18 @@ class AppTheme {
       ),
       filled: true,
       fillColor: AppTheme.getCardColor(context),
+      errorMaxLines: 3, // Permitir hasta 3 líneas para mensajes de error
+      errorStyle: TextStyle(
+        color: Colors.red[700],
+        fontSize: 12.0,
+        height: 1.2, // Espaciado de línea más compacto
+      ),
+      helperMaxLines: 3, // Permitir hasta 3 líneas para mensajes de ayuda
+      helperStyle: TextStyle(
+        color: getTextGreyColor(context),
+        fontSize: 11.0,
+        height: 1.2, // Espaciado de línea más compacto
+      ),
     );
   }
 

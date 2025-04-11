@@ -39,6 +39,7 @@
     "passwordUppercase": "La contraseña debe contener al menos una letra mayúscula",
     "passwordNumber": "La contraseña debe contener al menos un número",
     "passwordSpecial": "La contraseña debe contener al menos un carácter especial",
+    "passwordRequirements": "La contraseña debe tener al menos 6 caracteres, una letra mayúscula, un número y un carácter especial",
     "pleaseEnterPhone": "Por favor, ingresa tu número de teléfono",
     "pleaseEnterCompletePhone": "Por favor, ingresa un número de teléfono completo",
     "phoneNumberFormat": "El número de teléfono debe incluir el código de país y tener entre 10 y 15 dígitos",

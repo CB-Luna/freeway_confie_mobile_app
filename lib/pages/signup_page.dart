@@ -240,6 +240,10 @@ class SignUpPageState extends State<SignUpPage> {
                           });
                         },
                       ),
+                      // Añadir texto de ayuda para explicar los requisitos de la contraseña
+                      helperText:
+                          context.translate('auth.passwordRequirements'),
+                      helperMaxLines: 3,
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
@@ -263,7 +267,9 @@ class SignUpPageState extends State<SignUpPage> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(
+                    height: 16,
+                  ),
                   TextFormField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
