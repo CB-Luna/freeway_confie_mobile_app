@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+import 'package:rive_animated_icon/rive_animated_icon.dart';
 
 import '../../providers/auth_provider.dart';
 import '../../providers/notification_provider.dart';
 import '../../providers/theme_provider.dart';
 
-class HeaderSection extends StatelessWidget {
+class HeaderSection extends StatefulWidget {
   final VoidCallback? onNotificationTap;
 
   const HeaderSection({
@@ -14,6 +15,11 @@ class HeaderSection extends StatelessWidget {
     this.onNotificationTap,
   });
 
+  @override
+  State<HeaderSection> createState() => _HeaderSectionState();
+}
+
+class _HeaderSectionState extends State<HeaderSection> {
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -69,18 +75,15 @@ class HeaderSection extends StatelessWidget {
               Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_outlined,
-                      size: 28,
-                    ),
-                    onPressed: () {
+                  // Icono de notificación con animación Rive
+                  GestureDetector(
+                    onTap: () {
                       debugPrint(
                         'HeaderSection - Clic en icono de notificaciones',
                       );
                       // Llamar a la función de navegación si está disponible
-                      if (onNotificationTap != null) {
-                        onNotificationTap!();
+                      if (widget.onNotificationTap != null) {
+                        widget.onNotificationTap!();
                       } else {
                         // Si no hay función de navegación, mostrar un mensaje
                         ScaffoldMessenger.of(context).showSnackBar(
@@ -91,6 +94,26 @@ class HeaderSection extends StatelessWidget {
                         );
                       }
                     },
+                    child: SizedBox(
+                      width: 40,
+                      height: 40,
+                      child: notificationCount > 0
+                          // Usar el icono animado de Rive cuando hay notificaciones
+                          ? RiveAnimatedIcon(
+                              riveIcon: RiveIcon.bell,
+                              loopAnimation: true,
+                              width: 20,
+                              height: 20,
+                              strokeWidth: 4,
+                              color: AppTheme.getPrimaryColor(context),
+                            )
+                          // Usar un icono estático cuando no hay notificaciones
+                          : Icon(
+                              Icons.notifications_outlined,
+                              size: 28,
+                              color: AppTheme.getPrimaryColor(context),
+                            ),
+                    ),
                   ),
                   if (notificationCount > 0)
                     Positioned(
@@ -152,8 +175,8 @@ class HeaderSection extends StatelessWidget {
                         ),
                 ),
               ),
-              const SizedBox(width: 16),
               // Theme toggle
+              const SizedBox(width: 16),
               Container(
                 decoration: BoxDecoration(
                   color: AppTheme.getBrightnessColor(context),
