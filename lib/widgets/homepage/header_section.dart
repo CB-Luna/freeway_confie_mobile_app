@@ -76,49 +76,58 @@ class _HeaderSectionState extends State<HeaderSection> {
                 clipBehavior: Clip.none,
                 children: [
                   // Icono de notificación con animación Rive
-                  GestureDetector(
-                    onTap: () {
-                      debugPrint(
-                        'HeaderSection - Clic en icono de notificaciones',
-                      );
-                      // Llamar a la función de navegación si está disponible
-                      if (widget.onNotificationTap != null) {
-                        widget.onNotificationTap!();
-                      } else {
-                        // Si no hay función de navegación, mostrar un mensaje
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text('$notificationCount notificaciones'),
-                            duration: const Duration(seconds: 2),
-                          ),
+                  // Usamos Material para asegurar el efecto de splash y mejor feedback táctil
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(20),
+                      onTap: () {
+                        debugPrint(
+                          'HeaderSection - Clic en icono de notificaciones',
                         );
-                      }
-                    },
-                    child: SizedBox(
-                      width: 40,
-                      height: 40,
-                      child: notificationCount > 0
-                          // Usar el icono animado de Rive cuando hay notificaciones
-                          ? RiveAnimatedIcon(
-                              riveIcon: RiveIcon.bell,
-                              loopAnimation: true,
-                              width: 20,
-                              height: 20,
-                              strokeWidth: 4,
-                              color: AppTheme.getPrimaryColor(context),
-                            )
-                          // Usar un icono estático cuando no hay notificaciones
-                          : Icon(
-                              Icons.notifications_outlined,
-                              size: 28,
-                              color: AppTheme.getPrimaryColor(context),
+                        // Llamar a la función de navegación si está disponible
+                        if (widget.onNotificationTap != null) {
+                          widget.onNotificationTap!();
+                        } else {
+                          // Si no hay función de navegación, mostrar un mensaje
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                                  Text('$notificationCount notificaciones'),
+                              duration: const Duration(seconds: 2),
                             ),
+                          );
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: notificationCount > 0
+                              // Usar el icono animado de Rive cuando hay notificaciones
+                              ? RiveAnimatedIcon(
+                                  riveIcon: RiveIcon.bell,
+                                  loopAnimation: true,
+                                  width: 24,
+                                  height: 24,
+                                  strokeWidth: 4,
+                                  color: AppTheme.getPrimaryColor(context),
+                                )
+                              // Usar un icono estático cuando no hay notificaciones
+                              : Icon(
+                                  Icons.notifications_outlined,
+                                  size: 24,
+                                  color: AppTheme.getPrimaryColor(context),
+                                ),
+                        ),
+                      ),
                     ),
                   ),
                   if (notificationCount > 0)
                     Positioned(
-                      right: 2,
-                      top: 2,
+                      right: 0,
+                      top: 0,
                       child: Container(
                         padding: const EdgeInsets.all(4),
                         decoration: BoxDecoration(
