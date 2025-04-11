@@ -69,7 +69,9 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
             height: 170,
             width: double.infinity,
             child: Center(
-              child: LoadingView(message: context.translate('home.loadingPolicies')),
+              child: LoadingView(
+                message: context.translate('home.loadingPolicies'),
+              ),
             ),
           );
         }
@@ -168,50 +170,63 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
           width: double.infinity,
           child: cards.isEmpty
               ? Center(child: Text(context.translate('home.noCardsAvailable')))
-              : CardSwiper(
-                  controller: controller,
-                  cardsCount: cards.length,
-                  onSwipe: (previousIndex, currentIndex, direction) {
-                    setState(() {
-                      this.currentIndex = (currentIndex ?? 0) % cards.length;
-                    });
-                    return true;
-                  },
-                  cardBuilder:
-                      (context, index, percentThresholdX, percentThresholdY) =>
+              : cards.length == 1
+                  // Si solo hay una tarjeta, mostrarla directamente sin efecto de swipe
+                  ? cards[0]
+                  // Si hay múltiples tarjetas, usar el CardSwiper
+                  : CardSwiper(
+                      controller: controller,
+                      cardsCount: cards.length,
+                      onSwipe: (previousIndex, currentIndex, direction) {
+                        setState(() {
+                          this.currentIndex =
+                              (currentIndex ?? 0) % cards.length;
+                        });
+                        return true;
+                      },
+                      cardBuilder: (
+                        context,
+                        index,
+                        percentThresholdX,
+                        percentThresholdY,
+                      ) =>
                           SizedBox(
-                    width: double.infinity,
-                    child: cards[index % cards.length],
-                  ),
-                  allowedSwipeDirection:
-                      const AllowedSwipeDirection.symmetric(horizontal: true),
-                  isLoop: true,
-                  padding: const EdgeInsets.all(0),
-                  scale: 0.0,
-                  backCardOffset: const Offset(0, 0),
-                  numberOfCardsDisplayed: 1,
-                  duration: const Duration(milliseconds: 300),
-                ),
+                        width: double.infinity,
+                        child: cards[index % cards.length],
+                      ),
+                      allowedSwipeDirection:
+                          const AllowedSwipeDirection.symmetric(
+                        horizontal: true,
+                      ),
+                      isLoop: true,
+                      padding: const EdgeInsets.all(0),
+                      scale: 0.0,
+                      backCardOffset: const Offset(0, 0),
+                      numberOfCardsDisplayed: 1,
+                      duration: const Duration(milliseconds: 300),
+                    ),
         ),
-        // Indicadores de página
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(
-            cards.isNotEmpty ? cards.length : 0,
-            (index) => Container(
-              width: 8,
-              height: 8,
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == index
-                    ? AppTheme.getIndicatorCurrentIndexCardColor(context)
-                    : AppTheme.getIndicatorIndexCardColor(context),
+        // Indicadores de página - solo mostrarlos si hay más de una tarjeta
+        if (cards.length > 1) ...[
+          const SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              cards.length,
+              (index) => Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: currentIndex == index
+                      ? AppTheme.getIndicatorCurrentIndexCardColor(context)
+                      : AppTheme.getIndicatorIndexCardColor(context),
+                ),
               ),
             ),
           ),
-        ),
+        ],
       ],
     );
   }
