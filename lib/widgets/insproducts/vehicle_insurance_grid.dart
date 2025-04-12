@@ -7,7 +7,7 @@ import '../../data/services/location_service.dart';
 import '../../locatordevice/locator_device_module.dart';
 import '../../locatordevice/presentation/widgets/loading_view.dart';
 import '../../pages/home_page.dart';
-import '../../pages/roadsideautoclub/webview_page.dart';
+import '../../pages/webview_page.dart';
 import '../../utils/menu/circle_nav_bar.dart';
 import '../../widgets/common/custom_dialog.dart';
 import 'zip_code_dialog.dart';

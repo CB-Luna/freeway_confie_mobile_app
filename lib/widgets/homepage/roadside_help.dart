@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
-import '../../pages/roadsideautoclub/webview_page.dart';
+import '../../pages/webview_page.dart';
 
 class RoadsideHelp extends StatefulWidget {
   const RoadsideHelp({super.key});
