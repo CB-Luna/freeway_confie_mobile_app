@@ -147,12 +147,12 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
-                
+
                 // Opciones de búsqueda
                 Container(
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: AppTheme.getDetailsGreyColor(context).withValues(alpha: 128),
+                      color: AppTheme.getDetailsGreyColor(context),
                     ),
                     borderRadius: BorderRadius.circular(8),
                   ),
@@ -183,7 +183,7 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                       Divider(
                         height: 1,
                         thickness: 1,
-                        color: AppTheme.getDetailsGreyColor(context).withValues(alpha: 51),
+                        color: AppTheme.getDetailsGreyColor(context),
                       ),
                       // Opción de búsqueda por número de teléfono
                       RadioListTile<SearchType>(
@@ -210,9 +210,9 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                     ],
                   ),
                 ),
-                
+
                 const SizedBox(height: 20),
-                
+
                 // Campo de entrada de ZipCode
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -224,17 +224,20 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                     keyboardType: TextInputType.number,
                     maxLength: 5,
                     decoration: InputDecoration(
-                      labelText: context.translate('payment.search.zipCodeHint'),
+                      labelText:
+                          context.translate('payment.search.zipCodeHint'),
                       border: InputBorder.none,
                       counterText: '',
                       focusedBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                         borderSide: BorderSide(
                           color: AppTheme.getPrimaryColor(context),
                         ),
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderRadius: const BorderRadius.all(Radius.circular(8)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(8)),
                         borderSide: BorderSide(
                           color: AppTheme.getDetailsGreyColor(context),
                         ),
@@ -246,13 +249,16 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(height: isKeyboardVisible ? 40 : 30),
-                
+
                 // Botón de continuar
                 ElevatedButton(
                   onPressed: _isZipCodeValid
-                      ? () => widget.onContinue(_zipCodeController.text, _selectedSearchType)
+                      ? () => widget.onContinue(
+                            _zipCodeController.text,
+                            _selectedSearchType,
+                          )
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.getPrimaryColor(context),
@@ -273,7 +279,7 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                     ),
                   ),
                 ),
-                
+
                 SizedBox(height: isKeyboardVisible ? 20 : 10),
               ],
             ),
