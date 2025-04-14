@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/widgets/common/custom_dialog.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import '../../pages/webview_page.dart';
@@ -25,16 +26,26 @@ class _RoadsideHelpState extends State<RoadsideHelp>
       ),
       color: AppTheme.getCardColor(context),
       child: InkWell(
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const WebViewPage(
-                url: 'https://buy.freeway.com/product/auto-club/step-1',
-                title: 'Freeway Auto Club',
-              ),
-            ),
+        onTap: () async {
+          final result = await CustomDialog.show(
+            context: context,
+            title: context.translate('home.roadsideHelp.webDialogTitle'),
+            message: context.translate('home.roadsideHelp.webDialogMessage'),
+            positiveButtonText:
+                context.translate('home.roadsideHelp.visitWebsite'),
+            negativeButtonText: context.translate('home.roadsideHelp.cancel'),
           );
+          if (result == true && context.mounted) {
+            await Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const WebViewPage(
+                  url: 'https://buy.freeway.com/product/auto-club/step-1',
+                  title: 'Freeway Auto Club',
+                ),
+              ),
+            );
+          }
         },
         borderRadius: BorderRadius.circular(15),
         child: Container(
