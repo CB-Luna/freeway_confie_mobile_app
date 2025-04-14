@@ -76,9 +76,10 @@ class _WebViewPageState extends State<WebViewPage> {
         children: [
           WebViewWidget(controller: _controller),
           if (_isLoading)
-            const Center(
+            Center(
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF0047CC)),
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    AppTheme.getPrimaryColor(context)),
               ),
             ),
         ],
