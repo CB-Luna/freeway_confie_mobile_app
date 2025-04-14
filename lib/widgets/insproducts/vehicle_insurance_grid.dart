@@ -221,8 +221,8 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     final overlay = LoadingView.showOverlay(
       context,
       message: context.translate('vehicleInsurance.location.gettingLocation'),
-      indicatorColor: const Color(0xFF0046B9),
-      textColor: Colors.white,
+      indicatorColor: AppTheme.getPrimaryColor(context),
+      textColor: AppTheme.getTitleTextColor(context),
     );
 
     try {
@@ -335,7 +335,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             content: Text(
               context.translate('vehicleInsurance.location.invalidZipCode'),
             ),
-            backgroundColor: Colors.red,
+            backgroundColor: AppTheme.getRedColor(context),
           ),
         );
       }
