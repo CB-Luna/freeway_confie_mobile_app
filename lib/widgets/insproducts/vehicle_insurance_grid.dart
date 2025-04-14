@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
@@ -354,19 +355,34 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     String placeName,
     String stateAbbreviation,
   ) async {
-    final result = await CustomDialog.show(
-      context: context,
-      title: context.translate('vehicleInsurance.location.webDialogTitle'),
-      message: context
-          .translate('vehicleInsurance.location.webDialogMessage')
-          .replaceAll('{0}', placeName)
-          .replaceAll('{1}', stateAbbreviation),
-      positiveButtonText:
-          context.translate('vehicleInsurance.location.visitWebsite'),
-      negativeButtonText: context.translate('vehicleInsurance.location.cancel'),
-    );
+    // Verificar si ya se ha mostrado el diálogo anteriormente
+    final webDialogService = WebDialogService();
+    final hasBeenShown = await webDialogService.hasWebDialogBeenShown();
 
-    if (result == true && context.mounted) {
+    bool shouldProceed = true;
+
+    // Solo mostrar el diálogo si no se ha mostrado antes
+    if (!hasBeenShown && context.mounted) {
+      final result = await CustomDialog.show(
+        context: context,
+        title: context.translate('vehicleInsurance.location.webDialogTitle'),
+        message: context
+            .translate('vehicleInsurance.location.webDialogMessage')
+            .replaceAll('{0}', placeName)
+            .replaceAll('{1}', stateAbbreviation),
+        positiveButtonText:
+            context.translate('vehicleInsurance.location.visitWebsite'),
+        negativeButtonText:
+            context.translate('vehicleInsurance.location.cancel'),
+      );
+
+      // Marcar el diálogo como mostrado
+      await webDialogService.setWebDialogShown();
+
+      shouldProceed = result == true;
+    }
+
+    if (shouldProceed && context.mounted) {
       final urlString =
           'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya';
 

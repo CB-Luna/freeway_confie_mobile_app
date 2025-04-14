@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/common/custom_dialog.dart';
@@ -353,23 +354,40 @@ class _PolicyCardState extends State<PolicyCard>
                                     );
 
                                     if (result != null && context.mounted) {
-                                      final dialogResult =
-                                          await CustomDialog.show(
-                                        context: context,
-                                        title: context.translate(
-                                          'payment.search.webDialogTitle',
-                                        ),
-                                        message: context.translate(
-                                          'payment.search.webDialogMessage',
-                                        ),
-                                        positiveButtonText: context.translate(
-                                          'payment.search.visitWebsite',
-                                        ),
-                                        negativeButtonText: context
-                                            .translate('payment.search.cancel'),
-                                      );
-                                      if (dialogResult == true &&
-                                          context.mounted) {
+                                      // Verificar si ya se ha mostrado el diálogo anteriormente
+                                      final webDialogService =
+                                          WebDialogService();
+                                      final hasBeenShown =
+                                          await webDialogService
+                                              .hasWebDialogBeenShown();
+
+                                      bool shouldProceed = true;
+
+                                      // Solo mostrar el diálogo si no se ha mostrado antes
+                                      if (!hasBeenShown && context.mounted) {
+                                        final dialogResult =
+                                            await CustomDialog.show(
+                                          context: context,
+                                          title: context.translate(
+                                            'payment.search.webDialogTitle',
+                                          ),
+                                          message: context.translate(
+                                            'payment.search.webDialogMessage',
+                                          ),
+                                          positiveButtonText: context.translate(
+                                            'payment.search.visitWebsite',
+                                          ),
+                                          negativeButtonText: context.translate(
+                                              'payment.search.cancel'),
+                                        );
+
+                                        // Marcar el diálogo como mostrado
+                                        await webDialogService
+                                            .setWebDialogShown();
+
+                                        shouldProceed = dialogResult == true;
+                                      }
+                                      if (shouldProceed && context.mounted) {
                                         final zipCode = result['zipCode'];
                                         final searchType =
                                             result['searchType'] as SearchType;

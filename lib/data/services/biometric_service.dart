@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/services.dart';
@@ -27,7 +28,7 @@ class BiometricService {
 
       return canAuthenticate;
     } on PlatformException catch (e) {
-      print('Error al verificar biometría: $e');
+      log('Error al verificar biometría: $e');
       return false;
     }
   }
@@ -37,7 +38,7 @@ class BiometricService {
     try {
       return await _localAuth.getAvailableBiometrics();
     } on PlatformException catch (e) {
-      print('Error al obtener biometrías disponibles: $e');
+      log('Error al obtener biometrías disponibles: $e');
       return [];
     }
   }
@@ -62,7 +63,7 @@ class BiometricService {
       if (Platform.isIOS) {
         localizedReason = 'Authenticate to access your account';
       } else {
-        localizedReason = 'Scan your fingerprint to access your account';
+        localizedReason = 'Scan your fingerlog to access your account';
       }
 
       return await _localAuth.authenticate(
@@ -73,7 +74,7 @@ class BiometricService {
         ),
       );
     } on PlatformException catch (e) {
-      print('Error de autenticación: $e');
+      log('Error de autenticación: $e');
       if (e.code == auth_error.notAvailable) {
         // Biometría no disponible
         return false;
@@ -95,7 +96,7 @@ class BiometricService {
       final prefs = await SharedPreferences.getInstance();
       return await prefs.setBool(_biometricEnabledKey, enabled);
     } catch (e) {
-      print('Error al guardar preferencia biométrica: $e');
+      log('Error al guardar preferencia biométrica: $e');
       return false;
     }
   }
@@ -106,7 +107,7 @@ class BiometricService {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getBool(_biometricEnabledKey) ?? false;
     } catch (e) {
-      print('Error al obtener preferencia biométrica: $e');
+      log('Error al obtener preferencia biométrica: $e');
       return false;
     }
   }

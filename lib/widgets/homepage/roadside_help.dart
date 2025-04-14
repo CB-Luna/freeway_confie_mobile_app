@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/common/custom_dialog.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -27,15 +28,30 @@ class _RoadsideHelpState extends State<RoadsideHelp>
       color: AppTheme.getCardColor(context),
       child: InkWell(
         onTap: () async {
-          final result = await CustomDialog.show(
-            context: context,
-            title: context.translate('home.roadsideHelp.webDialogTitle'),
-            message: context.translate('home.roadsideHelp.webDialogMessage'),
-            positiveButtonText:
-                context.translate('home.roadsideHelp.visitWebsite'),
-            negativeButtonText: context.translate('home.roadsideHelp.cancel'),
-          );
-          if (result == true && context.mounted) {
+          // Verificar si ya se ha mostrado el diálogo anteriormente
+          final webDialogService = WebDialogService();
+          final hasBeenShown = await webDialogService.hasWebDialogBeenShown();
+
+          bool shouldProceed = true;
+
+          // Solo mostrar el diálogo si no se ha mostrado antes
+          if (!hasBeenShown && context.mounted) {
+            final result = await CustomDialog.show(
+              context: context,
+              title: context.translate('home.roadsideHelp.webDialogTitle'),
+              message: context.translate('home.roadsideHelp.webDialogMessage'),
+              positiveButtonText:
+                  context.translate('home.roadsideHelp.visitWebsite'),
+              negativeButtonText: context.translate('home.roadsideHelp.cancel'),
+            );
+
+            // Marcar el diálogo como mostrado
+            await webDialogService.setWebDialogShown();
+
+            shouldProceed = result == true;
+          }
+
+          if (shouldProceed && context.mounted) {
             await Navigator.push(
               context,
               MaterialPageRoute(
