@@ -27,6 +27,13 @@ class OfficeList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el ancho de la pantalla para cálculos responsive
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    
+    // Ajustar el padding según el tamaño de la pantalla
+    final horizontalPadding = isSmallScreen ? 12.0 : 16.0;
+    
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getCardColor(context),
@@ -87,7 +94,7 @@ class OfficeList extends StatelessWidget {
               child: ListView.builder(
                 controller: scrollController,
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: EdgeInsets.symmetric(horizontal: horizontalPadding),
                 // Incrementamos el itemCount en 2: uno para el título y otro para el espacio/botón al final
                 itemCount: offices.length + 2,
                 itemBuilder: (context, index) {
@@ -101,7 +108,7 @@ class OfficeList extends StatelessWidget {
                           child: Text(
                             context.translate('office.nearestOffice'),
                             style: TextStyle(
-                              fontSize: 18,
+                              fontSize: isSmallScreen ? 16 : 18,
                               fontWeight: FontWeight.bold,
                               color: AppTheme.getTextGreyColor(context),
                             ),
@@ -119,9 +126,9 @@ class OfficeList extends StatelessWidget {
                   if (adjustedIndex == offices.length) {
                     if (offices.length == 1) {
                       return Padding(
-                        padding: const EdgeInsets.only(
-                          top: 16.0,
-                          bottom: 24.0,
+                        padding: EdgeInsets.only(
+                          top: isSmallScreen ? 12.0 : 16.0,
+                          bottom: isSmallScreen ? 16.0 : 24.0,
                         ),
                         child: Center(
                           child: TextButton.icon(
@@ -140,9 +147,9 @@ class OfficeList extends StatelessWidget {
                               ),
                             ),
                             style: TextButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16.0,
-                                vertical: 8.0,
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isSmallScreen ? 12.0 : 16.0,
+                                vertical: isSmallScreen ? 6.0 : 8.0,
                               ),
                             ),
                           ),
@@ -192,21 +199,35 @@ class OfficeListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el ancho de la pantalla para cálculos responsive
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    
+    // Ajustar tamaños de fuente y espaciado según el tamaño de la pantalla
+    final smallFontSize = isSmallScreen ? 10.0 : 12.0;
+    final mediumFontSize = isSmallScreen ? 12.0 : 14.0;
+    final buttonPaddingH = isSmallScreen ? 10.0 : 16.0;
+    final buttonPaddingV = isSmallScreen ? 8.0 : 12.0;
+    final buttonSpacing = isSmallScreen ? 8.0 : 12.0;
+    
     return ListTile(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            '${context.translate('office.openNow')} • ${context.translateWithArgs(
-              'office.closesAt',
-              args: [
-                '7pm',
-              ],
-            )}',
-            style: TextStyle(
-              color: AppTheme.getGreenColor(context),
-              fontWeight: FontWeight.bold,
-              fontSize: 12,
+          Flexible(
+            child: Text(
+              '${context.translate('office.openNow')} • ${context.translateWithArgs(
+                'office.closesAt',
+                args: [
+                  '7pm',
+                ],
+              )}',
+              style: TextStyle(
+                color: AppTheme.getGreenColor(context),
+                fontWeight: FontWeight.bold,
+                fontSize: smallFontSize,
+              ),
+              overflow: TextOverflow.ellipsis,
             ),
           ),
           Text(
@@ -214,7 +235,7 @@ class OfficeListItem extends StatelessWidget {
             style: TextStyle(
               color: AppTheme.getBlueColor(context),
               fontWeight: FontWeight.bold,
-              fontSize: 12,
+              fontSize: smallFontSize,
             ),
           ),
         ],
@@ -225,7 +246,7 @@ class OfficeListItem extends StatelessWidget {
           Text(
             office.streetAddress,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: mediumFontSize,
               fontWeight: FontWeight.bold,
               color: AppTheme.getTitleTextColor(context),
             ),
@@ -236,7 +257,7 @@ class OfficeListItem extends StatelessWidget {
               Text(
                 office.name,
                 style: TextStyle(
-                  fontSize: 12,
+                  fontSize: smallFontSize,
                   fontWeight: FontWeight.normal,
                   color: AppTheme.getTextGreyColor(context),
                 ),
@@ -246,12 +267,12 @@ class OfficeListItem extends StatelessWidget {
                   Icon(
                     Icons.star,
                     color: AppTheme.getYellowColor(context),
-                    size: 18,
+                    size: isSmallScreen ? 14 : 18,
                   ),
-                  const Text(
+                  Text(
                     '4.5',
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: mediumFontSize,
                       fontWeight: FontWeight.normal,
                     ),
                   ),
@@ -269,9 +290,10 @@ class OfficeListItem extends StatelessWidget {
                     // Acción para llamar a la oficina
                     launchUrl(Uri.parse('tel:${office.phone}'));
                   },
-                  icon: const Icon(
+                  icon: Icon(
                     Icons.phone_in_talk_outlined,
                     color: AppTheme.white,
+                    size: isSmallScreen ? 18 : 24,
                   ),
                   label: Text(context.translate('office.callOffice')),
                   style: ElevatedButton.styleFrom(
@@ -281,13 +303,13 @@ class OfficeListItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: buttonPaddingH,
+                      vertical: buttonPaddingV,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: buttonSpacing),
 
                 // Botón para obtener direcciones
                 OutlinedButton.icon(
@@ -307,13 +329,13 @@ class OfficeListItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: buttonPaddingH,
+                      vertical: buttonPaddingV,
                     ),
                   ),
                 ),
-                const SizedBox(width: 12),
+                SizedBox(width: buttonSpacing),
 
                 // Botón para abrir en Maps (GoogleMaps o Apple Maps)
                 OutlinedButton.icon(
@@ -369,9 +391,9 @@ class OfficeListItem extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: buttonPaddingH,
+                      vertical: buttonPaddingV,
                     ),
                   ),
                 ),

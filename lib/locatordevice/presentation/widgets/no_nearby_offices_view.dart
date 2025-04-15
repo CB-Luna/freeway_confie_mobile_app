@@ -14,62 +14,38 @@ class NoNearbyOfficesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el ancho de la pantalla para cálculos responsive
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 360;
+    
+    // Ajustar tamaños de fuente y espaciado según el tamaño de la pantalla
+    final textFontSize = isSmallScreen ? 12.0 : 14.0;
+    final buttonPaddingH = isSmallScreen ? 16.0 : 20.0;
+    final buttonPaddingV = isSmallScreen ? 10.0 : 12.0;
+    final buttonSpacing = isSmallScreen ? 12.0 : 16.0;
+    final iconSize = isSmallScreen ? 18.0 : 24.0;
+    final helpButtonPaddingH = isSmallScreen ? 30.0 : 40.0;
+    final helpButtonPaddingV = isSmallScreen ? 12.0 : 16.0;
+    
     // Eliminamos el SingleChildScrollView anidado ya que ya tenemos uno en OfficeList
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.min,
       children: [
-        // // Mensaje de error con ícono
-        // Container(
-        //   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        //   padding: const EdgeInsets.all(12),
-        //   decoration: BoxDecoration(
-        //     color: Colors.white,
-        //     borderRadius: BorderRadius.circular(10),
-        //     boxShadow: [
-        //       BoxShadow(
-        //         color: Colors.black.withOpacity(0.1),
-        //         blurRadius: 5,
-        //         spreadRadius: 1,
-        //       ),
-        //     ],
-        //   ),
-        //   child: Row(
-        //     children: [
-        //       const Icon(
-        //         Icons.warning_amber_rounded,
-        //         color: Colors.orange,
-        //         size: 24,
-        //       ),
-        //       const SizedBox(width: 12),
-        //       Expanded(
-        //         child: Text(
-        //           "We're sorry, we were unable to find a location near you",
-        //           style: TextStyle(
-        //             color: Colors.orange[700],
-        //             fontWeight: FontWeight.w500,
-        //           ),
-        //         ),
-        //       ),
-        //     ],
-        //   ),
-        // ),
-        // const SizedBox(height: 12),
-
         // Mensaje informativo
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: buttonPaddingH),
           child: Text(
             context.translate('office.noNearbyLocations'),
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: textFontSize,
               fontWeight: FontWeight.w500,
               color: AppTheme.getTextGreyColor(context),
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: buttonSpacing),
 
         // Botón para expandir el radio de búsqueda
         OutlinedButton.icon(
@@ -77,6 +53,7 @@ class NoNearbyOfficesView extends StatelessWidget {
           icon: Icon(
             Icons.search,
             color: AppTheme.getPrimaryColor(context),
+            size: iconSize,
           ),
           label: Text(
             context.translate('office.expandSearchRadius'),
@@ -89,13 +66,13 @@ class NoNearbyOfficesView extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 12,
+            padding: EdgeInsets.symmetric(
+              horizontal: buttonPaddingH,
+              vertical: buttonPaddingV,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: buttonSpacing),
 
         // Botón para ver todas las oficinas
         OutlinedButton.icon(
@@ -103,6 +80,7 @@ class NoNearbyOfficesView extends StatelessWidget {
           icon: Icon(
             Icons.location_on_outlined,
             color: AppTheme.getPrimaryColor(context),
+            size: iconSize,
           ),
           label: Text(
             context.translate('office.viewAllOffices'),
@@ -115,22 +93,23 @@ class NoNearbyOfficesView extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 12,
+            padding: EdgeInsets.symmetric(
+              horizontal: buttonPaddingH,
+              vertical: buttonPaddingV,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: buttonSpacing),
 
         // Botón de ayuda
         ElevatedButton.icon(
           onPressed: () {
             // Acción para el botón de ayuda
           },
-          icon: const Icon(
+          icon: Icon(
             Icons.phone_in_talk_outlined,
             color: AppTheme.white,
+            size: iconSize,
           ),
           label: Text(context.translate('office.help')),
           style: ElevatedButton.styleFrom(
@@ -139,29 +118,29 @@ class NoNearbyOfficesView extends StatelessWidget {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
-            padding: const EdgeInsets.symmetric(
-              horizontal: 40,
-              vertical: 16,
+            padding: EdgeInsets.symmetric(
+              horizontal: helpButtonPaddingH,
+              vertical: helpButtonPaddingV,
             ),
           ),
         ),
-        const SizedBox(height: 16),
+        SizedBox(height: buttonSpacing),
 
         // Mensaje de cobertura nacional
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(horizontal: buttonPaddingH),
           child: Text(
             context.translate('office.nationalCoverage'),
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 14,
+              fontSize: textFontSize,
               fontWeight: FontWeight.w500,
               color: AppTheme.getTextGreyColor(context),
             ),
           ),
         ),
         // Añadir espacio adicional al final para permitir desplazamiento completo
-        const SizedBox(height: 24),
+        SizedBox(height: isSmallScreen ? 16 : 24),
       ],
     );
   }

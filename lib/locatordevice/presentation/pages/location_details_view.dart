@@ -58,6 +58,7 @@ class _LocationDetailsViewContentState
       DraggableScrollableController();
 
   // Valores para el DraggableScrollableSheet
+  // Estos son valores por defecto que pueden ser ajustados según el tamaño de la pantalla
   final double _minChildSize = 0.1;
   final double _maxChildSize = 0.8;
 
@@ -68,18 +69,27 @@ class _LocationDetailsViewContentState
   }
 
   void _toggleBottomSheet() {
+    // Obtener el tamaño de la pantalla para cálculos responsive
+    final screenSize = MediaQuery.of(context).size;
+    final isShortScreen = screenSize.height < 700;
+
+    // Ajustar los valores según el tamaño de la pantalla
+    final minSize = isShortScreen ? 0.08 : _minChildSize;
+    final midSize = isShortScreen ? 0.45 : 0.5;
+    final threshold = isShortScreen ? 0.35 : 0.4;
+
     // Si está en la posición mínima o cerca de ella, expandirlo
-    if (_scrollController.size <= _minChildSize + 0.05) {
+    if (_scrollController.size <= minSize + 0.05) {
       _scrollController.animateTo(
-        0.5,
+        midSize,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
     }
     // Si está expandido, colapsarlo
-    else if (_scrollController.size >= 0.4) {
+    else if (_scrollController.size >= threshold) {
       _scrollController.animateTo(
-        _minChildSize,
+        minSize,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -87,7 +97,7 @@ class _LocationDetailsViewContentState
     // En posición intermedia, expandirlo
     else {
       _scrollController.animateTo(
-        0.5,
+        midSize,
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
       );
@@ -96,14 +106,23 @@ class _LocationDetailsViewContentState
 
   @override
   Widget build(BuildContext context) {
+    // Obtener el tamaño de la pantalla para cálculos responsive
+    final screenSize = MediaQuery.of(context).size;
+    final isSmallScreen = screenSize.width < 360;
+    final isShortScreen = screenSize.height < 700;
+
+    // Ajustar el padding superior según el tamaño de la pantalla
+    final topPadding = isShortScreen ? 30.0 : 40.0;
+    final appBarHeight = isShortScreen ? 63.0 : 73.0;
+
     return Consumer<LocationController>(
       builder: (context, controller, _) {
         return Scaffold(
-          appBar: const PreferredSize(
-            preferredSize: Size.fromHeight(73),
+          appBar: PreferredSize(
+            preferredSize: Size.fromHeight(appBarHeight),
             child: Padding(
-              padding: EdgeInsets.only(top: 40),
-              child: HeaderSection(),
+              padding: EdgeInsets.only(top: topPadding),
+              child: const HeaderSection(),
             ),
           ),
           body: _buildBody(context, controller),
@@ -121,15 +140,21 @@ class _LocationDetailsViewContentState
               tabItems: [
                 TabData(
                   Icons.home_outlined,
-                  context.translate('home.navigation.myProducts'),
+                  isSmallScreen
+                      ? '' // En pantallas pequeñas, no mostrar texto
+                      : context.translate('home.navigation.myProducts'),
                 ),
                 TabData(
                   Icons.verified_user_outlined,
-                  context.translate('home.navigation.addInsurance'),
+                  isSmallScreen
+                      ? ''
+                      : context.translate('home.navigation.addInsurance'),
                 ),
                 TabData(
                   Icons.location_on_outlined,
-                  context.translate('home.navigation.location'),
+                  isSmallScreen
+                      ? ''
+                      : context.translate('home.navigation.location'),
                 ),
               ],
             ),
@@ -210,6 +235,21 @@ class _LocationDetailsViewContentState
   ) {
     final state = controller.state;
 
+    // Obtener el tamaño de la pantalla para cálculos responsive
+    final screenSize = MediaQuery.of(context).size;
+    final isShortScreen = screenSize.height < 700;
+
+    // Ajustar los tamaños del DraggableScrollableSheet según el tamaño de la pantalla
+    final minChildSize = isShortScreen ? 0.08 : _minChildSize;
+    final initialSizeNoOffices = isShortScreen ? 0.3 : 0.35;
+    final initialSizeWithOffices = isShortScreen ? 0.2 : 0.25;
+    final maxChildSize = isShortScreen ? 0.7 : _maxChildSize;
+
+    // Ajustar los snapSizes para pantallas pequeñas
+    final List<double> snapSizes = isShortScreen
+        ? [minChildSize, 0.3, 0.45, maxChildSize]
+        : [_minChildSize, 0.35, 0.5, _maxChildSize];
+
     return Stack(
       children: [
         // Mapa con configuración optimizada para emuladores
@@ -246,17 +286,17 @@ class _LocationDetailsViewContentState
         // Lista de oficinas
         DraggableScrollableSheet(
           // Ajustar el tamaño inicial según si se muestra el mensaje de no hay oficinas cercanas
-          initialChildSize: !controller.hasNearbyOffices() &&
-                  !state.showAllOffices
-              ? 0.35 // Reducido de 0.5 a 0.35 para permitir más flexibilidad
-              : 0.25,
-          minChildSize: _minChildSize,
+          initialChildSize:
+              !controller.hasNearbyOffices() && !state.showAllOffices
+                  ? initialSizeNoOffices
+                  : initialSizeWithOffices,
+          minChildSize: minChildSize,
           // Aumentar el tamaño máximo para mostrar todo el contenido
-          maxChildSize: _maxChildSize,
+          maxChildSize: maxChildSize,
           controller: _scrollController,
           // Añadir snap para que se ajuste a posiciones específicas
           snap: true,
-          snapSizes: [_minChildSize, 0.35, 0.5, _maxChildSize],
+          snapSizes: snapSizes,
           builder: (context, scrollController) {
             // Obtener la lista de oficinas a mostrar (cercanas o todas)
             final officesToDisplay = controller.getOfficeListToDisplay();
@@ -275,7 +315,7 @@ class _LocationDetailsViewContentState
                 controller.navigateToOffice(office);
                 // Colapsar la lista al mínimo cuando se selecciona una oficina
                 _scrollController.animateTo(
-                  _minChildSize,
+                  minChildSize,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
@@ -285,7 +325,7 @@ class _LocationDetailsViewContentState
                 controller.expandSearchRadius(context);
                 // Mantener la lista expandida después de expandir el radio
                 _scrollController.animateTo(
-                  0.35,
+                  isShortScreen ? 0.3 : 0.35,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
@@ -294,7 +334,7 @@ class _LocationDetailsViewContentState
                 controller.showAllOffices();
                 // Colapsar parcialmente la lista al mostrar todas las oficinas
                 _scrollController.animateTo(
-                  0.25,
+                  isShortScreen ? 0.2 : 0.25,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
