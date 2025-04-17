@@ -39,29 +39,24 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            Positioned(
-              left: 0,
-              child: Text(
-                context.translate('submitClaim.back'),
-                style: const TextStyle(
-                  color: AppTheme.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
+            Text(
+              context.translate('submitClaim.back'),
+              style: const TextStyle(
+                color: AppTheme.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
         ),
-        elevation: 0,
       ),
       body: SafeArea(
-        child: Stack(
-          fit: StackFit.expand,
+        child: Column(
           children: [
-            Positioned(
-              top: 50,
-              left: 0,
-              right: 0,
+            const SizedBox(height: 10),
+            // Contenedor principal
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -76,21 +71,16 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
                 ],
               ),
             ),
-            Positioned(
-              top: 103,
-              left: 0,
-              right: 0,
-              child: Center(
-                child: _showBluefireCard
-                    ? const BluefireClaimCard()
-                    : SafetyCheckCard(
-                        onSafetyConfirmed: () {
-                          setState(() {
-                            _showBluefireCard = true;
-                          });
-                        },
-                      ),
-              ),
+            Center(
+              child: _showBluefireCard
+                  ? const BluefireClaimCard()
+                  : SafetyCheckCard(
+                      onSafetyConfirmed: () {
+                        setState(() {
+                          _showBluefireCard = true;
+                        });
+                      },
+                    ),
             ),
           ],
         ),

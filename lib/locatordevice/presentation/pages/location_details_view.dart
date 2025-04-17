@@ -68,42 +68,6 @@ class _LocationDetailsViewContentState
     super.dispose();
   }
 
-  void _toggleBottomSheet() {
-    // Obtener el tamaño de la pantalla para cálculos responsive
-    final screenSize = MediaQuery.of(context).size;
-    final isShortScreen = screenSize.height < 700;
-
-    // Ajustar los valores según el tamaño de la pantalla
-    final minSize = isShortScreen ? 0.08 : _minChildSize;
-    final midSize = isShortScreen ? 0.45 : 0.5;
-    final threshold = isShortScreen ? 0.35 : 0.4;
-
-    // Si está en la posición mínima o cerca de ella, expandirlo
-    if (_scrollController.size <= minSize + 0.05) {
-      _scrollController.animateTo(
-        midSize,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-    // Si está expandido, colapsarlo
-    else if (_scrollController.size >= threshold) {
-      _scrollController.animateTo(
-        minSize,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-    // En posición intermedia, expandirlo
-    else {
-      _scrollController.animateTo(
-        midSize,
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     // Obtener el tamaño de la pantalla para cálculos responsive
@@ -241,8 +205,8 @@ class _LocationDetailsViewContentState
 
     // Ajustar los tamaños del DraggableScrollableSheet según el tamaño de la pantalla
     final minChildSize = isShortScreen ? 0.08 : _minChildSize;
-    final initialSizeNoOffices = isShortScreen ? 0.3 : 0.35;
-    final initialSizeWithOffices = isShortScreen ? 0.2 : 0.25;
+    final initialSizeNoOffices = isShortScreen ? 0.3 : 0.45;
+    final initialSizeWithOffices = isShortScreen ? 0.25 : 0.35;
     final maxChildSize = isShortScreen ? 0.7 : _maxChildSize;
 
     // Ajustar los snapSizes para pantallas pequeñas
@@ -280,7 +244,6 @@ class _LocationDetailsViewContentState
         // Botones para controlar el mapa
         MapButtons(
           onLocationPressed: () => controller.updateMapPosition(),
-          onToggleListPressed: _toggleBottomSheet,
         ),
 
         // Lista de oficinas
@@ -315,7 +278,7 @@ class _LocationDetailsViewContentState
                 controller.navigateToOffice(office);
                 // Colapsar la lista al mínimo cuando se selecciona una oficina
                 _scrollController.animateTo(
-                  minChildSize,
+                  initialSizeWithOffices,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
@@ -325,7 +288,7 @@ class _LocationDetailsViewContentState
                 controller.expandSearchRadius(context);
                 // Mantener la lista expandida después de expandir el radio
                 _scrollController.animateTo(
-                  isShortScreen ? 0.3 : 0.35,
+                  isShortScreen ? 0.25 : 0.35,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
@@ -334,7 +297,7 @@ class _LocationDetailsViewContentState
                 controller.showAllOffices();
                 // Colapsar parcialmente la lista al mostrar todas las oficinas
                 _scrollController.animateTo(
-                  isShortScreen ? 0.2 : 0.25,
+                  isShortScreen ? 0.35 : 0.45,
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.easeInOut,
                 );
