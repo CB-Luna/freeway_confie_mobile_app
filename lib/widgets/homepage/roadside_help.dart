@@ -82,8 +82,7 @@ class _RoadsideHelpState extends State<RoadsideHelp>
                         fontWeight: FontWeight.w500,
                         color: AppTheme.getTextGreyColor(context),
                       ),
-                      maxLines: 2, // Permitir hasta 2 líneas si es necesario
-                      overflow: TextOverflow.ellipsis,
+                      // Eliminamos maxLines y overflow para que el texto se muestre completo
                     ),
                     const SizedBox(height: 4),
                     Text(
@@ -95,8 +94,7 @@ class _RoadsideHelpState extends State<RoadsideHelp>
                         fontSize: 14,
                         height: 18 / 14,
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                      // Eliminamos maxLines y overflow para que el texto se muestre completo
                     ),
                   ],
                 ),
