@@ -230,9 +230,18 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       // Verificar si los servicios de ubicación están habilitados
       final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
-        // Si los servicios de ubicación no están habilitados, mostrar diálogo sin código postal
-        if (!context.mounted) return;
+        // Si los servicios de ubicación no están habilitados, ocultar el indicador y mostrar diálogo
+        overlay.remove();
+        if (!context.mounted) {
+          setState(() {
+            _isProcessingAutoInsurance = false;
+          });
+          return;
+        }
         await _showZipCodeDialog(context, null);
+        setState(() {
+          _isProcessingAutoInsurance = false;
+        });
         return;
       }
 
@@ -241,17 +250,35 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          // Si los permisos son denegados, mostrar diálogo sin código postal
-          if (!context.mounted) return;
+          // Si los permisos son denegados, ocultar el indicador y mostrar diálogo
+          overlay.remove();
+          if (!context.mounted) {
+            setState(() {
+              _isProcessingAutoInsurance = false;
+            });
+            return;
+          }
           await _showZipCodeDialog(context, null);
+          setState(() {
+            _isProcessingAutoInsurance = false;
+          });
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        // Si los permisos están denegados permanentemente, mostrar diálogo sin código postal
-        if (!context.mounted) return;
+        // Si los permisos están denegados permanentemente, ocultar el indicador y mostrar diálogo
+        overlay.remove();
+        if (!context.mounted) {
+          setState(() {
+            _isProcessingAutoInsurance = false;
+          });
+          return;
+        }
         await _showZipCodeDialog(context, null);
+        setState(() {
+          _isProcessingAutoInsurance = false;
+        });
         return;
       }
 
