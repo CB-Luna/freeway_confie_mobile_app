@@ -30,10 +30,10 @@ class OfficeList extends StatelessWidget {
     // Obtener el ancho de la pantalla para cálculos responsive
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
-    
+
     // Ajustar el padding según el tamaño de la pantalla
     final horizontalPadding = isSmallScreen ? 12.0 : 16.0;
-    
+
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.getCardColor(context),
@@ -66,7 +66,7 @@ class OfficeList extends StatelessWidget {
           ),
 
           // Contenido principal
-          if (showNoNearbyOfficesView) 
+          if (showNoNearbyOfficesView)
             // Contenido cuando no hay oficinas cercanas
             Expanded(
               child: SingleChildScrollView(
@@ -118,10 +118,10 @@ class OfficeList extends StatelessWidget {
                       ],
                     );
                   }
-                  
+
                   // Ajustamos el índice para los elementos de la oficina (restamos 1 por el título)
                   final adjustedIndex = index - 1;
-                  
+
                   // Si es el último elemento (después de todas las oficinas)
                   if (adjustedIndex == offices.length) {
                     if (offices.length == 1) {
@@ -170,7 +170,6 @@ class OfficeList extends StatelessWidget {
                         office: office,
                         index: adjustedIndex,
                         onTap: () => onOfficeTap(office),
-                        onDirectionsTap: () => onOfficeTap(office),
                       ),
                     ],
                   );
@@ -187,13 +186,11 @@ class OfficeListItem extends StatelessWidget {
   final Office office;
   final int index;
   final VoidCallback onTap;
-  final VoidCallback onDirectionsTap;
 
   const OfficeListItem({
     required this.office,
     required this.index,
     required this.onTap,
-    required this.onDirectionsTap,
     super.key,
   });
 
@@ -202,14 +199,14 @@ class OfficeListItem extends StatelessWidget {
     // Obtener el ancho de la pantalla para cálculos responsive
     final screenWidth = MediaQuery.of(context).size.width;
     final isSmallScreen = screenWidth < 360;
-    
+
     // Ajustar tamaños de fuente y espaciado según el tamaño de la pantalla
     final smallFontSize = isSmallScreen ? 10.0 : 12.0;
     final mediumFontSize = isSmallScreen ? 12.0 : 14.0;
     final buttonPaddingH = isSmallScreen ? 10.0 : 16.0;
     final buttonPaddingV = isSmallScreen ? 8.0 : 12.0;
     final buttonSpacing = isSmallScreen ? 8.0 : 12.0;
-    
+
     return ListTile(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -313,32 +310,6 @@ class OfficeListItem extends StatelessWidget {
 
                 // Botón para obtener direcciones
                 OutlinedButton.icon(
-                  onPressed: onDirectionsTap,
-                  icon: Icon(
-                    Icons.directions,
-                    color: AppTheme.getPrimaryColor(context),
-                  ),
-                  label: Text(
-                    context.translate('office.getDirections'),
-                    style: TextStyle(color: AppTheme.getPrimaryColor(context)),
-                  ),
-                  style: OutlinedButton.styleFrom(
-                    side: BorderSide(
-                      color: AppTheme.getPrimaryColor(context),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: EdgeInsets.symmetric(
-                      horizontal: buttonPaddingH,
-                      vertical: buttonPaddingV,
-                    ),
-                  ),
-                ),
-                SizedBox(width: buttonSpacing),
-
-                // Botón para abrir en Maps (GoogleMaps o Apple Maps)
-                OutlinedButton.icon(
                   onPressed: () async {
                     // Obtener la latitud y longitud de la oficina
                     final lat = office.latitude;
@@ -377,11 +348,11 @@ class OfficeListItem extends StatelessWidget {
                     }
                   },
                   icon: Icon(
-                    Icons.map,
+                    Icons.directions,
                     color: AppTheme.getPrimaryColor(context),
                   ),
                   label: Text(
-                    context.translate('office.viewInMaps'),
+                    context.translate('office.getDirections'),
                     style: TextStyle(color: AppTheme.getPrimaryColor(context)),
                   ),
                   style: OutlinedButton.styleFrom(
