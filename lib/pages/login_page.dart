@@ -40,16 +40,18 @@ class LoginPageState extends State<LoginPage> {
   Future<void> _checkBiometricStatus() async {
     final biometricProvider =
         Provider.of<BiometricProvider>(context, listen: false);
-    
+
     // Forzar una actualización del estado biométrico
     await biometricProvider.refreshBiometricState();
-    
+
     // Actualizar el estado local con los valores del provider
     if (mounted) {
       setState(() {
         _isBiometricAvailable = biometricProvider.isAvailable;
         _isBiometricEnabled = biometricProvider.isEnabled;
-        debugPrint('Estado biométrico actualizado - Disponible: $_isBiometricAvailable, Habilitado: $_isBiometricEnabled');
+        debugPrint(
+          'Estado biométrico actualizado - Disponible: $_isBiometricAvailable, Habilitado: $_isBiometricEnabled',
+        );
       });
     }
 
@@ -177,7 +179,6 @@ class LoginPageState extends State<LoginPage> {
                         const SizedBox(height: 32),
                         // Campos de login normal
                         SizedBox(
-                          height: 60,
                           width: 346,
                           child: TextFormField(
                             controller: _usernameController,
@@ -395,8 +396,16 @@ class LoginPageState extends State<LoginPage> {
           (route) => false,
         );
       } else if (mounted) {
-        final errorMessage =
-            authProvider.errorMessage ?? context.translate('auth.authError');
+        // Verificar si el mensaje de error es una clave de traducción
+        String errorMessage;
+        if (authProvider.errorMessage != null && authProvider.errorMessage!.startsWith('auth.')) {
+          // Si es una clave de traducción, obtener el texto traducido
+          errorMessage = context.translate(authProvider.errorMessage!);
+        } else {
+          // Si no es una clave de traducción, usar el mensaje tal cual o el mensaje de error por defecto
+          errorMessage = authProvider.errorMessage ?? context.translate('auth.authError');
+        }
+        
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(errorMessage),

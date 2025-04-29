@@ -28,7 +28,7 @@
     "lastName": "Apellido",
     "email": "Correo electrónico",
     "phoneNumber": "Número de teléfono",
-    "birthDate": "Fecha de nacimiento (AAAA-MM-DD)",
+    "birthDate": "Fecha de nacimiento (MM/DD/AAAA)",
     "policyNumber": "Número de póliza (opcional)",
     "pleaseEnterFirstName": "Por favor, ingresa tu nombre",
     "pleaseEnterLastName": "Por favor, ingresa tu apellido",
@@ -46,7 +46,8 @@
     "phoneNumberHelper": "Incluye el código de país (ej. +1 para EE.UU.)",
     "pleaseSelectBirthDate": "Por favor, selecciona tu fecha de nacimiento",
     "haveAccount": "¿Ya tienes una cuenta?",
-    "signUpLoading": "Creando cuenta..."
+    "signUpLoading": "Creando cuenta...",
+    "incorrectCredentials": "Tus credenciales de inicio de sesión son incorrectas. Por favor, intenta de nuevo."
   },
   "home": {
     "welcome": "Bienvenido",

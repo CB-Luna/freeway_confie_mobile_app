@@ -58,7 +58,16 @@ class AuthProvider with ChangeNotifier {
       // Ya no verificamos requiresTwoFactor porque la API ahora devuelve directamente el token
       return await _completeLogin(response);
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      // Mejorar el mensaje de error para credenciales incorrectas
+      if (e.statusCode == 401 || e.message.toLowerCase().contains('no autorizado') || 
+          e.message.toLowerCase().contains('unauthorized')) {
+        // Usar la traducción para el mensaje de credenciales incorrectas
+        // El contexto no está disponible aquí, así que usamos un mensaje estático
+        // que será mostrado en la interfaz de usuario
+        _errorMessage = 'auth.incorrectCredentials';
+      } else {
+        _errorMessage = e.message;
+      }
       notifyListeners();
       return false;
     } catch (e) {

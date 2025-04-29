@@ -28,7 +28,7 @@
     "lastName": "Last Name",
     "email": "Email address",
     "phoneNumber": "Phone Number",
-    "birthDate": "Birth Date (YYYY-MM-DD)",
+    "birthDate": "Birth Date (MM/DD/YYYY)",
     "policyNumber": "Policy Number (optional)",
     "pleaseEnterFirstName": "Please enter your first name",
     "pleaseEnterLastName": "Please enter your last name",
@@ -47,7 +47,8 @@
     "phoneNumberHelper": "Include country code (e.g. +1 for USA)",
     "pleaseSelectBirthDate": "Please select your birth date",
     "haveAccount": "Already have an account?",
-    "signUpLoading": "Creating account..."
+    "signUpLoading": "Creating account...",
+    "incorrectCredentials": "Your login credentials are incorrect. Please try again."
   },
   "home": {
     "welcome": "Welcome",

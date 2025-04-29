@@ -31,16 +31,10 @@ class SignUpPageState extends State<SignUpPage> {
   bool _isLoading = false;
   DateTime? _selectedDate;
 
-  // Formateador para el número de teléfono con formato internacional
+  // Formateador para el número de teléfono con formato de EE.UU.
+  // La máscara solo incluye la parte después del +1
   final _phoneMaskFormatter = MaskTextInputFormatter(
-    mask: '+1 (###) ###-####',
-    filter: {'#': RegExp(r'[0-9]')},
-    type: MaskAutoCompletionType.lazy,
-  );
-  
-  // Formateador para la fecha de nacimiento en formato estadounidense (MMDDYYYY)
-  final _birthDateMaskFormatter = MaskTextInputFormatter(
-    mask: '##/##/####',
+    mask: '(###) ###-####',
     filter: {'#': RegExp(r'[0-9]')},
     type: MaskAutoCompletionType.lazy,
   );
@@ -78,47 +72,22 @@ class SignUpPageState extends State<SignUpPage> {
     if (picked != null && picked != _selectedDate) {
       setState(() {
         _selectedDate = picked;
-        // Formatear la fecha en formato estadounidense (MM/DD/YYYY)
-        _birthDateController.text = DateFormat('MM/dd/yyyy').format(picked);
+        _birthDateController.text = DateFormat('yyyy-MM-dd').format(picked);
       });
     }
   }
-  
-  // Método para convertir la fecha de formato MM/DD/YYYY a formato ISO (YYYY-MM-DD) para la API
-  String _getFormattedBirthDate() {
-    if (_selectedDate != null) {
-      return DateFormat('yyyy-MM-dd').format(_selectedDate!);
-    } else if (_birthDateController.text.isNotEmpty) {
-      try {
-        // Intentar parsear la fecha ingresada manualmente
-        final parts = _birthDateController.text.split('/');
-        if (parts.length == 3) {
-          final month = int.tryParse(parts[0]);
-          final day = int.tryParse(parts[1]);
-          final year = int.tryParse(parts[2]);
-          
-          if (month != null && day != null && year != null) {
-            final date = DateTime(year, month, day);
-            return DateFormat('yyyy-MM-dd').format(date);
-          }
-        }
-      } catch (e) {
-        // Si hay un error al parsear, devolver la fecha como está
-      }
-    }
-    return _birthDateController.text;
-  }
 
   // Método para extraer solo los dígitos del número de teléfono formateado
+  // y asegurar que siempre tenga el prefijo +1
   String _getFormattedPhoneNumber() {
     // Obtener el número con formato (con máscara)
     final maskedNumber = _phoneController.text;
-
-    // Eliminar todos los caracteres que no sean dígitos o el signo '+'
-    final cleanedNumber = maskedNumber.replaceAll(RegExp(r'[^\d+]'), '');
-
-    // Asegurarse de que comience con '+'
-    return cleanedNumber.startsWith('+') ? cleanedNumber : '+$cleanedNumber';
+    
+    // Eliminar todos los caracteres que no sean dígitos
+    final cleanedNumber = maskedNumber.replaceAll(RegExp(r'[^\d]'), '');
+    
+    // Asegurarse de que comience con +1
+    return '+1$cleanedNumber';
   }
 
   Future<void> _signUp() async {
@@ -133,9 +102,9 @@ class SignUpPageState extends State<SignUpPage> {
           _lastNameController.text,
           email,
           _passwordController.text,
-          _getFormattedPhoneNumber(),
+          _getFormattedPhoneNumber(), // Usar el método para obtener el número completo con +1
           _policyNumberController.text,
-          _getFormattedBirthDate(), // Usar el método para obtener la fecha en formato ISO
+          _birthDateController.text,
         );
 
         // Verificar si hay un mensaje de error
@@ -326,91 +295,33 @@ class SignUpPageState extends State<SignUpPage> {
                       hintText: context.translate('auth.phoneNumberHint'),
                       prefixIcon: const Icon(Icons.phone),
                       helperText: context.translate('auth.phoneNumberHelper'),
+                      // Agregar un prefijo fijo +1 al campo
+                      prefix: const Text('+1 ', style: TextStyle(color: Colors.black87, fontWeight: FontWeight.bold)),
                     ),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return context.translate('auth.pleaseEnterPhone');
                       }
-
-                      // Verificar que el número tenga el formato correcto
-                      if (!_phoneMaskFormatter.isFill()) {
-                        return context
-                            .translate('auth.pleaseEnterCompletePhone');
-                      }
-
-                      // Verificar que el número limpio tenga el formato correcto para la API
-                      final cleanedNumber =
-                          value.replaceAll(RegExp(r'[^\d+]'), '');
-                      if (!RegExp(r'^\+\d{10,15}$').hasMatch(cleanedNumber)) {
-                        return context.translate('auth.phoneNumberFormat');
-                      }
-
-                      return null;
-                    },
+                      
+                      // Verificar que el número tenga el formato correcto (10 dígitos para números de EE.UU.)
+                      final digitsOnly = value.replaceAll(RegExp(r'[^0-9]'), '');
+                      if (digitsOnly.length != 10) {
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _birthDateController,
+                    readOnly: true,
                     decoration: AppTheme.inputDecoration(
                       context,
                       labelText: context.translate('auth.birthDate'),
                     ).copyWith(
                       prefixIcon: const Icon(Icons.calendar_today),
-                      helperText: 'MM/DD/YYYY', // Indicar el formato esperado
                     ),
-                    inputFormatters: [_birthDateMaskFormatter],
-                    keyboardType: TextInputType.datetime,
                     onTap: () => _selectDate(context),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return context.translate('auth.pleaseSelectBirthDate');
                       }
-                      
-                      // Validar que la fecha tenga el formato correcto
-                      if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
-                        return 'Por favor ingrese la fecha en formato MM/DD/YYYY';
-                      }
-                      
-                      try {
-                        // Validar que la fecha sea válida
-                        final parts = value.split('/');
-                        final month = int.parse(parts[0]);
-                        final day = int.parse(parts[1]);
-                        final year = int.parse(parts[2]);
-                        
-                        if (month < 1 || month > 12) {
-                          return 'Mes inválido';
-                        }
-                        
-                        if (day < 1 || day > 31) {
-                          return 'Día inválido';
-                        }
-                        
-                        if (year < 1900 || year > DateTime.now().year) {
-                          return 'Año inválido';
-                        }
-                        
-                        // Validar días según el mes
-                        if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
-                          return 'Este mes solo tiene 30 días';
-                        }
-                        
-                        // Febrero y años bisiestos
-                        if (month == 2) {
-                          final bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
-                          if (day > (isLeapYear ? 29 : 28)) {
-                            return 'Febrero tiene ${isLeapYear ? 29 : 28} días en $year';
-                          }
-                        }
-                        
-                        // Guardar la fecha seleccionada
-                        if (_selectedDate == null) {
-                          _selectedDate = DateTime(year, month, day);
-                        }
-                      } catch (e) {
-                        return 'Fecha inválida';
-                      }
-                      
                       return null;
                     },
                   ),
