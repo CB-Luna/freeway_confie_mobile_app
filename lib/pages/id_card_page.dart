@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
@@ -106,77 +108,140 @@ class _IdCardPageState extends State<IdCardPage> {
               offset: const Offset(0, 3),
               blurRadius: 8,
               spreadRadius: -1,
-              color: AppTheme.getBoxShadowColor(context), // 0D is 13% opacity
+              color: AppTheme.getBoxShadowColor(context),
             ),
           ],
         ),
         child: Column(
           children: [
             Expanded(
-              child: Stack(
-                children: [
-                  Positioned(
-                    top: 30,
-                    left: 70,
-                    child: Image.asset(
-                      'assets/home/idcardicons/add_apple_wallet.png',
-                      width: 146,
-                      height: 45,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                  Positioned(
-                    top: 30,
-                    right: 50,
-                    child: Row(
-                      children: [
-                        IconButton(
-                          icon: Icon(
-                            Icons.download_outlined,
-                            color: AppTheme.getIconColor(context),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calcular el ancho disponible para la tarjeta
+                  final availableWidth = constraints.maxWidth;
+                  final availableHeight = constraints.maxHeight;
+                  
+                  // Determinar el tamaño de la tarjeta basado en el espacio disponible
+                  // Mantener la relación de aspecto original (309:430)
+                  final cardWidth = availableWidth > 350 ? 309.0 : availableWidth * 0.85;
+                  final cardHeight = cardWidth * (430 / 309);
+                  
+                  // Calcular el espacio superior para centrar verticalmente
+                  final topSpace = (availableHeight - cardHeight - 80) / 2;
+                  final positiveTopSpace = topSpace > 0 ? topSpace : 20.0;
+                  
+                  return Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      // Add to Apple Wallet (solo en iOS)
+                      if (Platform.isIOS)
+                        Positioned(
+                          top: positiveTopSpace * 0.5,
+                          left: (availableWidth - 146) / 2, // Centrado horizontalmente
+                          child: GestureDetector(
+                            onTap: () {
+                              // TODO: Implementar funcionalidad de Apple Wallet
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Adding to Apple Wallet...'),
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
+                            },
+                            child: Image.asset(
+                              'assets/home/idcardicons/add_apple_wallet.png',
+                              width: 146,
+                              height: 45,
+                              fit: BoxFit.contain,
+                            ),
                           ),
-                          onPressed: () {
-                            // TODO: Implement download functionality
-                          },
                         ),
-                        IconButton(
-                          icon: Icon(
-                            Icons.print_outlined,
-                            color: AppTheme.getIconColor(context),
-                          ),
-                          onPressed: () {
-                            // TODO: Implement print functionality
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                  Positioned(
-                    top: 95,
-                    left: (MediaQuery.of(context).size.width - 309) / 2,
-                    child: IdCardWidget(
-                      user: user,
-                      // Ejemplo de fechas, en una implementación real vendrían de la API
-                      effectiveDate: DateTime(2023, 6, 18),
-                      expirationDate: DateTime(2026, 12, 18),
-                    ),
-                  ),
-                  Positioned(
-                    top:
-                        534, // 95 (card top) + 430 (card height) + 15 (spacing)
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: Text(
-                        context.translate('idCard.notProofOfCoverage'),
-                        style: TextStyle(
-                          color: AppTheme.getTextGreyColor(context),
-                          fontSize: 12,
+                      
+                      // Botones de acción (descarga e impresión)
+                      Positioned(
+                        top: positiveTopSpace * 0.5,
+                        right: 20,
+                        child: Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(
+                                Icons.download_outlined,
+                                color: AppTheme.getIconColor(context),
+                              ),
+                              onPressed: () {
+                                // TODO: Implement download functionality
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Downloading ID card...'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                Icons.print_outlined,
+                                color: AppTheme.getIconColor(context),
+                              ),
+                              onPressed: () {
+                                // TODO: Implement print functionality
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Printing ID card...'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
-                    ),
-                  ),
-                ],
+                      
+                      // Tarjeta ID (centrada)
+                      Positioned(
+                        top: positiveTopSpace + (Platform.isIOS ? 45 : 0),
+                        left: (availableWidth - cardWidth) / 2, // Centrado horizontalmente
+                        child: SizedBox(
+                          width: cardWidth,
+                          height: cardHeight,
+                          child: FittedBox(
+                            fit: BoxFit.contain,
+                            child: SizedBox(
+                              width: 309, // Ancho original
+                              height: 430, // Alto original
+                              child: IdCardWidget(
+                                user: user,
+                                // Ejemplo de fechas, en una implementación real vendrían de la API
+                                effectiveDate: DateTime(2023, 6, 18),
+                                expirationDate: DateTime(2026, 12, 18),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      
+                      // Texto de aviso legal
+                      Positioned(
+                        bottom: 20,
+                        left: 0,
+                        right: 0,
+                        child: Center(
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                            child: Text(
+                              context.translate('idCard.notProofOfCoverage'),
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppTheme.getTextGreyColor(context),
+                                fontSize: 12,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ],

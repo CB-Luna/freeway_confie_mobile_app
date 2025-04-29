@@ -81,6 +81,8 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
                 crossAxisCount: 3,
                 mainAxisSpacing: 16.0,
                 crossAxisSpacing: 16.0,
+                childAspectRatio:
+                    MediaQuery.of(context).size.width < 360 ? 0.7 : 0.9,
                 children: [
                   _buildInsuranceItem(
                     context,
@@ -173,6 +175,17 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     String title,
     String iconName,
   ) {
+    // Determinar si el título necesita ser ajustado para pantallas pequeñas
+    // Obtener el ancho de la pantalla
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Calcular el ancho aproximado de cada elemento del grid
+    // El grid tiene 3 columnas con espaciado de 16.0 entre ellas y padding de 16.0 en los bordes
+    final itemWidth = (screenWidth - (16.0 * 2) - (16.0 * 2)) / 3;
+
+    // Ajustar el tamaño de fuente basado en el ancho disponible
+    final fontSize = itemWidth < 100 ? 11.0 : 14.0;
+
     return GestureDetector(
       onTap: () {
         // Evitar múltiples llamadas mientras se procesa una solicitud
@@ -205,25 +218,38 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
         }
       },
       child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset(
-              'assets/products/vehiclepng/4.0x/$iconName.png',
-              height: 40,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontFamily: 'Open Sans',
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: AppTheme.getTextGreyColor(context),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 2.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                'assets/products/vehiclepng/4.0x/$iconName.png',
+                height: 40,
               ),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Container(
+                height: 36, // Altura fija para el contenedor de texto
+                alignment: Alignment.center,
+                child: FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow:
+                        TextOverflow.visible, // Mostrar overflow para debugging
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
+                      fontSize: fontSize,
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.getTextGreyColor(context),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
