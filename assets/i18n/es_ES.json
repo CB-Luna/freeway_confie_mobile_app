@@ -162,7 +162,7 @@
     "payNowButton": "Pagar Ahora",
     "search": {
       "title": "Buscar tu Póliza",
-      "subtitle": "Ingresa tu código postal y selecciona un método de búsqueda para encontrar tu póliza",
+      "subtitle": "Ingresa tu código postal para encontrar tu póliza",
       "zipCodeHint": "Código Postal",
       "continueButton": "Continuar",
       "byPolicyNumber": "Buscar por Número de Póliza",

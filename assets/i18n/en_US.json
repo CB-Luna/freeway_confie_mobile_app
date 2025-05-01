@@ -164,7 +164,7 @@
     "addNewMethod": "Add New Method",
     "search": {
       "title": "Find Your Policy",
-      "subtitle": "Enter your ZIP code and select a search method to find your policy",
+      "subtitle": "Enter your ZIP code to find your policy",
       "zipCodeHint": "ZIP Code",
       "continueButton": "Continue",
       "byPolicyNumber": "Search by Policy Number",

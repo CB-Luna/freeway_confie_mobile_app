@@ -5,6 +5,7 @@ import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 
+// Mantener el enum para compatibilidad con código existente
 enum SearchType {
   policyNumber,
   phoneNumber,
@@ -38,7 +39,7 @@ class PaymentSearchDialog extends StatefulWidget {
       useSafeArea: true,
       builder: (BuildContext context) {
         final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-        final initialSize = keyboardHeight > 0 ? 0.7 : 0.6;
+        final initialSize = keyboardHeight > 0 ? 0.5 : 0.4;
 
         return DraggableScrollableSheet(
           initialChildSize: initialSize,
@@ -125,18 +126,21 @@ class PaymentSearchDialog extends StatefulWidget {
 }
 
 class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
-  late TextEditingController _zipCodeController;
+  final TextEditingController _zipCodeController = TextEditingController();
+  // Siempre usar policyNumber como tipo de búsqueda predeterminado
+  final SearchType _selectedSearchType = SearchType.policyNumber;
   bool _isZipCodeValid = false;
-  SearchType _selectedSearchType = SearchType.policyNumber;
 
   @override
   void initState() {
     super.initState();
-    _zipCodeController =
-        TextEditingController(text: widget.initialZipCode ?? '');
-    _validateZipCode(_zipCodeController.text);
+    // Inicializar con el código postal proporcionado, si hay uno
+    _zipCodeController.text = widget.initialZipCode ?? '';
+    _isZipCodeValid = _validateZipCode(_zipCodeController.text);
     _zipCodeController.addListener(() {
-      _validateZipCode(_zipCodeController.text);
+      setState(() {
+        _isZipCodeValid = _validateZipCode(_zipCodeController.text);
+      });
     });
   }
 
@@ -146,10 +150,9 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
     super.dispose();
   }
 
-  void _validateZipCode(String value) {
-    setState(() {
-      _isZipCodeValid = value.length == 5 && RegExp(r'^\d{5}$').hasMatch(value);
-    });
+  bool _validateZipCode(String value) {
+    // Validar que el código postal tenga 5 dígitos
+    return value.length == 5 && RegExp(r'^\d{5}$').hasMatch(value);
   }
 
   @override
@@ -192,91 +195,28 @@ class _PaymentSearchDialogState extends State<PaymentSearchDialog> {
                   ),
                 ),
                 const SizedBox(height: 20),
-                // Título
+                // Título del diálogo
                 Text(
                   context.translate('payment.search.title'),
                   style: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 20,
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.getTitleTextColor(context),
                   ),
-                  textAlign: TextAlign.center,
                 ),
+
                 const SizedBox(height: 10),
-                // Subtítulo
+
+                // Subtítulo simplificado
                 Text(
                   context.translate('payment.search.subtitle'),
                   style: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: 14,
-                    color: AppTheme.getSubtitleTextColor(context),
+                    fontSize: 16,
+                    color: AppTheme.getTextGreyColor(context),
                   ),
                   textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 20),
-
-                // Opciones de búsqueda
-                Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(
-                      color: AppTheme.getDetailsGreyColor(context),
-                    ),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Column(
-                    children: [
-                      // Opción de búsqueda por número de póliza
-                      RadioListTile<SearchType>(
-                        title: Text(
-                          context.translate('payment.search.byPolicyNumber'),
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppTheme.getTitleTextColor(context),
-                          ),
-                        ),
-                        value: SearchType.policyNumber,
-                        groupValue: _selectedSearchType,
-                        activeColor: AppTheme.getPrimaryColor(context),
-                        onChanged: (SearchType? value) {
-                          if (value != null) {
-                            setState(() {
-                              _selectedSearchType = value;
-                            });
-                          }
-                        },
-                      ),
-                      Divider(
-                        height: 1,
-                        thickness: 1,
-                        color: AppTheme.getDetailsGreyColor(context),
-                      ),
-                      // Opción de búsqueda por número de teléfono
-                      RadioListTile<SearchType>(
-                        title: Text(
-                          context.translate('payment.search.byPhoneNumber'),
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                            color: AppTheme.getTitleTextColor(context),
-                          ),
-                        ),
-                        value: SearchType.phoneNumber,
-                        groupValue: _selectedSearchType,
-                        activeColor: AppTheme.getPrimaryColor(context),
-                        onChanged: (SearchType? value) {
-                          if (value != null) {
-                            setState(() {
-                              _selectedSearchType = value;
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
                 ),
 
                 const SizedBox(height: 20),

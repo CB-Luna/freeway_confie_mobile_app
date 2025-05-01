@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:freeway_app/data/services/web_dialog_service.dart';
+import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
-import 'package:freeway_app/widgets/common/custom_dialog.dart';
 import 'package:intl/intl.dart';
 
 import '../../data/models/home_policy/vehicle.dart';
@@ -11,7 +10,7 @@ import '../../widgets/payments/payment_search_dialog.dart';
 import '../../widgets/theme/app_theme.dart';
 
 class PolicyCard extends StatefulWidget {
-  final dynamic user;
+  final User user;
   final Vehicle? vehicle;
 
   const PolicyCard({
@@ -354,74 +353,27 @@ class _PolicyCardState extends State<PolicyCard>
                                     );
 
                                     if (result != null && context.mounted) {
-                                      // Verificar si ya se ha mostrado el diálogo anteriormente
-                                      final webDialogService =
-                                          WebDialogService();
-                                      final hasBeenShown =
-                                          await webDialogService
-                                              .hasWebDialogBeenShown();
+                                      final zipCode = result['zipCode'];
+                                      // Ya no necesitamos el tipo de búsqueda, siempre usamos policyNumber
 
-                                      bool shouldProceed = true;
+                                      // Usar una única URL con número de póliza y código postal
+                                      final String policyNumber =
+                                          widget.user.policyNumber;
+                                      final String urlString =
+                                          'https://quickpay.freeway.com/PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
+                                      final String title =
+                                          context.translate('payment.title');
 
-                                      // Solo mostrar el diálogo si no se ha mostrado antes
-                                      if (!hasBeenShown && context.mounted) {
-                                        final dialogResult =
-                                            await CustomDialog.show(
-                                          context: context,
-                                          title: context.translate(
-                                            'payment.search.webDialogTitle',
-                                          ),
-                                          message: context.translate(
-                                            'payment.search.webDialogMessage',
-                                          ),
-                                          positiveButtonText: context.translate(
-                                            'payment.search.visitWebsite',
-                                          ),
-                                          negativeButtonText: context.translate(
-                                            'payment.search.cancel',
+                                      if (context.mounted) {
+                                        await Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => WebViewPage(
+                                              url: urlString,
+                                              title: title,
+                                            ),
                                           ),
                                         );
-
-                                        // Marcar el diálogo como mostrado
-                                        await webDialogService
-                                            .setWebDialogShown();
-
-                                        shouldProceed = dialogResult == true;
-                                      }
-                                      if (shouldProceed && context.mounted) {
-                                        final zipCode = result['zipCode'];
-                                        final searchType =
-                                            result['searchType'] as SearchType;
-
-                                        String urlString;
-                                        String title;
-
-                                        if (searchType ==
-                                            SearchType.policyNumber) {
-                                          urlString =
-                                              'https://quickpay.freeway.com/PolicySearch?zipCode=$zipCode';
-                                          title = context.translate(
-                                            'payment.search.byPolicyNumber',
-                                          );
-                                        } else {
-                                          urlString =
-                                              'https://quickpay.freeway.com/?zipCode=$zipCode';
-                                          title = context.translate(
-                                            'payment.search.byPhoneNumber',
-                                          );
-                                        }
-
-                                        if (context.mounted) {
-                                          await Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => WebViewPage(
-                                                url: urlString,
-                                                title: title,
-                                              ),
-                                            ),
-                                          );
-                                        }
                                       }
                                     }
                                   }

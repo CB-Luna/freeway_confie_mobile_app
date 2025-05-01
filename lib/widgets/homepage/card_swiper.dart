@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +13,7 @@ import 'policy_inactive_card.dart';
 import 'roadside_assist.dart';
 
 class CardSwiperSection extends StatefulWidget {
-  final dynamic user;
+  final User user;
   final String policyNumber;
 
   const CardSwiperSection({
