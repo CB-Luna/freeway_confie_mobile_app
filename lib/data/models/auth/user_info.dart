@@ -8,6 +8,11 @@ class UserInfo {
   final String? avatar;
   final String? languageCode;
   final String street;
+  final String zipCode;
+  final String city;
+  final String state;
+  final String? carrierName;
+  final String? policyUsaState;
 
   UserInfo({
     required this.fullName,
@@ -17,8 +22,13 @@ class UserInfo {
     required this.policyType,
     required this.customerId,
     required this.street,
+    required this.zipCode,
+    required this.city,
+    required this.state,
     this.avatar,
     this.languageCode,
+    this.carrierName,
+    this.policyUsaState,
   });
 
   // Crear un UserInfo con valores por defecto para cuando no hay información disponible
@@ -37,6 +47,11 @@ class UserInfo {
       avatar: null,
       languageCode: 'en_US',
       street: '123 Main St',
+      zipCode: '12345',
+      city: 'City',
+      state: 'State',
+      carrierName: 'Carrier Name',
+      policyUsaState: 'LA',
     );
   }
 }

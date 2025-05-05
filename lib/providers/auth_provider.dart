@@ -133,6 +133,11 @@ class AuthProvider with ChangeNotifier {
             avatar: null, // No disponible en la API
             languageCode: 'en_US', // Por defecto o basado en preferencias
             street: apiResponse['Street'] ?? '',
+            zipCode: apiResponse['Zip'].toString(),
+            city: apiResponse['City'] ?? '',
+            state: apiResponse['State'] ?? '',
+            carrierName: apiResponse['CarrierName'] ?? '',
+            policyUsaState: apiResponse['PolicyUsaState'] ?? '',
           );
 
           // Parsear la fecha de expiración para usarla como próximo pago
@@ -178,6 +183,11 @@ class AuthProvider with ChangeNotifier {
         avatar: userInfo.avatar,
         languageCode: userInfo.languageCode,
         street: userInfo.street,
+        zipCode: userInfo.zipCode,
+        city: userInfo.city,
+        state: userInfo.state,
+        carrierName: userInfo.carrierName,
+        policyUsaState: userInfo.policyUsaState,
       );
 
       _isAuthenticated = true;

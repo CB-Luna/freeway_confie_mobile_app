@@ -230,7 +230,12 @@ class _IdCardPageState extends State<IdCardPage> {
                           child: FittedBox(
                             fit: BoxFit.contain,
                             child: IdCardWidget(
+                              width: cardWidth,
+                              height: cardHeight,
                               user: user,
+                              policyNumber: user.policyNumber,
+                              carrier: user.carrierName,
+                              state: user.policyUsaState,
                               // Ejemplo de fechas, en una implementación real vendrían de la API
                               effectiveDate: DateTime(2023, 6, 18),
                               expirationDate: DateTime(2026, 12, 18),

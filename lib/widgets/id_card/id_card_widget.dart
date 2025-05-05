@@ -11,9 +11,13 @@ class IdCardWidget extends StatelessWidget {
   final String? state;
   final DateTime? effectiveDate;
   final DateTime? expirationDate;
+  final double width;
+  final double height;
 
   const IdCardWidget({
     required this.user,
+    required this.width,
+    required this.height,
     super.key,
     this.policyNumber,
     this.carrier,
@@ -37,8 +41,8 @@ class IdCardWidget extends StatelessWidget {
         : '--/--/----';
 
     return Container(
-      width: 309,
-      height: 430,
+      width: width,
+      height: height,
       decoration: BoxDecoration(
         color: AppTheme.getCardColor(context),
         borderRadius: BorderRadius.circular(14),
@@ -132,6 +136,7 @@ class IdCardWidget extends StatelessWidget {
                             const SizedBox(height: 4),
                             Text(
                               carrier ?? 'Infinity',
+                              overflow: TextOverflow.clip,
                               style: TextStyle(
                                 fontSize: 18,
                                 color: AppTheme.getPrimaryColor(context),
