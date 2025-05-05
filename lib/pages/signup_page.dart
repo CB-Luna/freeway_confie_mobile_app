@@ -37,7 +37,7 @@ class SignUpPageState extends State<SignUpPage> {
     filter: {'#': RegExp(r'[0-9]')},
     type: MaskAutoCompletionType.lazy,
   );
-  
+
   // Formateador para la fecha de nacimiento en formato estadounidense (MMDDYYYY)
   final _birthDateMaskFormatter = MaskTextInputFormatter(
     mask: '##/##/####',
@@ -83,7 +83,7 @@ class SignUpPageState extends State<SignUpPage> {
       });
     }
   }
-  
+
   // Método para convertir la fecha de formato MM/DD/YYYY a formato ISO (YYYY-MM-DD) para la API
   String _getFormattedBirthDate() {
     if (_selectedDate != null) {
@@ -96,7 +96,7 @@ class SignUpPageState extends State<SignUpPage> {
           final month = int.tryParse(parts[0]);
           final day = int.tryParse(parts[1]);
           final year = int.tryParse(parts[2]);
-          
+
           if (month != null && day != null && year != null) {
             final date = DateTime(year, month, day);
             return DateFormat('yyyy-MM-dd').format(date);
@@ -365,52 +365,56 @@ class SignUpPageState extends State<SignUpPage> {
                       if (value == null || value.isEmpty) {
                         return context.translate('auth.pleaseSelectBirthDate');
                       }
-                      
+
                       // Validar que la fecha tenga el formato correcto
                       if (!RegExp(r'^\d{2}/\d{2}/\d{4}$').hasMatch(value)) {
                         return 'Por favor ingrese la fecha en formato MM/DD/YYYY';
                       }
-                      
+
                       try {
                         // Validar que la fecha sea válida
                         final parts = value.split('/');
                         final month = int.parse(parts[0]);
                         final day = int.parse(parts[1]);
                         final year = int.parse(parts[2]);
-                        
+
                         if (month < 1 || month > 12) {
                           return 'Mes inválido';
                         }
-                        
+
                         if (day < 1 || day > 31) {
                           return 'Día inválido';
                         }
-                        
+
                         if (year < 1900 || year > DateTime.now().year) {
                           return 'Año inválido';
                         }
-                        
+
                         // Validar días según el mes
-                        if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) {
+                        if ((month == 4 ||
+                                month == 6 ||
+                                month == 9 ||
+                                month == 11) &&
+                            day > 30) {
                           return 'Este mes solo tiene 30 días';
                         }
-                        
+
                         // Febrero y años bisiestos
                         if (month == 2) {
-                          final bool isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0);
+                          final bool isLeapYear =
+                              (year % 4 == 0 && year % 100 != 0) ||
+                                  (year % 400 == 0);
                           if (day > (isLeapYear ? 29 : 28)) {
                             return 'Febrero tiene ${isLeapYear ? 29 : 28} días en $year';
                           }
                         }
-                        
+
                         // Guardar la fecha seleccionada
-                        if (_selectedDate == null) {
-                          _selectedDate = DateTime(year, month, day);
-                        }
+                        _selectedDate ??= DateTime(year, month, day);
                       } catch (e) {
                         return 'Fecha inválida';
                       }
-                      
+
                       return null;
                     },
                   ),

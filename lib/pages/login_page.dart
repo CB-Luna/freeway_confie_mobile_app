@@ -134,6 +134,87 @@ class LoginPageState extends State<LoginPage> {
     }
   }
 
+  /// Muestra un diálogo preguntando al usuario si desea activar la autenticación biométrica
+  Future<void> _showBiometricEnableDialog(
+    BiometricProvider biometricProvider,
+  ) async {
+    if (!context.mounted) return;
+
+    final bool? result = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            context.translateWithArgs(
+              'profile.biometricEnableQuestion',
+              args: [biometricProvider.biometricType],
+            ),
+          ),
+          content: Text(
+            context.translateWithArgs(
+              'profile.biometricEnableDescription',
+              args: [biometricProvider.biometricType],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(context.translate('profile.notNow')),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(context.translate('profile.enable')),
+            ),
+          ],
+        );
+      },
+    );
+
+    // Si el usuario acepta activar la biometría
+    if (result == true && context.mounted) {
+      final authProvider = context.read<AuthProvider>();
+
+      // Intentar habilitar la biometría
+      final success = await biometricProvider.toggleBiometric(true);
+
+      if (success && context.mounted) {
+        // Guardar las credenciales actuales para uso futuro
+        await authProvider.saveCredentials(
+          _usernameController.text.toLowerCase(),
+          _passwordController.text,
+        );
+
+        // Mostrar mensaje de éxito
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                context.translateWithArgs(
+                  'profile.biometricEnableSuccess',
+                  args: [biometricProvider.biometricType],
+                ),
+              ),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else if (context.mounted) {
+        // Mostrar mensaje de error
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.translateWithArgs(
+                'profile.biometricEnableFailed',
+                args: [biometricProvider.biometricType],
+              ),
+            ),
+            backgroundColor: AppTheme.getRedColor(context),
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // final authProvider = Provider.of<AuthProvider>(context);
@@ -399,6 +480,15 @@ class LoginPageState extends State<LoginPage> {
       setState(() => _isLoading = false);
 
       if (success && mounted) {
+        // Verificar si la biometría está disponible pero no habilitada
+        final biometricProvider = context.read<BiometricProvider>();
+        await biometricProvider.refreshBiometricState();
+
+        // Si la biometría está disponible pero no habilitada, mostrar el diálogo
+        if (biometricProvider.isAvailable && !biometricProvider.isEnabled) {
+          await _showBiometricEnableDialog(biometricProvider);
+        }
+
         await Navigator.of(context).pushNamedAndRemoveUntil(
           '/home',
           (route) => false,
