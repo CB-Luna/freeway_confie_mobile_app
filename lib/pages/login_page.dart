@@ -279,13 +279,21 @@ class LoginPageState extends State<LoginPage> {
                             child: Consumer<BiometricProvider>(
                               builder: (context, biometricProvider, child) {
                                 return IconButton(
-                                  icon: Icon(
-                                    biometricProvider.biometricType == 'Face ID'
-                                        ? Icons.face
-                                        : Icons.fingerprint,
-                                    color: AppTheme.getPrimaryColor(context),
-                                    size: 40,
-                                  ),
+                                  icon: biometricProvider.biometricType ==
+                                          'Face ID'
+                                      ? Image.asset(
+                                          'assets/home/icons/face_id_icon.png',
+                                          width: 40,
+                                          height: 40,
+                                          color:
+                                              AppTheme.getPrimaryColor(context),
+                                        )
+                                      : Icon(
+                                          Icons.fingerprint,
+                                          color:
+                                              AppTheme.getPrimaryColor(context),
+                                          size: 40,
+                                        ),
                                   onPressed: () async {
                                     if (await _authenticateWithBiometrics()) {
                                       if (context.mounted) {
