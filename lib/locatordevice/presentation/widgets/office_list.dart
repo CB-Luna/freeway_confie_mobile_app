@@ -375,6 +375,22 @@ class OfficeListItem extends StatelessWidget {
     super.key,
   });
 
+  // Método para obtener el nombre del día de la semana actual
+  String _getDayOfWeek(BuildContext context) {
+    final now = DateTime.now();
+    final locale = Localizations.localeOf(context).languageCode;
+    
+    // En Dart: weekday va de 1 (lunes) a 7 (domingo)
+    // Organizamos los arrays para que coincidan con este orden
+    const daysEn = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const daysEs = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+    
+    // Obtenemos el índice correcto (0-6)
+    final index = now.weekday - 1;
+    
+    return locale.startsWith('es') ? daysEs[index] : daysEn[index];
+  }
+
   @override
   Widget build(BuildContext context) {
     // Obtener el ancho de la pantalla para cálculos responsive
@@ -394,12 +410,7 @@ class OfficeListItem extends StatelessWidget {
         children: [
           Flexible(
             child: Text(
-              '${context.translate('office.openNow')} • ${context.translateWithArgs(
-                'office.closesAt',
-                args: [
-                  '7pm',
-                ],
-              )}',
+              '• ${context.translate('office.openNow')}',
               style: TextStyle(
                 color: AppTheme.getGreenColor(context),
                 fontWeight: FontWeight.bold,
@@ -458,6 +469,74 @@ class OfficeListItem extends StatelessWidget {
               ),
             ],
           ),
+          // Landmark
+          Row(
+            children: [
+              Icon(
+                Icons.location_on_outlined,
+                color: AppTheme.getTextGreyColor(context),
+                size: isSmallScreen ? 14 : 16,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                context.translateWithArgs(
+                  'office.landmark',
+                  args: ['Broadway'],
+                ),
+                style: TextStyle(
+                  fontSize: smallFontSize,
+                  color: AppTheme.getTextGreyColor(context),
+                ),
+              ),
+            ],
+          ),
+          // Horario
+          Row(
+            children: [
+              Icon(
+                Icons.access_time,
+                color: AppTheme.getTextGreyColor(context),
+                size: isSmallScreen ? 14 : 16,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                context.translateWithArgs(
+                  'office.todayHours',
+                  args: [
+                    _getDayOfWeek(context),
+                    '08:00am',
+                    '08:00pm',
+                  ],
+                ),
+                style: TextStyle(
+                  fontSize: smallFontSize,
+                  color: AppTheme.getTextGreyColor(context),
+                ),
+              ),
+            ],
+          ),
+          // Idiomas
+          Row(
+            children: [
+              Icon(
+                Icons.language,
+                color: AppTheme.getTextGreyColor(context),
+                size: isSmallScreen ? 14 : 16,
+              ),
+              const SizedBox(width: 4),
+              Text(
+                context.translateWithArgs(
+                  'office.languages',
+                  args: ['English, Spanish'],
+                ),
+                style: TextStyle(
+                  fontSize: smallFontSize,
+                  color: AppTheme.getTextGreyColor(context),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Row(
