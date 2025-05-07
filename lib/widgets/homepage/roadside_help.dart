@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
+import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/common/custom_dialog.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:provider/provider.dart';
 
 import '../../pages/webview_page.dart';
 
@@ -52,12 +54,34 @@ class _RoadsideHelpState extends State<RoadsideHelp>
           }
 
           if (shouldProceed && context.mounted) {
+            // Obtener información del usuario actual para prellenar formularios
+            final authProvider =
+                Provider.of<AuthProvider>(context, listen: false);
+            final user = authProvider.currentUser;
+
+            // Preparar datos del usuario para pasar a los formularios
+            final Map<String, String> userData = {
+              'firstName': user?.fullName.split(' ').first ?? '',
+              'lastName': user?.fullName.split(' ').isNotEmpty == true &&
+                      user!.fullName.split(' ').length > 1
+                  ? user.fullName.split(' ').skip(1).join(' ')
+                  : '',
+              'email': user?.email ?? '',
+              'phone': user?.phone ?? '',
+              'zipCode': user?.zipCode ?? '',
+              'city': user?.city ?? '',
+              'state': user?.state ?? '',
+              'street': user?.street ?? '',
+            };
+
             await Navigator.push(
               context,
               MaterialPageRoute(
-                builder: (context) => const WebViewPage(
+                builder: (context) => WebViewPage(
                   url: 'https://buy.freeway.com/product/auto-club/step-1',
                   title: 'Freeway Auto Club',
+                  userData: userData,
+                  formType: 'auto_club',
                 ),
               ),
             );

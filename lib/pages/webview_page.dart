@@ -257,6 +257,42 @@ class _WebViewPageState extends State<WebViewPage> {
                 });
               }, 1000);
               break;
+              
+            case 'auto_club':
+              // Lógica específica para formulario de Auto Club
+              console.log('Aplicando lógica específica para formulario de Auto Club');
+              
+              // Intentar rellenar los campos del formulario después de que cargue completamente
+              setTimeout(function() {
+                // Campos del formulario según la imagen compartida
+                fillField(['#first-name', '[name="first-name"]', '[id="first-name"]', '[for="first-name"] + input', '.form__item input[placeholder*="First"]'], userData.firstName);
+                fillField(['#last-name', '[name="last-name"]', '[id="last-name"]', '[for="last-name"] + input', '.form__item input[placeholder*="Last"]'], userData.lastName);
+                fillField(['#address', '[name="address"]', '[id="address"]', '[for="address"] + input', '.form__item input[placeholder*="Address"]'], userData.street);
+                fillField(['#zip-code', '[name="zip-code"]', '[id="zipcode"]', '[for="zipcode"] + input', '.form__item input[placeholder*="Zip"]'], userData.zipCode);
+                fillField(['#city', '[name="city"]', '[id="city"]', '[for="city"] + input', '.form__item input[placeholder*="City"]'], userData.city);
+                fillField(['#state', '[name="state"]', '[id="state"]', '[for="state"] + input', '.form__item input[placeholder*="State"]'], userData.state);
+                fillField(['#email', '[name="email"]', '[id="email"]', '[for="email"] + input', '.form__item input[type="email"]'], userData.email);
+                fillField(['#phone', '[name="phone"]', '[id="phone"]', '[for="phone"] + input', '.form__item input[type="tel"]'], userData.phone);
+                
+                // Activar eventos para asegurar que los campos se validen correctamente
+                const autoClubInputs = document.querySelectorAll('.form__item input');
+                autoClubInputs.forEach(input => {
+                  if (input && input.value) {
+                    console.log('Activando eventos para:', input.name || input.id);
+                    ['input', 'change', 'blur', 'focus'].forEach(eventType => {
+                      const event = new Event(eventType, { bubbles: true });
+                      input.dispatchEvent(event);
+                    });
+                  }
+                });
+                
+                // Intentar hacer scroll al botón de continuar
+                const continueButton = document.querySelector('button[type="submit"], .form__button, .btn-primary');
+                if (continueButton) {
+                  continueButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 2000); // Esperar 2 segundos para asegurar que el formulario está cargado
+              break;
             // Añadir más casos según sea necesario
           }
           
