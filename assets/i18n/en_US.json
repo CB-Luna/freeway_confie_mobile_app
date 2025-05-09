@@ -325,5 +325,27 @@
       "cancel": "Cancel"
     },
     "notAvailableMessage": "insurance is not available at this time."
+  },
+  "propertyInsurance": {
+    "back": "Back",
+    "title": "Select a product to start your quote",
+    "homeowners": "Homeowners",
+    "renters": "Renters",
+    "mobileHome": "Mobile\nHome Insurance",
+    "location": {
+      "gettingLocation": "Getting your location...",
+      "zipCodeDialogTitle": "Enter your ZIP code",
+      "zipCodeDialogMessage": "Please enter your ZIP code to get accurate quotes for your area.",
+      "zipCodeHint": "ZIP Code",
+      "continueButton": "Continue",
+      "invalidZipCode": "Please enter a valid ZIP code",
+      "webDialogTitle": "Would you like to visit our website?",
+      "webDialogMessage": "You'll be redirected to our website to complete your property insurance quote for {0}, {1}.",
+      "visitWebsite": "Visit Website",
+      "invalidUrl": "No coverage for this zipcode.",
+      "cancel": "Cancel"
+    },
+    "notAvailableMessage": "insurance is not available at this time.",
+    "processing": "Processing your request..."
   }
 }

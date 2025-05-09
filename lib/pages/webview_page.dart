@@ -293,6 +293,114 @@ class _WebViewPageState extends State<WebViewPage> {
                 }
               }, 2000); // Esperar 2 segundos para asegurar que el formulario está cargado
               break;
+              
+            case 'homeowners':
+              // Lógica específica para formulario de seguro de casa propia
+              console.log('Aplicando lógica específica para formulario de seguro de casa propia');
+              
+              setTimeout(function() {
+                // Campos comunes en formularios de seguro de propiedad
+                fillField(['#zip', '#zipcode', '[name="zip"]', '[name="zipcode"]', '[id="zip"]', 'input[placeholder*="ZIP"]', 'input[placeholder*="Zip"]'], userData.zipCode);
+                fillField(['#firstName', '#first_name', '[name="firstName"]', '[name="first_name"]', 'input[placeholder*="First"]'], userData.firstName);
+                fillField(['#lastName', '#last_name', '[name="lastName"]', '[name="last_name"]', 'input[placeholder*="Last"]'], userData.lastName);
+                fillField(['#email', '[name="email"]', 'input[type="email"]', 'input[placeholder*="Email"]'], userData.email);
+                fillField(['#phone', '#phoneNumber', '[name="phone"]', '[name="phoneNumber"]', 'input[type="tel"]', 'input[placeholder*="Phone"]'], userData.phone);
+                fillField(['#address', '#street', '[name="address"]', '[name="street"]', 'input[placeholder*="Address"]', 'input[placeholder*="Street"]'], userData.street);
+                fillField(['#city', '[name="city"]', 'input[placeholder*="City"]'], userData.city);
+                fillField(['#state', '[name="state"]', 'select[name="state"]'], userData.state);
+                
+                // Nuevo campo de fecha de nacimiento
+                fillField(['#form_insurance_date_of_birth', '#date_of_birth', '[name="client[date_birth]"]', 'input[placeholder*="MM / DD / YYYY"]', 'input.only-date', 'input[autocomplete="bday"]'], userData.birthDate);
+                
+                // Activar eventos para validación
+                const inputs = document.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                  if (input && input.value) {
+                    ['input', 'change', 'blur'].forEach(eventType => {
+                      const event = new Event(eventType, { bubbles: true });
+                      input.dispatchEvent(event);
+                    });
+                  }
+                });
+                
+                // Intentar hacer click en botón de continuar
+                const nextButton = document.querySelector('button[type="submit"], .btn-primary, .next-button, button.continue');
+                if (nextButton) {
+                  nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 2000);
+              break;
+              
+            case 'renters':
+              // Lógica específica para formulario de seguro de inquilinos
+              console.log('Aplicando lógica específica para formulario de seguro de inquilinos');
+              
+              setTimeout(function() {
+                // Campos comunes en formularios de seguro de inquilinos
+                fillField(['#zip', '#zipcode', '[name="zip"]', '[name="zipcode"]', '[id="zip"]', 'input[placeholder*="ZIP"]', 'input[placeholder*="Zip"]'], userData.zipCode);
+                fillField(['#firstName', '#first_name', '[name="firstName"]', '[name="first_name"]', 'input[placeholder*="First"]'], userData.firstName);
+                fillField(['#lastName', '#last_name', '[name="lastName"]', '[name="last_name"]', 'input[placeholder*="Last"]'], userData.lastName);
+                fillField(['#email', '[name="email"]', 'input[type="email"]', 'input[placeholder*="Email"]'], userData.email);
+                fillField(['#phone', '#phoneNumber', '[name="phone"]', '[name="phoneNumber"]', 'input[type="tel"]', 'input[placeholder*="Phone"]'], userData.phone);
+                fillField(['#address', '#street', '[name="address"]', '[name="street"]', 'input[placeholder*="Address"]', 'input[placeholder*="Street"]'], userData.street);
+                fillField(['#city', '[name="city"]', 'input[placeholder*="City"]'], userData.city);
+                fillField(['#state', '[name="state"]', 'select[name="state"]'], userData.state);
+                
+                // Nuevo campo de fecha de nacimiento
+                fillField(['#form_insurance_date_of_birth', '#date_of_birth', '[name="client[date_birth]"]', 'input[placeholder*="MM / DD / YYYY"]', 'input.only-date', 'input[autocomplete="bday"]'], userData.birthDate);
+                
+                // Activar eventos para validación
+                const inputs = document.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                  if (input && input.value) {
+                    ['input', 'change', 'blur'].forEach(eventType => {
+                      const event = new Event(eventType, { bubbles: true });
+                      input.dispatchEvent(event);
+                    });
+                  }
+                });
+                
+                // Intentar hacer click en botón de continuar
+                const nextButton = document.querySelector('button[type="submit"], .btn-primary, .next-button, button.continue');
+                if (nextButton) {
+                  nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 2000);
+              break;
+              
+            case 'mobile_home':
+              // Lógica específica para formulario de seguro de casa móvil
+              console.log('Aplicando lógica específica para formulario de seguro de casa móvil');
+              
+              setTimeout(function() {
+                // Campos comunes en formularios de seguro de casa móvil
+                fillField(['#zip', '#zipcode', '[name="zip"]', '[name="zipcode"]', '[id="zip"]', 'input[placeholder*="ZIP"]', 'input[placeholder*="Zip"]'], userData.zipCode);
+                fillField(['#firstName', '#first_name', '[name="firstName"]', '[name="first_name"]', 'input[placeholder*="First"]'], userData.firstName);
+                fillField(['#lastName', '#last_name', '[name="lastName"]', '[name="last_name"]', 'input[placeholder*="Last"]'], userData.lastName);
+                fillField(['#email', '[name="email"]', 'input[type="email"]', 'input[placeholder*="Email"]'], userData.email);
+                fillField(['#phone', '#phoneNumber', '[name="phone"]', '[name="phoneNumber"]', 'input[type="tel"]', 'input[placeholder*="Phone"]'], userData.phone);
+                fillField(['#address', '#street', '[name="address"]', '[name="street"]', 'input[placeholder*="Address"]', 'input[placeholder*="Street"]'], userData.street);
+                fillField(['#city', '[name="city"]', 'input[placeholder*="City"]'], userData.city);
+                fillField(['#state', '[name="state"]', 'select[name="state"]'], userData.state);
+                
+                // Activar eventos para validación
+                const inputs = document.querySelectorAll('input, select');
+                inputs.forEach(input => {
+                  if (input && input.value) {
+                    ['input', 'change', 'blur'].forEach(eventType => {
+                      const event = new Event(eventType, { bubbles: true });
+                      input.dispatchEvent(event);
+                    });
+                  }
+                });
+                
+                // Intentar hacer click en botón de continuar
+                const nextButton = document.querySelector('button[type="submit"], .btn-primary, .next-button, button.continue');
+                if (nextButton) {
+                  nextButton.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+              }, 2000);
+              break;
             // Añadir más casos según sea necesario
           }
           

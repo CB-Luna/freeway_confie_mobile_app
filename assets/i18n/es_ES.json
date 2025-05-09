@@ -305,6 +305,28 @@
     },
     "notAvailableMessage": "no está disponible en este momento."
   },
+  "propertyInsurance": {
+    "back": "Atrás",
+    "title": "Selecciona un producto para iniciar tu cotización",
+    "homeowners": "Casa Propia",
+    "renters": "Inquilinos",
+    "mobileHome": "Seguro\nCasa Móvil",
+    "location": {
+      "gettingLocation": "Obteniendo tu ubicación...",
+      "zipCodeDialogTitle": "Ingresa tu código postal",
+      "zipCodeDialogMessage": "Por favor ingresa tu código postal para obtener cotizaciones precisas para tu área.",
+      "zipCodeHint": "Código Postal",
+      "continueButton": "Continuar",
+      "invalidZipCode": "Por favor ingresa un código postal válido",
+      "webDialogTitle": "¿Te gustaría visitar nuestro sitio web?",
+      "webDialogMessage": "Serás redirigido a nuestro sitio web para completar tu cotización de seguro de propiedad para {0}, {1}.",
+      "visitWebsite": "Visitar Sitio Web",
+      "invalidUrl": "No hay cobertura para este código postal.",
+      "cancel": "Cancelar"
+    },
+    "notAvailableMessage": "no está disponible en este momento.",
+    "processing": "Procesando tu solicitud..."
+  },
   "common": {
     "ok": "OK",
     "cancel": "Cancelar",
