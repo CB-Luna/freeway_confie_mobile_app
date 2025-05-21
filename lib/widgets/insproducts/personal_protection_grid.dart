@@ -4,8 +4,8 @@ import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
-import 'package:provider/provider.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:provider/provider.dart';
 
 import '../../data/services/location_service.dart';
 import '../../locatordevice/locator_device_module.dart';
@@ -113,17 +113,17 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
                   _buildInsuranceItem(
                     context,
                     context.translate('personalProtection.accidentalDeath'),
-                    'accidental_death',
+                    'travel_club_add',
                   ),
                   _buildInsuranceItem(
                     context,
                     context.translate('personalProtection.identityTheft'),
-                    'identity_theft',
+                    'identity_theft_protection',
                   ),
                   _buildInsuranceItem(
                     context,
                     context.translate('personalProtection.mexicanCar'),
-                    'mexican_car',
+                    'mexican_car_insurance',
                   ),
                   _buildInsuranceItem(
                     context,
@@ -269,13 +269,13 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
           desiredAccuracy: LocationAccuracy.high,
           timeLimit: const Duration(seconds: 5),
         );
-        
+
         // Obtener el código postal a partir de las coordenadas
         final zipCode = await _locationService.getZipCodeFromCoordinates(
           position.latitude,
           position.longitude,
         );
-        
+
         if (zipCode != null && zipCode.isNotEmpty) {
           // Validar el código postal con la API
           final locationInfo = await _locationService.validateZipCode(zipCode);
@@ -443,39 +443,51 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
 
       switch (insuranceType) {
         case 'health_insurance':
-          urlString = 'https://www.freeway.com/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = '${context.translate('personalProtection.health')} - $placeName, $stateAbbreviation';
+          urlString =
+              'https://www.freeway.com/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+          title =
+              '${context.translate('personalProtection.health')} - $placeName, $stateAbbreviation';
           break;
         case 'dental_insurance':
-          urlString = 'https://www.freeway.com/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
+          urlString =
+              'https://www.freeway.com/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+          title =
+              '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
           break;
         case 'telemedicine':
-          urlString = 'https://buy.freeway.com/product/telemedicine/step-2#form__step_2';
+          urlString =
+              'https://buy.freeway.com/product/telemedicine/step-2#form__step_2';
           title = context.translate('personalProtection.telemedicine');
           break;
         case 'pet_insurance':
-          urlString = 'https://www.freeway.com/pet-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = '${context.translate('personalProtection.pet')} - $placeName, $stateAbbreviation';
+          urlString =
+              'https://www.freeway.com/pet-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+          title =
+              '${context.translate('personalProtection.pet')} - $placeName, $stateAbbreviation';
           break;
         case 'life_insurance':
-          urlString = 'https://www.freeway.com/life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = '${context.translate('personalProtection.life')} - $placeName, $stateAbbreviation';
+          urlString =
+              'https://www.freeway.com/life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+          title =
+              '${context.translate('personalProtection.life')} - $placeName, $stateAbbreviation';
           break;
-        case 'accidental_death':
-          urlString = 'https://buy.freeway.com/product/ad-d/step-2?#form__step_2';
+        case 'travel_club_add':
+          urlString =
+              'https://buy.freeway.com/product/ad-d/step-2?#form__step_2';
           title = context.translate('personalProtection.accidentalDeath');
           break;
-        case 'identity_theft':
-          urlString = 'https://buy.freeway.com/product/identity-theft/step-2#form__step_2';
+        case 'identity_theft_protection':
+          urlString =
+              'https://buy.freeway.com/product/identity-theft/step-2#form__step_2';
           title = context.translate('personalProtection.identityTheft');
           break;
-        case 'mexican_car':
+        case 'mexican_car_insurance':
           urlString = 'https://quote.sanborns.com/guest/fastquote/77001';
           title = context.translate('personalProtection.mexicanCar');
           break;
         case 'hospital_indemnity':
-          urlString = 'https://buy.freeway.com/product/hospital-indemnity/step-2?#form__step_2';
+          urlString =
+              'https://buy.freeway.com/product/hospital-indemnity/step-2?#form__step_2';
           title = context.translate('personalProtection.hospitalIndemnity');
           break;
         default:

@@ -229,7 +229,16 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
             children: [
               Image.asset(
                 'assets/products/vehiclepng/4.0x/$iconName.png',
-                height: 40,
+                width: 48,
+                height: 48,
+                fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(
+                    Icons.car_rental,
+                    size: 48,
+                    color: Colors.blue,
+                  );
+                },
               ),
               const SizedBox(height: 8),
               Container(

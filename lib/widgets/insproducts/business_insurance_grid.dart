@@ -47,7 +47,7 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Text(
-              context.translate('personalProtection.back'),
+              context.translate('businessInsurance.back'),
               style: const TextStyle(
                 color: AppTheme.white,
                 fontSize: 16,
@@ -66,7 +66,7 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
             children: [
               Center(
                 child: Text(
-                  context.translate('personalProtection.title'),
+                  context.translate('businessInsurance.title'),
                   style: TextStyle(
                     color: AppTheme.getTitleTextColor(context),
                     fontSize: 18,
@@ -79,7 +79,7 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
+                crossAxisCount: 2,
                 mainAxisSpacing: 16.0,
                 crossAxisSpacing: 16.0,
                 childAspectRatio:
@@ -87,48 +87,23 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
                 children: [
                   _buildInsuranceItem(
                     context,
-                    context.translate('personalProtection.health'),
-                    'health_insurance',
+                    context.translate('businessInsurance.businessInsurance'),
+                    'business_insurance',
                   ),
                   _buildInsuranceItem(
                     context,
-                    context.translate('personalProtection.dental'),
-                    'dental_insurance',
+                    context.translate('businessInsurance.landlord'),
+                    'landlord',
                   ),
                   _buildInsuranceItem(
                     context,
-                    context.translate('personalProtection.telemedicine'),
-                    'telemedicine',
+                    context.translate('businessInsurance.commercialAuto'),
+                    'commercial_auto',
                   ),
                   _buildInsuranceItem(
                     context,
-                    context.translate('personalProtection.pet'),
-                    'pet_insurance',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('personalProtection.life'),
-                    'life_insurance',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('personalProtection.accidentalDeath'),
-                    'accidental_death',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('personalProtection.identityTheft'),
-                    'identity_theft',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('personalProtection.mexicanCar'),
-                    'mexican_car',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('personalProtection.hospitalIndemnity'),
-                    'hospital_indemnity',
+                    context.translate('businessInsurance.rideShareInsurance'),
+                    'rideshare_insurance',
                   ),
                 ],
               ),
@@ -203,13 +178,13 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
-                'assets/products/personalpng/4.0x/$iconName.png',
+                'assets/products/businesspng/4.0x/$iconName.png',
                 width: 48,
                 height: 48,
                 fit: BoxFit.contain,
                 errorBuilder: (context, error, stackTrace) {
                   return const Icon(
-                    Icons.health_and_safety,
+                    Icons.business,
                     size: 48,
                     color: Colors.blue,
                   );
@@ -258,7 +233,7 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
       // Mostrar mensaje de procesamiento
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(context.translate('personalProtection.processing')),
+          content: Text(context.translate('businessInsurance.processing')),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -419,15 +394,15 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
     if (!hasBeenShown && context.mounted) {
       final result = await CustomDialog.show(
         context: context,
-        title: context.translate('personalProtection.location.webDialogTitle'),
+        title: context.translate('businessInsurance.location.webDialogTitle'),
         message: context
-            .translate('personalProtection.location.webDialogMessage')
+            .translate('businessInsurance.location.webDialogMessage')
             .replaceAll('{0}', placeName)
             .replaceAll('{1}', stateAbbreviation),
         positiveButtonText:
-            context.translate('personalProtection.location.visitWebsite'),
+            context.translate('businessInsurance.location.visitWebsite'),
         negativeButtonText:
-            context.translate('personalProtection.location.cancel'),
+            context.translate('businessInsurance.location.cancel'),
       );
 
       // Marcar el diálogo como mostrado
@@ -442,57 +417,31 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
       String title;
 
       switch (insuranceType) {
-        case 'health_insurance':
+        case 'business_insurance':
           urlString =
-              'https://www.freeway.com/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              'https://www.freeway.com/business-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
-              '${context.translate('personalProtection.health')} - $placeName, $stateAbbreviation';
+              '${context.translate('businessInsurance.businessInsurance')} - $placeName, $stateAbbreviation';
           break;
-        case 'dental_insurance':
+        case 'landlord':
           urlString =
-              'https://www.freeway.com/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              'https://www.freeway.com/landlord-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
-              '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
+              '${context.translate('businessInsurance.landlord')} - $placeName, $stateAbbreviation';
           break;
-        case 'telemedicine':
+        case 'commercial_auto':
           urlString =
-              'https://buy.freeway.com/product/telemedicine/step-2#form__step_2';
-          title = context.translate('personalProtection.telemedicine');
-          break;
-        case 'pet_insurance':
-          urlString =
-              'https://www.freeway.com/pet-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              'https://www.freeway.com/commercial-vehicle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
-              '${context.translate('personalProtection.pet')} - $placeName, $stateAbbreviation';
+              '${context.translate('businessInsurance.commercialAuto')} - $placeName, $stateAbbreviation';
           break;
-        case 'life_insurance':
-          urlString =
-              'https://www.freeway.com/life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title =
-              '${context.translate('personalProtection.life')} - $placeName, $stateAbbreviation';
-          break;
-        case 'accidental_death':
-          urlString =
-              'https://buy.freeway.com/product/ad-d/step-2?#form__step_2';
-          title = context.translate('personalProtection.accidentalDeath');
-          break;
-        case 'identity_theft':
-          urlString =
-              'https://buy.freeway.com/product/identity-theft/step-2#form__step_2';
-          title = context.translate('personalProtection.identityTheft');
-          break;
-        case 'mexican_car':
-          urlString = 'https://quote.sanborns.com/guest/fastquote/77001';
-          title = context.translate('personalProtection.mexicanCar');
-          break;
-        case 'hospital_indemnity':
-          urlString =
-              'https://buy.freeway.com/product/hospital-indemnity/step-2?#form__step_2';
-          title = context.translate('personalProtection.hospitalIndemnity');
+        case 'rideshare_insurance':
+          urlString = 'https://rate.freeway.com/';
+          title = context.translate('businessInsurance.rideShareInsurance');
           break;
         default:
           urlString = 'https://www.freeway.com/';
-          title = context.translate('personalProtection.title');
+          title = context.translate('businessInsurance.title');
       }
 
       // Abrir la URL en un WebView embebido en lugar de un navegador externo
