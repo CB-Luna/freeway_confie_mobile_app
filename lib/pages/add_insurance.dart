@@ -87,13 +87,6 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
               imageWidth: 139,
               imageHeight: 60,
             ),
-            InsuranceCard(
-              title: context.translate('addInsurance.ancillaryProducts'),
-              imagePath: 'assets/products/4.0x/ancillary.png',
-              route: '/ancillary-products',
-              imageWidth: 69,
-              imageHeight: 60,
-            ),
             const SizedBox(height: 5),
           ],
         ),
