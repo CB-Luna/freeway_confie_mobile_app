@@ -25,7 +25,7 @@ class PropertyInsuranceGrid extends StatefulWidget {
 class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
   int _selectedIndex = 1; // Inicializado en 1 para 'Add Insurance'
   final LocationService _locationService = LocationService();
-  bool _isProcessingAutoInsurance = false;
+  bool _isProcessingPropertyInsurance = false;
 
   @override
   Widget build(BuildContext context) {
@@ -166,7 +166,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
     return GestureDetector(
       onTap: () {
         // Evitar múltiples llamadas mientras se procesa una solicitud
-        if (!_isProcessingAutoInsurance) {
+        if (!_isProcessingPropertyInsurance) {
           // Determinar qué tipo de seguro se ha seleccionado
           if (title == context.translate('propertyInsurance.homeowners')) {
             _handleHomeownersInsurance(context);
@@ -236,7 +236,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
   ) async {
     // Establecer la bandera para evitar múltiples llamadas
     setState(() {
-      _isProcessingAutoInsurance = true;
+      _isProcessingPropertyInsurance = true;
     });
 
     // Mostrar un indicador de progreso
@@ -261,7 +261,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
 
       if (!context.mounted) {
         setState(() {
-          _isProcessingAutoInsurance = false;
+          _isProcessingPropertyInsurance = false;
         });
         return;
       }
@@ -287,7 +287,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
 
       if (!context.mounted) {
         setState(() {
-          _isProcessingAutoInsurance = false;
+          _isProcessingPropertyInsurance = false;
         });
         return;
       }
@@ -299,7 +299,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
     } finally {
       // Restablecer la bandera después de completar el proceso
       setState(() {
-        _isProcessingAutoInsurance = false;
+        _isProcessingPropertyInsurance = false;
       });
     }
   }
@@ -322,7 +322,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          '$insuranceType ${context.translate('vehicleInsurance.notAvailableMessage')}',
+          '$insuranceType ${context.translate('propertyInsurance.notAvailableMessage')}',
         ),
         backgroundColor: AppTheme.getOrangeColor(context),
         duration: const Duration(seconds: 3),
@@ -330,7 +330,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
     );
 
     setState(() {
-      _isProcessingAutoInsurance = false;
+      _isProcessingPropertyInsurance = false;
     });
   }
 
@@ -363,7 +363,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              context.translate('vehicleInsurance.location.invalidZipCode'),
+              context.translate('propertyInsurance.location.invalidZipCode'),
             ),
             backgroundColor: AppTheme.getRedColor(context),
           ),
@@ -373,7 +373,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
 
     // Restablecer la bandera después de completar el proceso
     setState(() {
-      _isProcessingAutoInsurance = false;
+      _isProcessingPropertyInsurance = false;
     });
   }
 
@@ -500,7 +500,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
 
 // Restablecer la bandera después de completar el proceso
     setState(() {
-      _isProcessingAutoInsurance = false;
+      _isProcessingPropertyInsurance = false;
     });
   }
 }

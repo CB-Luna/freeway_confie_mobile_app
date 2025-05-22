@@ -4,7 +4,6 @@ import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
-import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 
 import '../../data/services/location_service.dart';
@@ -26,7 +25,8 @@ class PersonalProtectionGrid extends StatefulWidget {
 class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
   int _selectedIndex = 1; // Inicializado en 1 para 'Add Insurance'
   final LocationService _locationService = LocationService();
-  bool _isProcessingRequest = false; // Bandera para evitar múltiples llamadas
+  bool _isProcessingPersonalProtection =
+      false; // Bandera para evitar múltiples llamadas
 
   @override
   Widget build(BuildContext context) {
@@ -197,8 +197,36 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
     return GestureDetector(
       onTap: () {
         // Evitar múltiples llamadas mientras se procesa una solicitud
-        if (!_isProcessingRequest) {
-          _handleInsurance(context, iconName);
+        if (!_isProcessingPersonalProtection) {
+          // Determinar qué tipo de seguro se ha seleccionado
+          if (title == context.translate('personalProtection.health')) {
+            _handleHealthInsurance(context);
+          } else if (title == context.translate('personalProtection.dental')) {
+            _handleDentalInsurance(context);
+          } else if (title ==
+              context.translate('personalProtection.telemedicine')) {
+            _handleTelemedicine(context);
+          } else if (title == context.translate('personalProtection.pet')) {
+            _handlePetInsurance(context);
+          } else if (title == context.translate('personalProtection.life')) {
+            _handleLifeInsurance(context);
+          } else if (title ==
+              context.translate('personalProtection.accidentalDeath')) {
+            _handleAccidentalDeath(context);
+          } else if (title ==
+              context.translate('personalProtection.identityTheft')) {
+            _handleIdentityTheft(context);
+          } else if (title ==
+              context.translate('personalProtection.mexicanCar')) {
+            // Mostrar mensaje de que no está disponible actualmente
+            _handleMexicanCarInsurance(context);
+          } else if (title ==
+              context.translate('personalProtection.hospitalIndemnity')) {
+            _handleHospitalIndemnity(context);
+          } else {
+            // Para cualquier otro tipo no reconocido
+            _showNotAvailableMessage(context, title);
+          }
         }
       },
       child: Card(
@@ -248,7 +276,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
     );
   }
 
-  // Método para manejar el seguro con geolocalización
+  // Método para manejar el seguro de auto con geolocalización
   // Método genérico para manejar cualquier tipo de seguro
   Future<void> _handleInsurance(
     BuildContext context,
@@ -256,7 +284,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
   ) async {
     // Establecer la bandera para evitar múltiples llamadas
     setState(() {
-      _isProcessingRequest = true;
+      _isProcessingPersonalProtection = true;
     });
 
     // Mostrar un indicador de progreso
@@ -268,133 +296,114 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
     );
 
     try {
-      // Obtener el código postal actual del usuario si está disponible
+      // Obtener información del usuario actual
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final user = authProvider.currentUser;
-      final String? initialZipCode = user?.zipCode;
+      final String zipCode = user?.zipCode ?? ''; // Acceso seguro a zipCode
 
-      try {
-        // Intentar obtener la ubicación actual
-        final position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
-          timeLimit: const Duration(seconds: 5),
-        );
+      // Validar el código postal con la API de Zippopotam
+      final placeInfo = await _locationService.validateZipCode(zipCode);
 
-        // Obtener el código postal a partir de las coordenadas
-        final zipCode = await _locationService.getZipCodeFromCoordinates(
-          position.latitude,
-          position.longitude,
-        );
-
-        if (zipCode != null && zipCode.isNotEmpty) {
-          // Validar el código postal con la API
-          final locationInfo = await _locationService.validateZipCode(zipCode);
-
-          // Ocultar el indicador de progreso
-          overlay.remove();
-
-          if (!context.mounted) {
-            setState(() {
-              _isProcessingRequest = false;
-            });
-            return;
-          }
-
-          if (locationInfo != null) {
-            // Si se obtuvo la información de ubicación, mostrar el diálogo web
-            await _showWebPageDialog(
-              context,
-              zipCode,
-              locationInfo['placeName'],
-              locationInfo['stateAbbreviation'],
-              insuranceType,
-            );
-          } else {
-            // Ocultar el indicador de progreso
-            overlay.remove();
-
-            if (!context.mounted) {
-              setState(() {
-                _isProcessingRequest = false;
-              });
-              return;
-            }
-
-            // Si no se pudo obtener la información de ubicación, mostrar el diálogo de código postal
-            if (context.mounted) {
-              await _showZipCodeDialog(context, initialZipCode, insuranceType);
-            }
-          }
-        } else {
-          // Ocultar el indicador de progreso
-          overlay.remove();
-
-          if (!context.mounted) {
-            setState(() {
-              _isProcessingRequest = false;
-            });
-            return;
-          }
-
-          // Si no se pudo obtener el código postal, mostrar el diálogo de código postal
-          if (context.mounted) {
-            await _showZipCodeDialog(context, initialZipCode, insuranceType);
-          }
-        }
-      } catch (e) {
-        debugPrint('Error al obtener la ubicación: $e');
-        // Ocultar el indicador de progreso
-        overlay.remove();
-
-        if (!context.mounted) {
-          setState(() {
-            _isProcessingRequest = false;
-          });
-          return;
-        }
-        // Si hay un error al obtener la ubicación, mostrar el diálogo de código postal
-        if (context.mounted) {
-          await _showZipCodeDialog(context, initialZipCode, insuranceType);
-        }
-      }
-    } catch (e) {
-      debugPrint('Error al procesar la solicitud: $e');
       // Ocultar el indicador de progreso
       overlay.remove();
 
       if (!context.mounted) {
         setState(() {
-          _isProcessingRequest = false;
+          _isProcessingPersonalProtection = false;
         });
         return;
       }
 
-      // En caso de error, mostrar un mensaje
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
+      if (placeInfo != null) {
+        // Si el código postal es válido, mostrar directamente el diálogo de página web
+        await _showWebPageDialog(
+          context,
+          zipCode,
+          placeInfo['placeName'],
+          placeInfo['stateAbbreviation'],
+          insuranceType,
         );
+      } else {
+        // Si el código postal no es válido, permitir al usuario ingresarlo manualmente
+        await _showZipCodeDialog(context, zipCode, insuranceType);
       }
-    } finally {
+    } catch (e) {
+      debugPrint('Error al procesar la solicitud: $e');
+
       // Ocultar el indicador de progreso
-      try {
-        overlay.remove();
-      } catch (e) {
-        // El overlay ya podría haber sido eliminado, ignorar el error
-        debugPrint('Error al remover overlay: $e');
+      overlay.remove();
+
+      if (!context.mounted) {
+        setState(() {
+          _isProcessingPersonalProtection = false;
+        });
+        return;
       }
 
+      // En caso de error, permitir al usuario ingresar el código postal manualmente
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final user = authProvider.currentUser;
+      await _showZipCodeDialog(context, user?.zipCode ?? '', insuranceType);
+    } finally {
       // Restablecer la bandera después de completar el proceso
-      if (mounted) {
-        setState(() {
-          _isProcessingRequest = false;
-        });
-      }
+      setState(() {
+        _isProcessingPersonalProtection = false;
+      });
     }
+  }
+
+  // Métodos específicos para cada tipo de seguro
+  Future<void> _handleHealthInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'health_insurance');
+  }
+
+  Future<void> _handleDentalInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'dental_insurance');
+  }
+
+  Future<void> _handleTelemedicine(BuildContext context) async {
+    await _handleInsurance(context, 'telemedicine');
+  }
+
+  Future<void> _handlePetInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'pet_insurance');
+  }
+
+  Future<void> _handleLifeInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'life_insurance');
+  }
+
+  Future<void> _handleAccidentalDeath(BuildContext context) async {
+    await _handleInsurance(context, 'travel_club_add');
+  }
+
+  Future<void> _handleIdentityTheft(BuildContext context) async {
+    await _handleInsurance(context, 'identity_theft_protection');
+  }
+
+  Future<void> _handleMexicanCarInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'mexican_car_insurance');
+  }
+
+  Future<void> _handleHospitalIndemnity(BuildContext context) async {
+    await _handleInsurance(context, 'hospital_indemnity');
+  }
+
+  // Método para mostrar mensaje cuando un seguro no está disponible
+  void _showNotAvailableMessage(BuildContext context, String insuranceType) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          '$insuranceType ${context.translate('personalProtection.notAvailableMessage')}',
+        ),
+        backgroundColor: AppTheme.getOrangeColor(context),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+
+    setState(() {
+      _isProcessingPersonalProtection = false;
+    });
   }
 
   // Método para mostrar el diálogo de código postal
@@ -426,7 +435,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              context.translate('vehicleInsurance.location.invalidZipCode'),
+              context.translate('personalProtection.location.invalidZipCode'),
             ),
             backgroundColor: AppTheme.getRedColor(context),
           ),
@@ -434,7 +443,10 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
       }
     }
 
-    // Proceso completado
+    // Restablecer la bandera después de completar el proceso
+    setState(() {
+      _isProcessingPersonalProtection = false;
+    });
   }
 
   // Método para mostrar el diálogo de página web
