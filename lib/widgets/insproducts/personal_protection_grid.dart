@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 
 import '../../data/services/location_service.dart';
 import '../../locatordevice/locator_device_module.dart';
+import '../../locatordevice/presentation/widgets/loading_view.dart';
 import '../../pages/home_page.dart';
 import '../../pages/webview_page.dart';
 import '../../utils/menu/circle_nav_bar.dart';
@@ -25,6 +26,7 @@ class PersonalProtectionGrid extends StatefulWidget {
 class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
   int _selectedIndex = 1; // Inicializado en 1 para 'Add Insurance'
   final LocationService _locationService = LocationService();
+  bool _isProcessingRequest = false; // Bandera para evitar múltiples llamadas
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +196,10 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
 
     return GestureDetector(
       onTap: () {
-        _handleInsurance(context, iconName);
+        // Evitar múltiples llamadas mientras se procesa una solicitud
+        if (!_isProcessingRequest) {
+          _handleInsurance(context, iconName);
+        }
       },
       child: Card(
         child: Padding(
@@ -249,22 +254,27 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
     BuildContext context,
     String insuranceType,
   ) async {
-    // Obtener el código postal actual del usuario si está disponible
-    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final user = authProvider.currentUser;
-    final String? initialZipCode = user?.zipCode;
+    // Establecer la bandera para evitar múltiples llamadas
+    setState(() {
+      _isProcessingRequest = true;
+    });
+
+    // Mostrar un indicador de progreso
+    final overlay = LoadingView.showOverlay(
+      context,
+      message: context.translate('personalProtection.processing'),
+      indicatorColor: AppTheme.getPrimaryColor(context),
+      textColor: AppTheme.getTitleTextColor(context),
+    );
 
     try {
-      // Mostrar mensaje de procesamiento
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(context.translate('personalProtection.processing')),
-          duration: const Duration(seconds: 2),
-        ),
-      );
+      // Obtener el código postal actual del usuario si está disponible
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final user = authProvider.currentUser;
+      final String? initialZipCode = user?.zipCode;
 
-      // Intentar obtener la ubicación actual
       try {
+        // Intentar obtener la ubicación actual
         final position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.high,
           timeLimit: const Duration(seconds: 5),
@@ -280,6 +290,16 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
           // Validar el código postal con la API
           final locationInfo = await _locationService.validateZipCode(zipCode);
 
+          // Ocultar el indicador de progreso
+          overlay.remove();
+
+          if (!context.mounted) {
+            setState(() {
+              _isProcessingRequest = false;
+            });
+            return;
+          }
+
           if (locationInfo != null) {
             // Si se obtuvo la información de ubicación, mostrar el diálogo web
             await _showWebPageDialog(
@@ -290,24 +310,65 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               insuranceType,
             );
           } else {
+            // Ocultar el indicador de progreso
+            overlay.remove();
+
+            if (!context.mounted) {
+              setState(() {
+                _isProcessingRequest = false;
+              });
+              return;
+            }
+
             // Si no se pudo obtener la información de ubicación, mostrar el diálogo de código postal
             if (context.mounted) {
               await _showZipCodeDialog(context, initialZipCode, insuranceType);
             }
           }
         } else {
+          // Ocultar el indicador de progreso
+          overlay.remove();
+
+          if (!context.mounted) {
+            setState(() {
+              _isProcessingRequest = false;
+            });
+            return;
+          }
+
           // Si no se pudo obtener el código postal, mostrar el diálogo de código postal
           if (context.mounted) {
             await _showZipCodeDialog(context, initialZipCode, insuranceType);
           }
         }
       } catch (e) {
+        debugPrint('Error al obtener la ubicación: $e');
+        // Ocultar el indicador de progreso
+        overlay.remove();
+
+        if (!context.mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+          return;
+        }
         // Si hay un error al obtener la ubicación, mostrar el diálogo de código postal
         if (context.mounted) {
           await _showZipCodeDialog(context, initialZipCode, insuranceType);
         }
       }
     } catch (e) {
+      debugPrint('Error al procesar la solicitud: $e');
+      // Ocultar el indicador de progreso
+      overlay.remove();
+
+      if (!context.mounted) {
+        setState(() {
+          _isProcessingRequest = false;
+        });
+        return;
+      }
+
       // En caso de error, mostrar un mensaje
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -319,7 +380,20 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
         );
       }
     } finally {
-      // No se requiere ninguna acción adicional
+      // Ocultar el indicador de progreso
+      try {
+        overlay.remove();
+      } catch (e) {
+        // El overlay ya podría haber sido eliminado, ignorar el error
+        debugPrint('Error al remover overlay: $e');
+      }
+
+      // Restablecer la bandera después de completar el proceso
+      if (mounted) {
+        setState(() {
+          _isProcessingRequest = false;
+        });
+      }
     }
   }
 
