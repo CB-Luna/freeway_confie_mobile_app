@@ -379,15 +379,31 @@ class OfficeListItem extends StatelessWidget {
   String _getDayOfWeek(BuildContext context) {
     final now = DateTime.now();
     final locale = Localizations.localeOf(context).languageCode;
-    
+
     // En Dart: weekday va de 1 (lunes) a 7 (domingo)
     // Organizamos los arrays para que coincidan con este orden
-    const daysEn = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-    const daysEs = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
-    
+    const daysEn = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    const daysEs = [
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+      'Domingo',
+    ];
+
     // Obtenemos el índice correcto (0-6)
     final index = now.weekday - 1;
-    
+
     return locale.startsWith('es') ? daysEs[index] : daysEn[index];
   }
 
@@ -441,7 +457,7 @@ class OfficeListItem extends StatelessWidget {
             ),
           ),
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Text(
                 office.name,
@@ -451,45 +467,9 @@ class OfficeListItem extends StatelessWidget {
                   color: AppTheme.getTextGreyColor(context),
                 ),
               ),
-              Row(
-                children: [
-                  Icon(
-                    Icons.star,
-                    color: AppTheme.getYellowColor(context),
-                    size: isSmallScreen ? 14 : 18,
-                  ),
-                  Text(
-                    '4.5',
-                    style: TextStyle(
-                      fontSize: mediumFontSize,
-                      fontWeight: FontWeight.normal,
-                    ),
-                  ),
-                ],
-              ),
             ],
           ),
-          // Landmark
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                color: AppTheme.getTextGreyColor(context),
-                size: isSmallScreen ? 14 : 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                context.translateWithArgs(
-                  'office.landmark',
-                  args: ['Broadway'],
-                ),
-                style: TextStyle(
-                  fontSize: smallFontSize,
-                  color: AppTheme.getTextGreyColor(context),
-                ),
-              ),
-            ],
-          ),
+          const SizedBox(height: 8),
           // Horario
           Row(
             children: [
@@ -507,27 +487,6 @@ class OfficeListItem extends StatelessWidget {
                     '08:00am',
                     '08:00pm',
                   ],
-                ),
-                style: TextStyle(
-                  fontSize: smallFontSize,
-                  color: AppTheme.getTextGreyColor(context),
-                ),
-              ),
-            ],
-          ),
-          // Idiomas
-          Row(
-            children: [
-              Icon(
-                Icons.language,
-                color: AppTheme.getTextGreyColor(context),
-                size: isSmallScreen ? 14 : 16,
-              ),
-              const SizedBox(width: 4),
-              Text(
-                context.translateWithArgs(
-                  'office.languages',
-                  args: ['English, Spanish'],
                 ),
                 style: TextStyle(
                   fontSize: smallFontSize,

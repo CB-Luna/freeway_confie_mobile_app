@@ -1,6 +1,7 @@
 import 'package:add_to_google_wallet/add_to_google_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:freeway_app/models/user_model.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:uuid/uuid.dart';
 
 /// Servicio para manejar la integración con Google Wallet
@@ -38,7 +39,7 @@ class GoogleWalletService {
     final effectiveDateStr = '06/18/2023';
     final expirationDateStr = '12/18/2026';
 
-    // Crear un JSON con los datos de la tarjeta de seguro que se parezca al diseño de IdCardWidget
+    // Crear un JSON simplificado para la tarjeta de seguro
     final String passJson = """
     {
       "iss": "${user.email ?? 'info@freewayinsurance.com'}",
@@ -53,74 +54,62 @@ class GoogleWalletService {
             "logo": {
               "sourceUri": {
                 "uri": "https://storage.googleapis.com/wallet-lab-tools-codelab-artifacts-public/pass_google_logo.jpg"
-              },
-              "contentDescription": {
-                "defaultValue": {
-                  "language": "en-US",
-                  "value": "LOGO_IMAGE_DESCRIPTION"
-                }
               }
             },
             "cardTitle": {
               "defaultValue": {
-                "language": "en-US",
+                "language": "${context.translate('idCard.languageCode')}-${context.translate('idCard.countryCode')}",
                 "value": "Freeway Insurance"
               }
             },
             "subheader": {
               "defaultValue": {
-                "language": "en-US",
+                "language": "${context.translate('idCard.languageCode')}-${context.translate('idCard.countryCode')}",
                 "value": "Named Insured"
               }
             },
             "header": {
               "defaultValue": {
-                "language": "en-US",
-                "value": "Uzziel Palma"
+                "language": "${context.translate('idCard.languageCode')}-${context.translate('idCard.countryCode')}",
+                "value": "${user.fullName}"
               }
             },
             "textModulesData": [
               {
                 "id": "carrier",
                 "header": "Carrier",
-                "body": "Old American Indemnity Co."
+                "body": "${user.carrierName ?? 'Freeway Insurance'}"
               },
               {
                 "id": "policy_number",
                 "header": "Policy Number",
-                "body": "LAOP0018134-000"
+                "body": "${user.policyNumber}"
               },
               {
                 "id": "state",
                 "header": "State",
-                "body": "LA"
+                "body": "${user.state}"
               },
               {
-                "id": "effecive_date",
-                "header": "Effecive Date",
-                "body": "06/18/2023"
+                "id": "effective_date",
+                "header": "Effective Date",
+                "body": "$effectiveDateStr"
               },
               {
                 "id": "expiration_date",
                 "header": "Expiration Date",
-                "body": "12/18/2026"
+                "body": "$expirationDateStr"
               }
             ],
             "barcode": {
               "type": "CODE_128",
               "value": "${user.policyNumber}",
-              "alternateText": "Not Official Proof of Insurance"
+              "alternateText": "${context.translate('idCard.notProofOfCoverage')}"
             },
             "hexBackgroundColor": "#ffffff",
             "heroImage": {
               "sourceUri": {
                 "uri": "https://encycolorpedia.es/0000ff.png"
-              },
-              "contentDescription": {
-                "defaultValue": {
-                  "language": "en-US",
-                  "value": "HERO_IMAGE_DESCRIPTION"
-                }
               }
             }
           }

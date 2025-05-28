@@ -24,7 +24,7 @@ class _IdCardPageState extends State<IdCardPage> {
   int _selectedIndex = 0;
   final GlobalKey _idCardKey = GlobalKey();
   bool _isProcessingRequest = false; // Bandera para evitar múltiples llamadas
-  
+
   // Servicio de Google Wallet
   final GoogleWalletService _googleWalletService = GoogleWalletService();
 
@@ -413,7 +413,7 @@ class _IdCardPageState extends State<IdCardPage> {
     // Mostrar un indicador de progreso
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.translate('idCard.addingToGoogleWallet')),
+        content: Text(context.translate('idCard.addedToGoogleWallet')),
         duration: const Duration(seconds: 2),
       ),
     );
