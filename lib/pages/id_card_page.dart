@@ -1,6 +1,7 @@
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/services/google_wallet_service.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
@@ -23,6 +24,9 @@ class _IdCardPageState extends State<IdCardPage> {
   int _selectedIndex = 0;
   final GlobalKey _idCardKey = GlobalKey();
   bool _isProcessingRequest = false; // Bandera para evitar múltiples llamadas
+  
+  // Servicio de Google Wallet
+  final GoogleWalletService _googleWalletService = GoogleWalletService();
 
   @override
   Widget build(BuildContext context) {
@@ -170,14 +174,9 @@ class _IdCardPageState extends State<IdCardPage> {
                             if (Platform.isAndroid)
                               GestureDetector(
                                 onTap: () {
-                                  // TODO: Implementar funcionalidad de Google Wallet
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content:
-                                          Text('Adding to Google Wallet...'),
-                                      duration: Duration(seconds: 2),
-                                    ),
-                                  );
+                                  if (!_isProcessingRequest) {
+                                    _handleAddToGoogleWallet(context, user);
+                                  }
                                 },
                                 child: Image.asset(
                                   'assets/home/idcardicons/add_google_wallet.png',
@@ -326,8 +325,8 @@ class _IdCardPageState extends State<IdCardPage> {
 
     // Utilizar la clase IdCardPrinter para imprimir la tarjeta
     IdCardPrinter.printIdCard(
-      context, 
-      _idCardKey, 
+      context,
+      _idCardKey,
       user,
       (success) {
         // Callback cuando se completa la operación
@@ -374,8 +373,8 @@ class _IdCardPageState extends State<IdCardPage> {
 
     // Utilizar la clase IdCardPrinter para guardar la tarjeta
     IdCardPrinter.saveIdCard(
-      context, 
-      _idCardKey, 
+      context,
+      _idCardKey,
       user,
       (success) {
         // Callback cuando se completa la operación
@@ -400,6 +399,71 @@ class _IdCardPageState extends State<IdCardPage> {
               ),
             );
           }
+        }
+      },
+    );
+  }
+
+  // Método para manejar la adición a Google Wallet
+  void _handleAddToGoogleWallet(BuildContext context, User user) {
+    setState(() {
+      _isProcessingRequest = true;
+    });
+
+    // Mostrar un indicador de progreso
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.translate('idCard.addingToGoogleWallet')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    // Usar el servicio de Google Wallet
+    _googleWalletService.addInsuranceCardToGoogleWallet(
+      context: context,
+      user: user,
+      onSuccess: () {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.translate('idCard.addedToGoogleWallet')),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onCanceled: () {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.translate('idCard.cancelToGoogleWallet')),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $error'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
         }
       },
     );
