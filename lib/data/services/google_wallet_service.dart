@@ -1,7 +1,6 @@
 import 'package:add_to_google_wallet/add_to_google_wallet.dart';
 import 'package:flutter/material.dart';
 import 'package:freeway_app/models/user_model.dart';
-import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:uuid/uuid.dart';
 
 /// Servicio para manejar la integración con Google Wallet
@@ -35,7 +34,11 @@ class GoogleWalletService {
     // Generar un ID único para el pase
     final String passId = const Uuid().v4();
 
-    // Crear un JSON con los datos de la tarjeta de seguro
+    // Fechas estáticas para demo
+    final effectiveDateStr = '06/18/2023';
+    final expirationDateStr = '12/18/2026';
+
+    // Crear un JSON con los datos de la tarjeta de seguro que se parezca al diseño de IdCardWidget
     final String passJson = """
     {
       "iss": "${user.email ?? 'info@freewayinsurance.com'}",
@@ -47,57 +50,79 @@ class GoogleWalletService {
           {
             "id": "$_issuerId.$passId",
             "classId": "$_issuerId.$_passClass",
-            "genericType": "GENERIC_TYPE_UNSPECIFIED",
-            "hexBackgroundColor": "#0066CC",
             "logo": {
               "sourceUri": {
-                "uri": "https://danielsuarezracing.com/wp-content/uploads/2021/04/IMG_3217.jpg"
+                "uri": "https://storage.googleapis.com/wallet-lab-tools-codelab-artifacts-public/pass_google_logo.jpg"
+              },
+              "contentDescription": {
+                "defaultValue": {
+                  "language": "en-US",
+                  "value": "LOGO_IMAGE_DESCRIPTION"
+                }
               }
             },
             "cardTitle": {
               "defaultValue": {
-                "language": "${user.languageCode ?? 'en'}",
+                "language": "en-US",
                 "value": "Freeway Insurance"
               }
             },
             "subheader": {
               "defaultValue": {
-                "language": "${user.languageCode ?? 'en'}",
-                "value": "${context.translate('idCard.policyNumberLabel')}"
+                "language": "en-US",
+                "value": "Named Insured"
               }
             },
             "header": {
               "defaultValue": {
-                "language": "${user.languageCode ?? 'en'}",
-                "value": "${user.policyNumber}"
-              }
-            },
-            "barcode": {
-              "type": "QR_CODE",
-              "value": "${user.policyNumber}"
-            },
-            "heroImage": {
-              "sourceUri": {
-                "uri": "https://danielsuarezracing.com/wp-content/uploads/2021/04/IMG_3217.jpg"
+                "language": "en-US",
+                "value": "Uzziel Palma"
               }
             },
             "textModulesData": [
               {
-                "header": "${context.translate('idCard.carrier')}",
-                "body": "${user.carrierName ?? 'Freeway Insurance'}",
-                "id": "carrier"
+                "id": "carrier",
+                "header": "Carrier",
+                "body": "Old American Indemnity Co."
               },
               {
-                "header": "${context.translate('idCard.state')}",
-                "body": "${user.state}",
-                "id": "state"
+                "id": "policy_number",
+                "header": "Policy Number",
+                "body": "LAOP0018134-000"
               },
               {
-                "header": "${context.translate('idCard.name')}",
-                "body": "${user.fullName}",
-                "id": "name"
+                "id": "state",
+                "header": "State",
+                "body": "LA"
+              },
+              {
+                "id": "effecive_date",
+                "header": "Effecive Date",
+                "body": "06/18/2023"
+              },
+              {
+                "id": "expiration_date",
+                "header": "Expiration Date",
+                "body": "12/18/2026"
               }
-            ]
+            ],
+            "barcode": {
+              "type": "CODE_128",
+              "value": "${user.policyNumber}",
+              "alternateText": "Not Official Proof of Insurance"
+            },
+            "hexBackgroundColor": "#ffffff",
+            "heroImage": {
+              "sourceUri": {
+                "uri": "https://encycolorpedia.es/0000ff.png"
+              },
+              "contentDescription": {
+                "defaultValue": {
+                  "language": "en-US",
+                  "value": "HERO_IMAGE_DESCRIPTION"
+                }
+              }
+            }
           }
         ]
       }
