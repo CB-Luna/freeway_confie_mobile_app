@@ -44,7 +44,7 @@
     "pleaseEnterCompletePhone": "Please enter a complete phone number",
     "phoneNumberFormat": "Phone number must include country code and be 10-15 digits",
     "phoneNumberHint": "+1 (234) 567-8910",
-    "phoneNumberHelper": "Include country code (e.g. +1 for USA)",
+    "phoneNumberHelper": "Input your personal phone number",
     "pleaseSelectBirthDate": "Please select your birth date",
     "haveAccount": "Already have an account?",
     "signUpLoading": "Creating account...",

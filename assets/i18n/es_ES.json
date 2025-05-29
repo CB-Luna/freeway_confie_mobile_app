@@ -43,7 +43,7 @@
     "pleaseEnterCompletePhone": "Por favor, ingresa un número de teléfono completo",
     "phoneNumberFormat": "El número de teléfono debe incluir el código de país y tener entre 10 y 15 dígitos",
     "phoneNumberHint": "+1 (234) 567-8910",
-    "phoneNumberHelper": "Incluye el código de país (ej. +1 para EE.UU.)",
+    "phoneNumberHelper": "Ingresa tu número telefónico personal",
     "pleaseSelectBirthDate": "Por favor, selecciona tu fecha de nacimiento",
     "haveAccount": "¿Ya tienes una cuenta?",
     "signUpLoading": "Creando cuenta...",
