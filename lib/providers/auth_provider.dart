@@ -133,7 +133,7 @@ class AuthProvider with ChangeNotifier {
             avatar: null, // No disponible en la API
             languageCode: 'en_US', // Por defecto o basado en preferencias
             street: apiResponse['Street'] ?? '',
-            zipCode: '91911',
+            zipCode: apiResponse['Zip'].toString(),
             city: apiResponse['City'] ?? '',
             state: apiResponse['State'] ?? '',
             carrierName: apiResponse['CarrierName'] ?? '',
