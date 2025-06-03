@@ -32,7 +32,8 @@ class SignUpPageState extends State<SignUpPage> {
   bool _obscureText = true;
   bool _isLoading = false;
   DateTime? _selectedDate;
-  String _completePhoneNumber = ''; // Almacena el número completo con código de país
+  String _completePhoneNumber =
+      ''; // Almacena el número completo con código de país
   CountryPhoneModel _selectedCountry = countryPhoneList.first;
 
   // Formateador para la fecha de nacimiento en formato estadounidense (MMDDYYYY)
@@ -313,7 +314,8 @@ class SignUpPageState extends State<SignUpPage> {
                     phoneController: _phoneController,
                     labelText: context.translate('auth.phoneNumber'),
                     helperText: context.translate('auth.phoneNumberHelper'),
-                    initialCountryCode: 'US', // Código de país predeterminado (Estados Unidos)
+                    initialCountryCode:
+                        'US', // Código de país predeterminado (Estados Unidos)
                     showFlag: true,
                     onPhoneChanged: (completeNumber) {
                       // Actualizar el número completo con código de país cuando cambia
@@ -403,8 +405,6 @@ class SignUpPageState extends State<SignUpPage> {
                     decoration: AppTheme.inputDecoration(
                       context,
                       labelText: context.translate('auth.policyNumber'),
-                    ).copyWith(
-                      prefixIcon: const Icon(Icons.policy),
                     ),
                     // No hay validación porque es opcional
                   ),

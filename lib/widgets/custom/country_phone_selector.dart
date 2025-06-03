@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 /// Widget personalizado para seleccionar un país y número de teléfono
 /// con prioridad para México, Estados Unidos y Canadá
@@ -246,6 +247,26 @@ class _CountryPhoneSelectorState extends State<CountryPhoneSelector> {
             labelText: widget.labelText,
             helperText: widget.helperText,
             errorText: widget.errorText,
+            labelStyle: TextStyle(color: AppTheme.getTitleTextColor(context)),
+            border: const OutlineInputBorder(
+              borderRadius: BorderRadius.all(Radius.circular(8)),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              borderSide:
+                  BorderSide(color: AppTheme.getDetailsGreyColor(context)),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: const BorderRadius.all(Radius.circular(8)),
+              borderSide: BorderSide(color: AppTheme.getPrimaryColor(context)),
+            ),
+            filled: true,
+            fillColor: AppTheme.getCardColor(context),
+            helperStyle: TextStyle(
+              color: AppTheme.getTextGreyColor(context),
+              fontSize: 11.0,
+              height: 1.2, // Espaciado de línea más compacto
+            ),
             prefixIcon: GestureDetector(
               onTap: widget.enabled ? _showCountryPicker : null,
               child: Container(
@@ -264,7 +285,7 @@ class _CountryPhoneSelectorState extends State<CountryPhoneSelector> {
                     Text(
                       _selectedCountry.formattedDialCode,
                       style: TextStyle(
-                        color: Theme.of(context).primaryColor,
+                        color: AppTheme.getTitleTextColor(context),
                         fontWeight: FontWeight.bold,
                         fontSize:
                             16, // Aumentar el tamaño de los códigos de país
