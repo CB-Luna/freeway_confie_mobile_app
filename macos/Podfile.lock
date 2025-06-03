@@ -12,6 +12,8 @@ PODS:
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
+  - printing (1.0.0):
+    - FlutterMacOS
   - rive_common (0.0.1):
     - FlutterMacOS
   - shared_preferences_foundation (0.0.1):
@@ -33,6 +35,7 @@ DEPENDENCIES:
   - geolocator_apple (from `Flutter/ephemeral/.symlinks/plugins/geolocator_apple/macos`)
   - local_auth_darwin (from `Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin`)
   - path_provider_foundation (from `Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin`)
+  - printing (from `Flutter/ephemeral/.symlinks/plugins/printing/macos`)
   - rive_common (from `Flutter/ephemeral/.symlinks/plugins/rive_common/macos`)
   - shared_preferences_foundation (from `Flutter/ephemeral/.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sqflite_darwin (from `Flutter/ephemeral/.symlinks/plugins/sqflite_darwin/darwin`)
@@ -52,6 +55,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral/.symlinks/plugins/local_auth_darwin/darwin
   path_provider_foundation:
     :path: Flutter/ephemeral/.symlinks/plugins/path_provider_foundation/darwin
+  printing:
+    :path: Flutter/ephemeral/.symlinks/plugins/printing/macos
   rive_common:
     :path: Flutter/ephemeral/.symlinks/plugins/rive_common/macos
   shared_preferences_foundation:
@@ -70,6 +75,7 @@ SPEC CHECKSUMS:
   geolocator_apple: 72a78ae3f3e4ec0db62117bd93e34523f5011d58
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
+  printing: 1dd6a1fce2209ec240698e2439a4adbb9b427637
   rive_common: 9580b9f1f08a8c85006083078e80479edf3db26a
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
   sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d

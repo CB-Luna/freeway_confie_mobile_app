@@ -43,7 +43,7 @@ class _ProductListState extends State<ProductList> {
     // Obtener el ancho de la pantalla para cálculos responsive
     final screenWidth = MediaQuery.of(context).size.width;
     // Calcular el ancho ideal para las tarjetas basado en el ancho de la pantalla
-    final cardWidth = screenWidth < 360 ? screenWidth * 0.4 : 160.0;
+    final cardWidth = screenWidth < 360 ? screenWidth * 0.4 : 140.0;
 
     final List<ProductItem> products = [
       ProductItem(
@@ -140,7 +140,7 @@ class ProductCard extends StatelessWidget {
     // Calcular tamaño del icono proporcional al ancho de la tarjeta
     final iconSize = cardWidth * 0.3;
     // Calcular tamaño de fuente basado en el ancho de la tarjeta
-    final fontSize = cardWidth < 140 ? 14.0 : 8.0;
+    final fontSize = cardWidth <= 140 ? 8.0 : 12.0;
 
     return Card(
       elevation: 4,
