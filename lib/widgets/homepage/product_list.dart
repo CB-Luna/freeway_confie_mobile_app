@@ -139,8 +139,33 @@ class ProductCard extends StatelessWidget {
     final cardHeight = cardWidth * 0.45;
     // Calcular tamaño del icono proporcional al ancho de la tarjeta
     final iconSize = cardWidth * 0.3;
-    // Calcular tamaño de fuente basado en el ancho de la tarjeta
-    final fontSize = cardWidth <= 140 ? 8.0 : 12.0;
+    // Obtener el TextScaler del dispositivo
+    final textScaler = MediaQuery.of(context).textScaler;
+
+    // Calcular tamaño de fuente base basado en el ancho de la tarjeta
+    final baseFontSize = cardWidth <= 140 ? 10.0 : 12.0;
+
+    // Ajustar el tamaño de fuente según el textScaler
+    // Usamos textScaler.scale(baseFontSize) para obtener el tamaño de fuente escalado.
+    // Esto maneja correctamente el escalado lineal y no lineal.
+    var adjustedFontSize = textScaler.scale(baseFontSize);
+
+    // Limitar el tamaño de fuente para evitar que sea demasiado pequeño o grande y rompa el UI
+    // Estos límites pueden ajustarse según las necesidades del diseño.
+    // Por ejemplo, si el baseFontSize es 8, y el textScaleFactor es 2.0 (muy grande),
+    // el adjustedFontSize sería 16. Si el cardWidth es pequeño, esto podría ser demasiado.
+    // Si el baseFontSize es 12 y textScaleFactor es 0.85 (pequeño), adjustedFontSize sería ~10.2
+    if (cardWidth <= 140) {
+      // Para tarjetas más pequeñas, los límites son más estrictos
+      adjustedFontSize =
+          adjustedFontSize.clamp(8.0, 12.0); // Ejemplo: Mínimo 8, Máximo 12
+    } else {
+      // Para tarjetas más grandes, podemos permitir un poco más de flexibilidad
+      adjustedFontSize =
+          adjustedFontSize.clamp(12.0, 16.0); // Ejemplo: Mínimo 12, Máximo 16
+    }
+    // Asignar el valor final a fontSize para usarlo en el widget Text
+    final fontSize = adjustedFontSize;
 
     return Card(
       elevation: 4,
@@ -192,9 +217,10 @@ class ProductCard extends StatelessWidget {
                   product.title,
                   style: TextStyle(
                     fontFamily: 'Open Sans',
-                    fontSize: fontSize,
+                    fontSize: fontSize, // Usará el adjustedFontSize calculado
                     fontWeight: FontWeight.w600,
-                    height: 1.3,
+                    height:
+                        1.3, // Ajustar el interlineado si es necesario con fuentes grandes
                     color: AppTheme.black,
                   ),
                   maxLines: 2,
