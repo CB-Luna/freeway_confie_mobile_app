@@ -254,6 +254,11 @@ class _LocationDetailsViewContentState
                   );
                 };
               },
+              onCameraMove: controller.onCameraMove,
+              onCameraIdle: () {
+                // Se podría implementar alguna lógica adicional cuando la cámara se detiene
+                // Por ahora lo dejamos vacío para evitar llamadas innecesarias
+              },
               zoomControlsEnabled: true,
               compassEnabled: true,
               mapToolbarEnabled: true,

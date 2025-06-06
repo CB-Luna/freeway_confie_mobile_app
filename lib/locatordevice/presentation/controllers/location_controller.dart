@@ -80,6 +80,12 @@ class LocationController extends ChangeNotifier {
 
   GoogleMapController? mapController;
   StreamSubscription<Position>? _positionStreamSubscription;
+  
+  // Variables para el manejo dinámico de la carga de oficinas según la posición de la cámara
+  LatLng? _initialCameraPosition; // Posición inicial de la cámara
+  LatLng? _lastCameraPosition; // Última posición de la cámara donde se cargaron oficinas
+  double _maxDistanceToOffice = 0.0; // Distancia máxima a la oficina más lejana (en millas)
+  bool _isLoadingOffices = false; // Bandera para evitar múltiples cargas simultáneas
 
   LocationState _state = LocationState();
   LocationState get state => _state;
@@ -498,14 +504,120 @@ class LocationController extends ChangeNotifier {
         ),
         zoom: 14.0,
       );
-      mapController!
-          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+
+      mapController!.animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      
+      // Actualizar la posición inicial y última posición de la cámara
+      _initialCameraPosition = LatLng(
+        state.currentPosition!.latitude,
+        state.currentPosition!.longitude,
+      );
+      _lastCameraPosition = _initialCameraPosition;
     }
   }
 
   void onMapCreated(GoogleMapController controller) {
     mapController = controller;
-    updateMapPosition();
+    
+    // Guardar la posición inicial de la cámara cuando se crea el mapa
+    if (state.currentPosition != null) {
+      _initialCameraPosition = LatLng(
+        state.currentPosition!.latitude,
+        state.currentPosition!.longitude,
+      );
+      _lastCameraPosition = _initialCameraPosition;
+    }
+  }
+  
+  // Método para manejar el movimiento de la cámara
+  void onCameraMove(CameraPosition position) {
+    // Si no tenemos posición inicial o última posición, establecerlas
+    if (_initialCameraPosition == null) {
+      _initialCameraPosition = position.target;
+      _lastCameraPosition = position.target;
+      return;
+    }
+    
+    // Si estamos cargando oficinas, no hacer nada
+    if (_isLoadingOffices) return;
+    
+    // Calcular la distancia entre la posición actual de la cámara y la última posición donde cargamos oficinas
+    final distanceInMeters = Geolocator.distanceBetween(
+      _lastCameraPosition!.latitude,
+      _lastCameraPosition!.longitude,
+      position.target.latitude,
+      position.target.longitude,
+    );
+    
+    // Convertir la distancia a millas (1 milla = 1609.34 metros)
+    final distanceInMiles = distanceInMeters / 1609.34;
+    
+    // Si la distancia es mayor que la distancia máxima a la oficina más lejana,
+    // o si estamos mostrando todas las oficinas y nos hemos movido significativamente,
+    // cargar nuevas oficinas
+    final significantDistance = state.showAllOffices ? 5.0 : _maxDistanceToOffice;
+    if (distanceInMiles > significantDistance * 0.7) { // 70% de la distancia máxima como umbral
+      _loadOfficesAtPosition(position.target);
+    }
+  }
+  
+  // Método para cargar oficinas en una posición específica
+  Future<void> _loadOfficesAtPosition(LatLng position) async {
+    // Evitar múltiples cargas simultáneas
+    if (_isLoadingOffices) return;
+    
+    _isLoadingOffices = true;
+    
+    try {
+      // No mostrar indicador de carga para no interrumpir la experiencia del usuario
+      // pero sí actualizar el estado interno
+      
+      // Crear una posición temporal para pasar al caso de uso
+      final tempPosition = Position(
+        latitude: position.latitude,
+        longitude: position.longitude,
+        timestamp: DateTime.now(),
+        accuracy: 0,
+        altitude: 0,
+        heading: 0,
+        speed: 0,
+        speedAccuracy: 0,
+        altitudeAccuracy: 0,
+        headingAccuracy: 0,
+      );
+      
+      // Obtener oficinas cercanas a la posición actual de la cámara
+      final result = await getOffices.execute(currentPosition: tempPosition);
+      
+      if (result.isNotEmpty) {
+        // Actualizar la última posición donde cargamos oficinas
+        _lastCameraPosition = position;
+        
+        // Combinar las nuevas oficinas con las existentes, evitando duplicados
+        final existingOfficeIds = state.offices.map((o) => o.locationId).toSet();
+        final newOffices = [
+          ...state.offices,
+          ...result.where((office) => !existingOfficeIds.contains(office.locationId)),
+        ];
+        
+        // Actualizar la lista de oficinas
+        _updateState(offices: newOffices);
+        
+        // Recalcular las distancias y actualizar los marcadores
+        _calculateDistancesToOffices();
+        _updateOfficeMarkers();
+        
+        // Actualizar la distancia máxima a la oficina más lejana
+        if (state.nearbyOffices.isNotEmpty) {
+          _maxDistanceToOffice = state.nearbyOffices.last.distance;
+        }
+      }
+    } catch (e) {
+      // No mostrar error al usuario para no interrumpir la experiencia
+      debugPrint('Error al cargar oficinas en la posición: $e');
+    } finally {
+      _isLoadingOffices = false;
+    }
   }
 
   // Callback para expandir el DraggableScrollableSheet

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class MapButtons extends StatelessWidget {
   final VoidCallback onLocationPressed;
@@ -34,11 +35,11 @@ class MapButtons extends StatelessWidget {
             height: buttonSize,
             child: FloatingActionButton(
               heroTag: 'currentLocation',
-              backgroundColor: Colors.white,
+              backgroundColor: AppTheme.getBackgroundColor(context),
               onPressed: onLocationPressed,
               tooltip: context.translate('office.findNearby'),
-              child:
-                  Icon(Icons.my_location, color: Colors.blue, size: iconSize),
+              child: Icon(Icons.my_location,
+                  color: AppTheme.getPrimaryColor(context), size: iconSize),
             ),
           ),
         ],
