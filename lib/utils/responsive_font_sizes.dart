@@ -51,12 +51,21 @@ class ResponsiveFontSizes {
     );
   }
 
-  /// Tamaño para títulos principales
+  /// Tamaño para títulos de la cabecera
   double titleHeader(BuildContext context) {
     return getResponsiveFontSize(
       context,
-      minSize: 28.0,
-      maxSize: 30.0,
+      minSize: 40.0,
+      maxSize: 45.0,
+    );
+  }
+
+  /// Tamaño para títulos de la cabecera
+  double backText(BuildContext context) {
+    return getResponsiveFontSize(
+      context,
+      minSize: 15.0,
+      maxSize: 18.0,
     );
   }
 
@@ -199,7 +208,7 @@ class ResponsiveFontSizes {
     return getResponsiveFontSize(
       context,
       minSize: 12.0,
-      maxSize: 14.0,
+      maxSize: 13.0,
     );
   }
 

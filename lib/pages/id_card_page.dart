@@ -46,7 +46,10 @@ class _IdCardPageState extends State<IdCardPage> {
           ),
           title: Text(
             context.translate('idCard.title'),
-            style: const TextStyle(color: AppTheme.white),
+            style: TextStyle(
+              color: AppTheme.white,
+              fontSize: responsiveFontSizes.titleHeader(context),
+            ),
           ),
         ),
         body: Center(
@@ -97,7 +100,7 @@ class _IdCardPageState extends State<IdCardPage> {
                 context.translate('idCard.back'),
                 style: TextStyle(
                   color: AppTheme.white,
-                  fontSize: responsiveFontSizes.titleMedium(context),
+                  fontSize: responsiveFontSizes.titleHeader(context),
                   fontWeight: FontWeight.w500,
                 ),
               ),

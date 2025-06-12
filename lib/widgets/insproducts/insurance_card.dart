@@ -88,7 +88,7 @@ class InsuranceCard extends StatelessWidget {
                       title,
                       style: TextStyle(
                         fontFamily: 'Open Sans',
-                        fontSize: responsiveFontSizes.titleMedium(context),
+                        fontSize: responsiveFontSizes.titleSmall(context),
                         fontWeight: FontWeight.w600,
                         color: AppTheme.getTitleTextColor(context),
                       ),

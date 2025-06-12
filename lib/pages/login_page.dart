@@ -159,21 +159,37 @@ class LoginPageState extends State<LoginPage> {
               'profile.biometricEnableQuestion',
               args: [biometricProvider.biometricType],
             ),
+            style: TextStyle(
+              fontSize: responsiveFontSizes.bodyMedium(context),
+            ),
           ),
           content: Text(
             context.translateWithArgs(
               'profile.biometricEnableDescription',
               args: [biometricProvider.biometricType],
             ),
+            style: TextStyle(
+              fontSize: responsiveFontSizes.bodyMedium(context),
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(false),
-              child: Text(context.translate('profile.notNow')),
+              child: Text(
+                context.translate('profile.notNow'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                ),
+              ),
             ),
             TextButton(
               onPressed: () => Navigator.of(context).pop(true),
-              child: Text(context.translate('profile.enable')),
+              child: Text(
+                context.translate('profile.enable'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                ),
+              ),
             ),
           ],
         );

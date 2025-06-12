@@ -35,7 +35,7 @@ class ProfileHeader extends StatelessWidget {
             Text(
               context.translate('profile.back'),
               style: TextStyle(
-                fontSize: responsiveFontSizes.titleMedium(context),
+                fontSize: responsiveFontSizes.backText(context),
                 fontWeight: FontWeight.bold,
                 color: AppTheme.white,
               ),

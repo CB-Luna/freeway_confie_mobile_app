@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class LoadingView extends StatelessWidget {
@@ -65,7 +66,7 @@ class LoadingView extends StatelessWidget {
                   message,
                   style: TextStyle(
                     color: textColor ?? AppTheme.getTitleTextColor(context),
-                    fontSize: 14,
+                    fontSize: responsiveFontSizes.bodyMedium(context),
                     fontWeight: FontWeight.w500,
                   ),
                   textAlign: TextAlign.center,

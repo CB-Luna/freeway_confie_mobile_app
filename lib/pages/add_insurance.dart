@@ -44,7 +44,7 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
                     child: Text(
                       context.translate('addInsurance.addInsurance'),
                       style: TextStyle(
-                        fontSize: responsiveFontSizes.titleLarge(context),
+                        fontSize: responsiveFontSizes.titleMedium(context),
                         fontWeight: FontWeight.bold,
                         color: AppTheme.getTitleTextColor(context),
                       ),

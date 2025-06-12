@@ -45,7 +45,8 @@ class ProfilePage extends StatelessWidget {
                           Text(
                             user != null ? user.fullName : defaultUserName,
                             style: TextStyle(
-                              fontSize: responsiveFontSizes.titleLarge(context),
+                              fontSize:
+                                  responsiveFontSizes.titleMedium(context),
                               fontWeight: FontWeight.bold,
                               color: AppTheme.getPrimaryColor(context),
                             ),

@@ -44,7 +44,7 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
               context.translate('submitClaim.back'),
               style: TextStyle(
                 color: AppTheme.white,
-                fontSize: responsiveFontSizes.titleMedium(context),
+                fontSize: responsiveFontSizes.titleHeader(context),
                 fontWeight: FontWeight.w500,
               ),
             ),

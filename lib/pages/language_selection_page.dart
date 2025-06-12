@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/language_provider.dart';
@@ -14,7 +15,12 @@ class LanguageSelectionPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(context.translate('profile.languages')),
+        title: Text(
+          context.translate('profile.languages'),
+          style: TextStyle(
+            fontSize: responsiveFontSizes.titleHeader(context),
+          ),
+        ),
         backgroundColor: AppTheme.getBackgroundHeaderColor(context),
         foregroundColor: AppTheme.white,
         elevation: 0,
@@ -38,6 +44,7 @@ class LanguageSelectionPage extends StatelessWidget {
                     color: AppTheme.getTitleTextColor(context),
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontSize: responsiveFontSizes.titleMedium(context),
                   ),
                 ),
                 trailing: isSelected

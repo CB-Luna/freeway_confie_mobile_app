@@ -3,6 +3,7 @@ import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -50,9 +51,9 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
           children: [
             Text(
               context.translate('additionalProducts.back'),
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppTheme.white,
-                fontSize: 16,
+                fontSize: responsiveFontSizes.titleHeader(context),
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -71,7 +72,7 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
                   context.translate('additionalProducts.title'),
                   style: TextStyle(
                     color: AppTheme.getTitleTextColor(context),
-                    fontSize: 18,
+                    fontSize: responsiveFontSizes.titleSmall(context),
                     fontFamily: 'Open Sans',
                     fontWeight: FontWeight.w600,
                   ),
@@ -184,16 +185,8 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
     String title,
     String iconName,
   ) {
-    // Determinar si el título necesita ser ajustado para pantallas pequeñas
-    // Obtener el ancho de la pantalla
-    final screenWidth = MediaQuery.of(context).size.width;
-
-    // Calcular el ancho aproximado de cada elemento del grid
-    // El grid tiene 3 columnas con espaciado de 16.0 entre ellas y padding de 16.0 en los bordes
-    final itemWidth = (screenWidth - (16.0 * 2) - (16.0 * 2)) / 3;
-
     // Ajustar el tamaño de fuente basado en el ancho disponible
-    final fontSize = itemWidth < 100 ? 11.0 : 14.0;
+    final fontSize = responsiveFontSizes.labelMedium(context);
 
     return GestureDetector(
       onTap: () {

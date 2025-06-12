@@ -119,8 +119,8 @@ class ProfileLogoutButton extends StatelessWidget {
                         children: [
                           // Warning icon with animation
                           Container(
-                            width: 80,
-                            height: 80,
+                            width: 60,
+                            height: 60,
                             decoration: BoxDecoration(
                               color: AppTheme.getBackgroundGreenColor(
                                 context,
@@ -130,7 +130,7 @@ class ProfileLogoutButton extends StatelessWidget {
                             child: Icon(
                               Icons.logout,
                               color: AppTheme.getGreenColor(context),
-                              size: 40,
+                              size: 30,
                             ),
                           ),
                           const SizedBox(height: 24),
@@ -139,7 +139,7 @@ class ProfileLogoutButton extends StatelessWidget {
                           Text(
                             context.translate('profile.logout'),
                             style: TextStyle(
-                              fontSize: responsiveFontSizes.titleLarge(context),
+                              fontSize: responsiveFontSizes.titleSmall(context),
                               fontWeight: FontWeight.bold,
                               color: AppTheme.getTitleTextColor(context),
                             ),
@@ -151,8 +151,7 @@ class ProfileLogoutButton extends StatelessWidget {
                             context.translate('profile.confirmLogout'),
                             textAlign: TextAlign.center,
                             style: TextStyle(
-                              fontSize:
-                                  responsiveFontSizes.titleMedium(context),
+                              fontSize: responsiveFontSizes.bodyMedium(context),
                               color: AppTheme.getSubtitleTextColor(context),
                               height: 1.4,
                             ),
@@ -191,7 +190,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                   child: Text(
                                     context.translate('profile.cancel'),
                                     style: TextStyle(
-                                      fontSize: responsiveFontSizes.titleSmall(
+                                      fontSize: responsiveFontSizes.bodyMedium(
                                         context,
                                       ),
                                       fontWeight: FontWeight.w500,
@@ -228,7 +227,7 @@ class ProfileLogoutButton extends StatelessWidget {
                                   child: Text(
                                     context.translate('profile.logout'),
                                     style: TextStyle(
-                                      fontSize: responsiveFontSizes.titleSmall(
+                                      fontSize: responsiveFontSizes.bodyMedium(
                                         context,
                                       ),
                                       fontWeight: FontWeight.w600,

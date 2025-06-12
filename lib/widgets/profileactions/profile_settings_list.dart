@@ -3,6 +3,7 @@ import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart
 import 'package:freeway_app/pages/language_selection_page.dart';
 import 'package:freeway_app/providers/language_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -29,21 +30,37 @@ class ProfileSettingsList extends StatelessWidget {
                   'profile.biometricEnable',
                   args: [biometricType],
                 ),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.titleMedium(context),
+                ),
               ),
               content: Text(
                 context.translateWithArgs(
                   'profile.biometricMessage',
                   args: [biometricType],
                 ),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                ),
               ),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(context.translate('profile.cancel')),
+                  child: Text(
+                    context.translate('profile.cancel'),
+                    style: TextStyle(
+                      fontSize: responsiveFontSizes.bodyMedium(context),
+                    ),
+                  ),
                 ),
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(true),
-                  child: Text(context.translate('profile.confirm')),
+                  child: Text(
+                    context.translate('profile.confirm'),
+                    style: TextStyle(
+                      fontSize: responsiveFontSizes.bodyMedium(context),
+                    ),
+                  ),
                 ),
               ],
             );
@@ -87,7 +104,7 @@ class ProfileSettingsList extends StatelessWidget {
               builder: (context, biometricProvider, child) {
                 // Establecer el contexto para las traducciones
                 biometricProvider.setContext(context);
-                
+
                 // Si está cargando o no está disponible, mostrar un widget diferente
                 if (biometricProvider.isLoading) {
                   return Padding(
