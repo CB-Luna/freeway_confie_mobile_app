@@ -18,7 +18,7 @@ class LanguageSelectionPage extends StatelessWidget {
         title: Text(
           context.translate('profile.languages'),
           style: TextStyle(
-            fontSize: responsiveFontSizes.titleHeader(context),
+            fontSize: responsiveFontSizes.titleMedium(context),
           ),
         ),
         backgroundColor: AppTheme.getBackgroundHeaderColor(context),
@@ -44,7 +44,7 @@ class LanguageSelectionPage extends StatelessWidget {
                     color: AppTheme.getTitleTextColor(context),
                     fontWeight:
                         isSelected ? FontWeight.bold : FontWeight.normal,
-                    fontSize: responsiveFontSizes.titleMedium(context),
+                    fontSize: responsiveFontSizes.bodyMedium(context),
                   ),
                 ),
                 trailing: isSelected

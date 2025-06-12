@@ -41,7 +41,7 @@ class ProfileSettingsItem extends StatelessWidget {
                     Text(
                       title,
                       style: TextStyle(
-                        fontSize: responsiveFontSizes.titleMedium(context),
+                        fontSize: responsiveFontSizes.bodyMedium(context),
                         fontWeight: FontWeight.w500,
                       ),
                     ),
@@ -51,7 +51,7 @@ class ProfileSettingsItem extends StatelessWidget {
                         child: Text(
                           subtitle!,
                           style: TextStyle(
-                            fontSize: responsiveFontSizes.titleSmall(context),
+                            fontSize: responsiveFontSizes.bodySmall(context),
                             color: AppTheme.getTextGreyColor(context),
                           ),
                         ),

@@ -45,7 +45,7 @@ class ProfileLogoutButton extends StatelessWidget {
             Text(
               context.translate('profile.logout'),
               style: TextStyle(
-                fontSize: responsiveFontSizes.titleMedium(context),
+                fontSize: responsiveFontSizes.titleSmall(context),
                 fontWeight: FontWeight.w500,
                 color: AppTheme.white,
               ),

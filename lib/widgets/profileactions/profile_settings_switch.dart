@@ -32,7 +32,7 @@ class ProfileSettingsSwitch extends StatelessWidget {
             child: Text(
               title,
               style: TextStyle(
-                fontSize: responsiveFontSizes.titleMedium(context),
+                fontSize: responsiveFontSizes.bodyMedium(context),
                 fontWeight: FontWeight.w500,
                 color: AppTheme.getTextGreyColor(context),
               ),
