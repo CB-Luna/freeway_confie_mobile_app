@@ -84,6 +84,8 @@ class IdCardWidget extends StatelessWidget {
                         fontSize: responsiveFontSizes.titleMedium(context),
                         fontWeight: FontWeight.bold,
                       ),
+                      textAlign: TextAlign.center,
+                      overflow: TextOverflow.ellipsis,
                       maxLines: 2,
                     ),
                   ),

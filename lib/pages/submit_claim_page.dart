@@ -63,12 +63,17 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      context.translate('submitClaim.title'),
-                      style: TextStyle(
-                        color: AppTheme.getTitleTextColor(context),
-                        fontSize: responsiveFontSizes.titleLarge(context),
-                        fontWeight: FontWeight.w600,
+                    Flexible(
+                      child: Text(
+                        context.translate('submitClaim.title'),
+                        style: TextStyle(
+                          color: AppTheme.getTitleTextColor(context),
+                          fontSize: responsiveFontSizes.titleLarge(context),
+                          fontWeight: FontWeight.w600,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ],

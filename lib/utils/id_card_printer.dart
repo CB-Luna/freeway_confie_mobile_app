@@ -32,13 +32,16 @@ class IdCardPrinter {
 
   /// Genera un PDF a partir de una imagen
   static Future<Uint8List> generatePdf(
-      Map<String, String> translations, Uint8List imageBytes, User user) async {
+      Map<String, String> translations, Uint8List imageBytes, User user,
+      {required BuildContext context}) async {
     final pdf = pw.Document();
     final image = pw.MemoryImage(imageBytes);
 
+    final textScale = MediaQuery.of(context).textScaler;
+
     // Calculate optimal size for the ID card image
     // Using a larger portion of the A4 page width (500-600px is about 70-80% of A4 width)
-    final cardWidth = 600.0;
+    final cardWidth = textScale.scale(1) > 1.5 ? 1000.0 : 600.0;
     // Calculate height to maintain aspect ratio (original was 350x220 = 1.59:1)
     final cardHeight = cardWidth / 1.59;
 
@@ -109,7 +112,8 @@ class IdCardPrinter {
       };
 
       // Generar el PDF
-      final pdfBytes = await generatePdf(translations, imageBytes, user);
+      final pdfBytes =
+          await generatePdf(translations, imageBytes, user, context: context);
 
       // Mostrar el diálogo de impresión
       await Printing.layoutPdf(
@@ -150,7 +154,8 @@ class IdCardPrinter {
       };
 
       // Generar el PDF
-      final pdfBytes = await generatePdf(translations, imageBytes, user);
+      final pdfBytes =
+          await generatePdf(translations, imageBytes, user, context: context);
 
       // Guardar el PDF
       final result = await Printing.sharePdf(

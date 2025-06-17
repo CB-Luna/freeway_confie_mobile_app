@@ -49,96 +49,99 @@ class _RequestCallPageState extends State<RequestCallPage> {
           ],
         ),
       ),
-      body: Stack(
-        children: [
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              // Contenedor principal
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 24.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      context.translate('requestCall.title'),
-                      style: TextStyle(
-                        color: AppTheme.white,
-                        fontSize: responsiveFontSizes.titleLarge(context),
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppTheme.getBackgroundColor(context),
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
+      body: SingleChildScrollView(
+        controller: ScrollController(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 10),
+            // Contenedor principal
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 24.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    context.translate('requestCall.title'),
+                    style: TextStyle(
+                      color: AppTheme.white,
+                      fontSize: responsiveFontSizes.titleLarge(context),
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          context.translate('requestCall.subtitle'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppTheme.getTitleTextColor(context),
-                            fontSize: responsiveFontSizes.bodyMedium(context),
-                            fontFamily: 'Open Sans',
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      Center(
-                        child: Image.asset(
-                          'assets/home/icons/contactagent.png',
-                          width: screenWidth * 0.5,
-                          height: screenWidth * 0.25,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Text(
-                        context.translate('requestCall.customerService'),
+                ],
+              ),
+            ),
+            Container(
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height * 0.75,
+              decoration: BoxDecoration(
+                color: AppTheme.getBackgroundColor(context),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              padding: const EdgeInsets.all(24),
+              child: SingleChildScrollView(
+                controller: ScrollController(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: Text(
+                        context.translate('requestCall.subtitle'),
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          color: AppTheme.getSubtitleTextColor(context),
-                          fontSize: responsiveFontSizes.bodySmall(context),
+                          color: AppTheme.getTitleTextColor(context),
+                          fontSize: responsiveFontSizes.bodyMedium(context),
                           fontFamily: 'Open Sans',
                           fontWeight: FontWeight.w600,
                         ),
                       ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Aquí irá la lógica para llamar al servicio al cliente
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.getPrimaryColor(context),
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
+                    ),
+                    const SizedBox(height: 24),
+                    Center(
+                      child: Image.asset(
+                        'assets/home/icons/contactagent.png',
+                        width: screenWidth * 0.5,
+                        height: screenWidth * 0.25,
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      context.translate('requestCall.customerService'),
+                      style: TextStyle(
+                        color: AppTheme.getSubtitleTextColor(context),
+                        fontSize: responsiveFontSizes.bodySmall(context),
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Aquí irá la lógica para llamar al servicio al cliente
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.getPrimaryColor(context),
+                        minimumSize: const Size(double.infinity, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.phone_in_talk,
-                              color: AppTheme.white,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.phone_in_talk,
+                            color: AppTheme.white,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
                               context
                                   .translate('requestCall.callCustomerService'),
                               style: TextStyle(
@@ -148,42 +151,47 @@ class _RequestCallPageState extends State<RequestCallPage> {
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.w600,
                               ),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-                      Text(
-                        context.translate('requestCall.insuranceQuotes'),
-                        style: TextStyle(
-                          color: AppTheme.getSubtitleTextColor(context),
-                          fontSize: responsiveFontSizes.bodySmall(context),
-                          fontFamily: 'Open Sans',
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      ElevatedButton(
-                        onPressed: () {
-                          // Aquí irá la lógica para llamar a cotizaciones
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.getSecondaryColor(context),
-                          minimumSize: const Size(double.infinity, 56),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
                           ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 32),
+                    Text(
+                      context.translate('requestCall.insuranceQuotes'),
+                      style: TextStyle(
+                        color: AppTheme.getSubtitleTextColor(context),
+                        fontSize: responsiveFontSizes.bodySmall(context),
+                        fontFamily: 'Open Sans',
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Aquí irá la lógica para llamar a cotizaciones
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.getSecondaryColor(context),
+                        minimumSize: const Size(double.infinity, 56),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            const Icon(
-                              Icons.phone_in_talk,
-                              color: AppTheme.white,
-                              size: 24,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.phone_in_talk,
+                            color: AppTheme.white,
+                            size: 24,
+                          ),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
                               context
                                   .translate('requestCall.callInsuranceQuotes'),
                               style: TextStyle(
@@ -193,17 +201,20 @@ class _RequestCallPageState extends State<RequestCallPage> {
                                 fontFamily: 'Open Sans',
                                 fontWeight: FontWeight.w600,
                               ),
+                              textAlign: TextAlign.center,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 2,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: Transform.translate(
         offset: const Offset(0, 0),

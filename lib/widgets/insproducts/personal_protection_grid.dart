@@ -31,6 +31,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
 
   @override
   Widget build(BuildContext context) {
+    final textScale = MediaQuery.of(context).textScaler;
     return Scaffold(
       backgroundColor: AppTheme.getBackgroundColor(context),
       appBar: AppBar(
@@ -83,11 +84,14 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: 3,
-                mainAxisSpacing: 16.0,
-                crossAxisSpacing: 16.0,
-                childAspectRatio:
-                    MediaQuery.of(context).size.width < 360 ? 0.7 : 0.9,
+                crossAxisCount: textScale.scale(1) > 1.5 ? 2 : 3,
+                mainAxisSpacing: textScale.scale(1) > 1.5 ? 20.0 : 16.0,
+                crossAxisSpacing: textScale.scale(1) > 1.5 ? 20.0 : 16.0,
+                childAspectRatio: textScale.scale(1) > 2
+                    ? 0.65
+                    : textScale.scale(1) > 1.5
+                        ? 0.8
+                        : 0.9,
                 children: [
                   _buildInsuranceItem(
                     context,
@@ -244,22 +248,17 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               ),
               const SizedBox(height: 8),
               Container(
-                height: 36, // Altura fija para el contenedor de texto
                 alignment: Alignment.center,
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Text(
-                    title,
-                    textAlign: TextAlign.center,
-                    maxLines: 2,
-                    overflow:
-                        TextOverflow.visible, // Mostrar overflow para debugging
-                    style: TextStyle(
-                      fontFamily: 'Open Sans',
-                      fontSize: fontSize,
-                      fontWeight: FontWeight.w600,
-                      color: AppTheme.getTextGreyColor(context),
-                    ),
+                child: Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  maxLines: 3,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Open Sans',
+                    fontSize: fontSize,
+                    fontWeight: FontWeight.w600,
+                    color: AppTheme.getTextGreyColor(context),
                   ),
                 ),
               ),
