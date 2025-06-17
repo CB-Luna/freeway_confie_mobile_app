@@ -84,14 +84,26 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               GridView.count(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
-                crossAxisCount: textScale.scale(1) > 1.5 ? 2 : 3,
-                mainAxisSpacing: textScale.scale(1) > 1.5 ? 20.0 : 16.0,
-                crossAxisSpacing: textScale.scale(1) > 1.5 ? 20.0 : 16.0,
-                childAspectRatio: textScale.scale(1) > 2
-                    ? 0.65
+                crossAxisCount: textScale.scale(1) > 2.5
+                    ? 1
                     : textScale.scale(1) > 1.5
-                        ? 0.8
-                        : 0.9,
+                        ? 2
+                        : 3,
+                mainAxisSpacing: textScale.scale(1) > 2.5
+                    ? 20.0
+                    : textScale.scale(1) > 1.5
+                        ? 18.0
+                        : 10.0,
+                crossAxisSpacing: textScale.scale(1) > 2.5
+                    ? 20.0
+                    : textScale.scale(1) > 1.5
+                        ? 18.0
+                        : 10.0,
+                childAspectRatio: textScale.scale(1) > 2.5
+                    ? 0.4
+                    : textScale.scale(1) > 1.5
+                        ? 0.65
+                        : 0.7,
                 children: [
                   _buildInsuranceItem(
                     context,
@@ -252,7 +264,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
                 child: Text(
                   title,
                   textAlign: TextAlign.center,
-                  maxLines: 3,
+                  maxLines: 4,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontFamily: 'Open Sans',
