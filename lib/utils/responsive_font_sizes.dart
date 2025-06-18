@@ -1,3 +1,5 @@
+import 'dart:io' show Platform;
+
 import 'package:flutter/material.dart';
 
 /// Clase utilitaria para manejar tamaños de fuente responsivos en toda la aplicación.
@@ -24,11 +26,25 @@ class ResponsiveFontSizes {
     // Determinar el tamaño base según el ancho de la pantalla
     final baseFontSize = screenWidth <= 360 ? minSize : maxSize;
 
-    // Esto maneja correctamente el escalado lineal y no lineal.
-    final adjustedFontSizeFactor = 1;
+    // Obtener el factor de escala de texto del dispositivo
+    var scaledSize = MediaQuery.of(context).textScaler.scale(1);
 
-    // Asignar el valor final a fontSize para usarlo en el widget Text
-    final fontSize = baseFontSize / adjustedFontSizeFactor;
+    var fontSize = baseFontSize;
+
+    // Limitar el factor de escala a un máximo de 1.5
+    if (scaledSize > 1.5) {
+      scaledSize = 1.5;
+
+      // Aplicar el factor de escala al tamaño base de la fuente según la plataforma
+      if (Platform.isAndroid) {
+        fontSize = baseFontSize / 1.1;
+      } else if (Platform.isIOS) {
+        fontSize = baseFontSize / 1.5;
+      } else {
+        // Para otras plataformas (web, desktop, etc.)
+        fontSize = baseFontSize / 1.1;
+      }
+    }
 
     // Limitar el tamaño dentro del rango especificado
     return fontSize;

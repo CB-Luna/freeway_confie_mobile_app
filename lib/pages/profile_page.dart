@@ -24,53 +24,54 @@ class ProfilePage extends StatelessWidget {
         slivers: [
           const ProfileHeader(),
           SliverToBoxAdapter(
-            child: Stack(
-              children: [
-                Column(
-                  children: [
-                    const SizedBox(height: 40),
-                    Container(
-                      height: MediaQuery.of(context).size.height -
-                          100, // Altura fija considerando el header y margen superior
-                      decoration: BoxDecoration(
-                        color: AppTheme.getCardColor(context),
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
+            child: SingleChildScrollView(
+              child: Stack(
+                children: [
+                  Column(
+                    children: [
+                      const SizedBox(height: 40),
+                      Container(
+                        height: MediaQuery.of(context)
+                            .size
+                            .height, // Altura fija considerando el header y margen superior
+                        decoration: BoxDecoration(
+                          color: AppTheme.getCardColor(context),
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(30),
+                            topRight: Radius.circular(30),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            const SizedBox(height: 80),
+                            Text(
+                              user != null ? user.fullName : defaultUserName,
+                              style: TextStyle(
+                                fontSize:
+                                    responsiveFontSizes.titleMedium(context),
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.getPrimaryColor(context),
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            const ProfileSettingsList(),
+                          ],
                         ),
                       ),
-                      child: Column(
-                        children: [
-                          const SizedBox(height: 80),
-                          Text(
-                            user != null ? user.fullName : defaultUserName,
-                            style: TextStyle(
-                              fontSize:
-                                  responsiveFontSizes.titleMedium(context),
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.getPrimaryColor(context),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Expanded(
-                            child: ProfileSettingsList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  child: ProfileAvatarName(
-                    userName: user != null ? user.fullName : defaultUserName,
-                    showName: false,
-                    userAvatar: user?.avatar,
+                    ],
                   ),
-                ),
-              ],
+                  Positioned(
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    child: ProfileAvatarName(
+                      userName: user != null ? user.fullName : defaultUserName,
+                      showName: false,
+                      userAvatar: user?.avatar,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
