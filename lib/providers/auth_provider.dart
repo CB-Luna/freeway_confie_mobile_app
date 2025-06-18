@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:freeway_app/data/models/auth/customer_model.dart';
+import 'package:freeway_app/data/models/auth/login_response.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/data/models/auth/register_request.dart';
 
 import '../core/errors/api_error.dart';
@@ -103,7 +106,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Método privado para completar el proceso de login
-  Future<bool> _completeLogin(dynamic response) async {
+  Future<bool> _completeLogin(LoginResponse response) async {
     try {
       // Guardar el token de autenticación
       _authToken = response.token;
@@ -183,6 +186,9 @@ class AuthProvider with ChangeNotifier {
         state: state,
         carrierName: carrierName,
         policyUsaState: policyUsaState,
+        // Guardar la información completa del customer y policies
+        customerData: response.customer,
+        policies: response.policies,
       );
 
       _isAuthenticated = true;
