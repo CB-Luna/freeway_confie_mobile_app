@@ -9,13 +9,40 @@ import '../widgets/profileactions/profile_avatar_name.dart';
 import '../widgets/profileactions/profile_header.dart';
 import '../widgets/profileactions/profile_settings_list.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  String _userName = '';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final savedName = await authProvider.getFullName();
+
+    if (mounted) {
+      setState(() {
+        _userName = savedName ??
+            (authProvider.currentUser?.fullName ??
+                context.translate('profile.defaultUser'));
+        _isLoading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<AuthProvider>(context).currentUser;
-    final defaultUserName = context.translate('profile.defaultUser');
 
     return Scaffold(
       backgroundColor: AppTheme.getBackgroundHeaderColor(context),
@@ -44,15 +71,23 @@ class ProfilePage extends StatelessWidget {
                         child: Column(
                           children: [
                             const SizedBox(height: 80),
-                            Text(
-                              user != null ? user.fullName : defaultUserName,
-                              style: TextStyle(
-                                fontSize:
-                                    responsiveFontSizes.titleMedium(context),
-                                fontWeight: FontWeight.bold,
-                                color: AppTheme.getPrimaryColor(context),
-                              ),
-                            ),
+                            _isLoading
+                                ? const SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    _userName,
+                                    style: TextStyle(
+                                      fontSize: responsiveFontSizes
+                                          .titleMedium(context),
+                                      fontWeight: FontWeight.bold,
+                                      color: AppTheme.getPrimaryColor(context),
+                                    ),
+                                  ),
                             const SizedBox(height: 16),
                             const ProfileSettingsList(),
                           ],
@@ -65,7 +100,7 @@ class ProfilePage extends StatelessWidget {
                     left: 0,
                     right: 0,
                     child: ProfileAvatarName(
-                      userName: user != null ? user.fullName : defaultUserName,
+                      userName: _userName,
                       showName: false,
                       userAvatar: user?.avatar,
                     ),

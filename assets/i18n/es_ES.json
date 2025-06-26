@@ -260,7 +260,8 @@
       "saveSuccess": "Información actualizada correctamente",
       "saveError": "Error al actualizar la información",
       "contactAgent": "Contactar Agente",
-      "contactAgentDescription": "Para actualizar tu información de dirección, por favor contacta a tu agente"
+      "contactAgentDescription": "Para actualizar tu información de dirección, por favor contacta a tu agente",
+      "applyingChanges": "Aplicando cambios en todas las pantallas..."
     },
     "password": "Contraseña",
     "biometric": "Autenticación biométrica",

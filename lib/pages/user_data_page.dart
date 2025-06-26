@@ -34,7 +34,10 @@ class _UserDataPageState extends State<UserDataPage> {
   @override
   void initState() {
     super.initState();
-    _loadUserData();
+    // Usar un Future.microtask para llamar al método asíncrono después de que el widget esté montado
+    Future.microtask(() async {
+      await _loadUserData();
+    });
   }
 
   @override
@@ -49,13 +52,17 @@ class _UserDataPageState extends State<UserDataPage> {
     super.dispose();
   }
 
-  void _loadUserData() {
+  Future<void> _loadUserData() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.currentUser;
 
     if (user != null) {
+      // Obtener el nombre completo desde el almacenamiento seguro
+      final savedName = await authProvider.getFullName();
+
       setState(() {
-        _fullNameController.text = user.fullName;
+        // Usar el nombre guardado si existe, de lo contrario usar el del objeto User
+        _fullNameController.text = savedName ?? user.fullName;
         _emailController.text = user.email ?? '';
 
         // Extraer el número de teléfono sin el código de país
@@ -156,6 +163,23 @@ class _UserDataPageState extends State<UserDataPage> {
 
           // Ejemplo de cómo se usarían los valores en una actualización real:
           // await userService.updateUserProfile(dataToUpdate);
+
+          // Mostrar un SnackBar indicando que se están aplicando los cambios
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  context.translate('profile.userDataPage.applyingChanges'),
+                ),
+                duration: const Duration(seconds: 1),
+                backgroundColor: Colors.blue,
+              ),
+            );
+          }
+          
+          // Guardar el nombre completo actualizado en el almacenamiento seguro
+          // Esto también actualizará el objeto User y notificará a los listeners
+          await authProvider.saveFullName(_fullNameController.text);
 
           // Nota: No podemos actualizar directamente el objeto User porque no tiene un setter
           // y el AuthProvider no tiene un método updateCurrentUser

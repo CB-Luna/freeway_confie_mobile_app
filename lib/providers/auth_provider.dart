@@ -22,6 +22,7 @@ class AuthProvider with ChangeNotifier {
   // Claves para almacenamiento seguro
   static const String _usernameKey = 'auth_username';
   static const String _passwordKey = 'auth_password';
+  static const String _fullNameKey = 'auth_fullname';
   static const String _tokenKey = 'auth_token';
 
   // Getters
@@ -165,10 +166,14 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
+      // Verificar si hay un nombre guardado en el almacenamiento seguro
+      final String? savedFullName = await getFullName();
+
       // Crear el objeto de usuario con la información obtenida
       _currentUser = User(
         username: _lastUsername ?? 'user',
-        fullName: fullName,
+        // Usar el nombre guardado si existe, de lo contrario usar el del servidor
+        fullName: savedFullName ?? fullName,
         policyNumber: policyNumber,
         nextPayment:
             expirationDate ?? DateTime.now().add(const Duration(days: 30)),
@@ -198,6 +203,11 @@ class AuthProvider with ChangeNotifier {
       // Si el usuario eligió guardar sus credenciales, las guardamos
       if (_lastUsername != null && _lastPassword != null) {
         await saveCredentials(_lastUsername!, _lastPassword!);
+      }
+
+      // Guardar el nombre completo del usuario en el almacenamiento seguro
+      if (_currentUser != null && _currentUser!.fullName.isNotEmpty) {
+        await saveFullName(_currentUser!.fullName);
       }
 
       notifyListeners();
@@ -375,6 +385,37 @@ class AuthProvider with ChangeNotifier {
     } catch (e) {
       debugPrint('Error al eliminar credenciales: $e');
       return false;
+    }
+  }
+
+  /// Guarda el nombre completo del usuario en el almacenamiento seguro
+  /// y actualiza el objeto User si existe
+  Future<bool> saveFullName(String fullName) async {
+    try {
+      await _secureStorage.write(key: _fullNameKey, value: fullName);
+      debugPrint('Nombre completo guardado correctamente');
+      
+      // Actualizar el objeto User si existe
+      if (_currentUser != null) {
+        _currentUser = _currentUser!.copyWith(fullName: fullName);
+        // Notificar a los listeners para que actualicen la UI
+        notifyListeners();
+      }
+      
+      return true;
+    } catch (e) {
+      debugPrint('Error al guardar nombre completo: $e');
+      return false;
+    }
+  }
+
+  /// Lee el nombre completo del usuario desde el almacenamiento seguro
+  Future<String?> getFullName() async {
+    try {
+      return await _secureStorage.read(key: _fullNameKey);
+    } catch (e) {
+      debugPrint('Error al leer nombre completo: $e');
+      return null;
     }
   }
 

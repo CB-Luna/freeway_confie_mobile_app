@@ -89,6 +89,27 @@ class _HeaderSectionState extends State<HeaderSection> {
     return colors[hashCode % colors.length];
   }
 
+  String _userName = 'Freeway User';
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final savedName = await authProvider.getFullName();
+    
+    if (mounted) {
+      setState(() {
+        _userName = savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
@@ -229,25 +250,33 @@ class _HeaderSectionState extends State<HeaderSection> {
                   Navigator.of(context).pushNamed('/profile');
                 },
                 child: ClipOval(
-                  child: authProvider.currentUser?.avatar != null &&
-                          authProvider.currentUser!.avatar!.isNotEmpty
-                      ? Image.network(
-                          authProvider.currentUser!.avatar!,
+                  // Mostrar indicador de carga mientras se obtiene el nombre
+                  child: _isLoading
+                      ? const SizedBox(
                           width: 33,
                           height: 33,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) {
-                            // Si hay un error al cargar la imagen, mostrar las iniciales
-                            return _buildInitialsAvatar(
-                              authProvider.currentUser!.fullName,
-                              size: 33,
-                            );
-                          },
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                          ),
                         )
-                      : _buildInitialsAvatar(
-                          authProvider.currentUser?.fullName ?? 'Freeway User',
-                          size: 33,
-                        ),
+                      : authProvider.currentUser?.avatar != null
+                          ? Image.network(
+                              authProvider.currentUser!.avatar!,
+                              width: 33,
+                              height: 33,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                // Si hay un error al cargar la imagen, mostrar las iniciales
+                                return _buildInitialsAvatar(
+                                  _userName,
+                                  size: 33,
+                                );
+                              },
+                            )
+                          : _buildInitialsAvatar(
+                              _userName,
+                              size: 33,
+                            ),
                 ),
               ),
               // Theme toggle

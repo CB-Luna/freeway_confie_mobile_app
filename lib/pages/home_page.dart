@@ -25,6 +25,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String _userName = '';
+  bool _isLoading = true;
   int _selectedIndex = 0;
   bool _isInitialized = false;
   bool _isNotificationsExpanded = false;
@@ -36,7 +38,20 @@ class _HomePageState extends State<HomePage> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _initializeData();
+      _loadUserName();
     });
+  }
+
+  Future<void> _loadUserName() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final savedName = await authProvider.getFullName();
+
+    if (mounted) {
+      setState(() {
+        _userName = savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
+        _isLoading = false;
+      });
+    }
   }
 
   void _initializeData() {
@@ -158,11 +173,19 @@ class _HomePageState extends State<HomePage> {
                     // Greeting
                     const SizedBox(height: 5),
                     Center(
-                      child: Text(
-                        context.translateWithArgs(
-                          'home.greeting',
-                          args: [user.fullName],
-                        ),
+                      child: _isLoading
+                        ? const SizedBox(
+                            height: 24,
+                            width: 24,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            context.translateWithArgs(
+                              'home.greeting',
+                              args: [_userName],
+                            ),
                         style: TextStyle(
                           fontFamily: 'Open Sans',
                           fontSize: responsiveFontSizes.titleMedium(context),

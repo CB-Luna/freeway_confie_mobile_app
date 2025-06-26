@@ -258,6 +258,7 @@
       "save": "Save Changes",
       "saveSuccess": "Your information has been updated successfully",
       "saveError": "An error occurred while saving your information",
+      "applyingChanges": "Applying changes to all screens...",
       "contactAgent": "Contact Agent",
       "contactAgentDescription": "To update your address information, please contact your agent"
     },
