@@ -176,7 +176,7 @@ class _UserDataPageState extends State<UserDataPage> {
               ),
             );
           }
-          
+
           // Guardar el nombre completo actualizado en el almacenamiento seguro
           // Esto también actualizará el objeto User y notificará a los listeners
           await authProvider.saveFullName(_fullNameController.text);
@@ -370,6 +370,7 @@ class _UserDataPageState extends State<UserDataPage> {
                   '${_birthDate.month.toString().padLeft(2, '0')}/${_birthDate.day.toString().padLeft(2, '0')}/${_birthDate.year}',
                   style: TextStyle(
                     fontSize: responsiveFontSizes.bodyMedium(context),
+                    color: AppTheme.black,
                   ),
                 ),
               ),

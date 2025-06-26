@@ -442,7 +442,7 @@ class OfficeListItem extends StatelessWidget {
             ),
           ),
           Text(
-            '${office.distanceObj.value.toStringAsFixed(2)} ${office.distanceObj.unitType}',
+            '${office.distanceObj.value.toStringAsFixed(1)} ${office.distanceObj.unitType}',
             style: TextStyle(
               color: AppTheme.getBlueColor(context),
               fontWeight: FontWeight.bold,
