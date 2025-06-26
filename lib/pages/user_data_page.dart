@@ -55,7 +55,7 @@ class _UserDataPageState extends State<UserDataPage> {
 
     if (user != null) {
       setState(() {
-        _fullNameController.text = user.fullName ?? '';
+        _fullNameController.text = user.fullName;
         _emailController.text = user.email ?? '';
 
         // Extraer el número de teléfono sin el código de país
@@ -135,6 +135,7 @@ class _UserDataPageState extends State<UserDataPage> {
         await Future.delayed(const Duration(seconds: 1));
 
         // Actualizamos los datos del usuario en el provider
+        if (!mounted) return;
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         final currentUser = authProvider.currentUser;
 

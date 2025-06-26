@@ -1,4 +1,6 @@
 PODS:
+  - apple_passkit (0.0.1):
+    - Flutter
   - device_info_plus (0.0.1):
     - Flutter
   - Flutter (1.0.0)
@@ -6,6 +8,9 @@ PODS:
     - Flutter
   - flutter_secure_storage (6.0.0):
     - Flutter
+  - flutter_wallet_card (1.0.0):
+    - Flutter
+    - OpenSSL-Universal
   - geocoding_ios (1.0.5):
     - Flutter
   - geolocator_apple (1.2.0):
@@ -24,6 +29,7 @@ PODS:
   - local_auth_darwin (0.0.1):
     - Flutter
     - FlutterMacOS
+  - OpenSSL-Universal (3.3.3001)
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
@@ -44,10 +50,12 @@ PODS:
     - FlutterMacOS
 
 DEPENDENCIES:
+  - apple_passkit (from `.symlinks/plugins/apple_passkit/ios`)
   - device_info_plus (from `.symlinks/plugins/device_info_plus/ios`)
   - Flutter (from `Flutter`)
   - flutter_credit_card (from `.symlinks/plugins/flutter_credit_card/ios`)
   - flutter_secure_storage (from `.symlinks/plugins/flutter_secure_storage/ios`)
+  - flutter_wallet_card (from `.symlinks/plugins/flutter_wallet_card/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
@@ -64,8 +72,11 @@ SPEC REPOS:
   trunk:
     - Google-Maps-iOS-Utils
     - GoogleMaps
+    - OpenSSL-Universal
 
 EXTERNAL SOURCES:
+  apple_passkit:
+    :path: ".symlinks/plugins/apple_passkit/ios"
   device_info_plus:
     :path: ".symlinks/plugins/device_info_plus/ios"
   Flutter:
@@ -74,6 +85,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/flutter_credit_card/ios"
   flutter_secure_storage:
     :path: ".symlinks/plugins/flutter_secure_storage/ios"
+  flutter_wallet_card:
+    :path: ".symlinks/plugins/flutter_wallet_card/ios"
   geocoding_ios:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   geolocator_apple:
@@ -98,16 +111,19 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/webview_flutter_wkwebview/darwin"
 
 SPEC CHECKSUMS:
+  apple_passkit: 61e6ce1062d3c413e29391979b64b025f461ddf8
   device_info_plus: c6fb39579d0f423935b0c9ce7ee2f44b71b9fce6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
   flutter_credit_card: 48fb35065294868bc6a3e7f18a42f28929b84f48
   flutter_secure_storage: d33dac7ae2ea08509be337e775f6b59f1ff45f12
+  flutter_wallet_card: a90c0ceec680b87c0c6bb04a1f6d429e171929e7
   geocoding_ios: a389ea40f6f548de6e63006a2e31bf66ff80769a
   geolocator_apple: 9bcea1918ff7f0062d98345d238ae12718acfbc1
   Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
   google_maps_flutter_ios: e31555a04d1986ab130f2b9f24b6cdc861acc6d3
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
   local_auth_darwin: 66e40372f1c29f383a314c738c7446e2f7fdadc3
+  OpenSSL-Universal: 6082b0bf950e5636fe0d78def171184e2b3899c2
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
   printing: 233e1b73bd1f4a05615548e9b5a324c98588640b
   rive_common: 4743dbfd2911c99066547a3c6454681e0fa907df

@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
+import 'package:freeway_app/data/services/apple_wallet_service.dart';
 import 'package:freeway_app/data/services/google_wallet_service.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/models/user_model.dart';
@@ -32,8 +33,9 @@ class _IdCardPageState extends State<IdCardPage> {
   final GlobalKey _idCardKey = GlobalKey();
   bool _isProcessingRequest = false; // Bandera para evitar múltiples llamadas
 
-  // Servicio de Google Wallet
+  // Servicios de Wallet
   final GoogleWalletService _googleWalletService = GoogleWalletService();
+  final AppleWalletService _appleWalletService = AppleWalletService();
 
   @override
   Widget build(BuildContext context) {
@@ -168,14 +170,9 @@ class _IdCardPageState extends State<IdCardPage> {
                               if (Platform.isIOS)
                                 GestureDetector(
                                   onTap: () {
-                                    // TODO: Implementar funcionalidad de Apple Wallet
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content:
-                                            Text('Adding to Apple Wallet...'),
-                                        duration: Duration(seconds: 2),
-                                      ),
-                                    );
+                                    if (!_isProcessingRequest) {
+                                      _handleAddToAppleWallet(context, user);
+                                    }
                                   },
                                   child: Image.asset(
                                     'assets/home/idcardicons/add_apple_wallet.png',
@@ -453,6 +450,70 @@ class _IdCardPageState extends State<IdCardPage> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(context.translate('idCard.cancelToGoogleWallet')),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $error'),
+              backgroundColor: Colors.red,
+              duration: const Duration(seconds: 3),
+            ),
+          );
+        }
+      },
+    );
+  }
+
+  void _handleAddToAppleWallet(BuildContext context, User user) {
+    setState(() {
+      _isProcessingRequest = true;
+    });
+
+    // Mostrar un indicador de progreso
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(context.translate('idCard.addingToAppleWallet')),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    // Usar el servicio de Apple Wallet
+    _appleWalletService.addInsuranceCardToAppleWallet(
+      context: context,
+      user: user,
+      onSuccess: () {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.translate('idCard.addedToAppleWallet')),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onCanceled: () {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.translate('idCard.canceledAddingToAppleWallet')),
               duration: const Duration(seconds: 2),
             ),
           );
