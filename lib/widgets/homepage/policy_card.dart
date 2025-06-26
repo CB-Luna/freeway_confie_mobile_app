@@ -96,7 +96,7 @@ class _PolicyCardState extends State<PolicyCard>
               children: [
                 // Icono del auto
                 Image.asset(
-                  'assets/home/icons/icon-car-1.png',
+                  'assets/home/icons/${policyType.toLowerCase()}.png',
                   width: screenWidth * 0.15,
                   height: screenWidth * 0.15,
                 ),
