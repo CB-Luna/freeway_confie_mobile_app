@@ -217,7 +217,7 @@ class _RequestCallPageState extends State<RequestCallPage> {
         ),
       ),
       bottomNavigationBar: Transform.translate(
-        offset: const Offset(0, 0),
+        offset: const Offset(0, -12),
         child: CircleNavBar(
           selectedPos: _selectedIndex,
           onTap: (index) {

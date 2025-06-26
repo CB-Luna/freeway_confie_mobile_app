@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
-import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
+import 'package:freeway_app/widgets/contactcenter/request_call.dart';
 import 'package:freeway_app/widgets/custom/country_phone_selector.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -17,16 +17,19 @@ class UserDataPage extends StatefulWidget {
 
 class _UserDataPageState extends State<UserDataPage> {
   final _formKey = GlobalKey<FormState>();
-  final _fullNameController = TextEditingController();
-  final _emailController = TextEditingController();
-  final _phoneController = TextEditingController();
+  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _policyNumberController = TextEditingController();
+  final TextEditingController _verificationCodeController =
+      TextEditingController();
   // Almacena el número completo con código de país - usado para guardar en el perfil
   String _completePhoneNumber = '';
   CountryPhoneModel _selectedCountry = countryPhoneList.first;
-  final _streetController = TextEditingController();
-  final _cityController = TextEditingController();
-  final _stateController = TextEditingController();
-  final _zipCodeController = TextEditingController();
+  final TextEditingController _streetController = TextEditingController();
+  final TextEditingController _cityController = TextEditingController();
+  final TextEditingController _stateController = TextEditingController();
+  final TextEditingController _zipCodeController = TextEditingController();
   bool _isLoading = false;
   bool _hasChanges = false;
   DateTime _birthDate = DateTime.now();
@@ -45,6 +48,8 @@ class _UserDataPageState extends State<UserDataPage> {
     _fullNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
+    _policyNumberController.dispose();
+    _verificationCodeController.dispose();
     _streetController.dispose();
     _cityController.dispose();
     _stateController.dispose();
@@ -57,13 +62,15 @@ class _UserDataPageState extends State<UserDataPage> {
     final user = authProvider.currentUser;
 
     if (user != null) {
-      // Obtener el nombre completo desde el almacenamiento seguro
-      final savedName = await authProvider.getFullName();
+      // Obtener el nombre y número de póliza guardados en el almacenamiento seguro
+      final String? savedName = await authProvider.getFullName();
 
       setState(() {
         // Usar el nombre guardado si existe, de lo contrario usar el del objeto User
         _fullNameController.text = savedName ?? user.fullName;
         _emailController.text = user.email ?? '';
+        // Usar el número de póliza guardado si existe, de lo contrario usar el del objeto User
+        _policyNumberController.text = user.policyNumber;
 
         // Extraer el número de teléfono sin el código de país
         if (user.phone != null && user.phone!.isNotEmpty) {
@@ -103,6 +110,7 @@ class _UserDataPageState extends State<UserDataPage> {
     _fullNameController.addListener(_onFieldChanged);
     _emailController.addListener(_onFieldChanged);
     _phoneController.addListener(_onFieldChanged);
+    _policyNumberController.addListener(_onFieldChanged);
     _streetController.addListener(_onFieldChanged);
     _cityController.addListener(_onFieldChanged);
     _stateController.addListener(_onFieldChanged);
@@ -127,8 +135,121 @@ class _UserDataPageState extends State<UserDataPage> {
 
   // Método para actualizar el país seleccionado
   void _updateSelectedCountry(CountryPhoneModel country) {
-    _selectedCountry = country;
-    _onFieldChanged();
+    setState(() {
+      _selectedCountry = country;
+    });
+  }
+
+  // Método para mostrar el diálogo de verificación de código
+  Future<void> _showVerificationDialog(BuildContext context) async {
+    // Resetear el controlador del código de verificación
+    _verificationCodeController.clear();
+
+    // Mostrar un SnackBar indicando que se envió un código
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          context.translate(
+            'profile.userDataPage.phoneUpdateRequiresVerification',
+          ),
+        ),
+        duration: const Duration(seconds: 3),
+      ),
+    );
+
+    // Mostrar el diálogo para ingresar el código
+    await showDialog(
+      context: context,
+      barrierDismissible: false, // El usuario debe interactuar con el diálogo
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            context.translate('profile.userDataPage.enterVerificationCode'),
+            style: TextStyle(
+              fontSize: responsiveFontSizes.titleMedium(context),
+              fontWeight: FontWeight.bold,
+              color: AppTheme.getPrimaryColor(context),
+            ),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                context.translate('profile.userDataPage.verificationCodeSent'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _verificationCodeController,
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                decoration: AppTheme.inputDecoration(
+                  context,
+                  labelText: context
+                      .translate('profile.userDataPage.verificationCode'),
+                ),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyLarge(context),
+                  letterSpacing:
+                      8.0, // Espaciado entre caracteres para mejor legibilidad
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Cerrar el diálogo
+              },
+              child: Text(
+                context.translate('cancel'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                  color: AppTheme.getTextGreyColor(context),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                // Aquí iría la lógica para verificar el código
+                // Por ahora, simplemente cerramos el diálogo y mostramos un mensaje de éxito
+                Navigator.of(context).pop(); // Cerrar el diálogo
+
+                // Mostrar mensaje de éxito
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      context
+                          .translate('profile.userDataPage.phoneUpdateSuccess'),
+                    ),
+                    backgroundColor: AppTheme.getGreenColor(context),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+
+                setState(() {
+                  _hasChanges = true; // Marcar que hay cambios para guardar
+                });
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.getPrimaryColor(context),
+                foregroundColor: Colors.white,
+              ),
+              child: Text(
+                context.translate('auth.twoFactorSubmit'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _saveChanges() async {
@@ -159,25 +280,10 @@ class _UserDataPageState extends State<UserDataPage> {
             'fullName': _fullNameController.text,
             'birthDate': _birthDate,
             'phone': _completePhoneNumber,
+            'policyNumber': _policyNumberController.text,
           };
 
-          // Ejemplo de cómo se usarían los valores en una actualización real:
-          // await userService.updateUserProfile(dataToUpdate);
-
-          // Mostrar un SnackBar indicando que se están aplicando los cambios
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  context.translate('profile.userDataPage.applyingChanges'),
-                ),
-                duration: const Duration(seconds: 1),
-                backgroundColor: Colors.blue,
-              ),
-            );
-          }
-
-          // Guardar el nombre completo actualizado en el almacenamiento seguro
+          // Guardar el nombre completo y número de póliza actualizados en el almacenamiento seguro
           // Esto también actualizará el objeto User y notificará a los listeners
           await authProvider.saveFullName(_fullNameController.text);
 
@@ -218,19 +324,12 @@ class _UserDataPageState extends State<UserDataPage> {
     }
   }
 
-  // Método para abrir el WebView con la página de contacto del agente
+  // Método para navegar a la página de contacto del agente
   void _contactAgent(BuildContext context) {
-    // URL de ejemplo para contactar al agente
-    const String agentContactUrl =
-        'https://www.freewayinsurance.com/contact-us';
-
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => WebViewPage(
-          url: agentContactUrl,
-          title: context.translate('profile.userDataPage.contactAgent'),
-        ),
+        builder: (context) => const RequestCallPage(),
       ),
     );
   }
@@ -238,7 +337,7 @@ class _UserDataPageState extends State<UserDataPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.getBackgroundHeaderColor(context),
+      backgroundColor: AppTheme.getBackgroundColor(context),
       appBar: AppBar(
         backgroundColor: AppTheme.getBackgroundHeaderColor(context),
         leading: Padding(
@@ -260,27 +359,94 @@ class _UserDataPageState extends State<UserDataPage> {
             fontWeight: FontWeight.w600,
           ),
         ),
-        centerTitle: true,
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : Container(
-              color: AppTheme.getBackgroundColor(context),
-              child: Form(
-                key: _formKey,
-                child: ListView(
-                  padding: const EdgeInsets.all(16.0),
+          : Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
                     _buildPersonalInfoCard(context),
-                    const SizedBox(height: 10),
                     _buildSaveButton(context),
-                    const SizedBox(height: 10),
+                    _buildPhoneCard(context),
                     _buildAddressCard(context),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 40),
                   ],
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildPhoneCard(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.all(16),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              context.translate('profile.userDataPage.phoneManagement'),
+              style: TextStyle(
+                fontSize: responsiveFontSizes.titleLarge(context),
+                fontWeight: FontWeight.bold,
+                color: AppTheme.getPrimaryColor(context),
+              ),
+            ),
+            const SizedBox(height: 16),
+            // Selector de país y número de teléfono
+            CountryPhoneSelector(
+              phoneController: _phoneController,
+              initialCountryCode: _selectedCountry.code,
+              labelText: context.translate('profile.userDataPage.phone'),
+              onPhoneChanged: _updateCompletePhoneNumber,
+              onCountryChanged: _updateSelectedCountry,
+            ),
+            const SizedBox(height: 16),
+            // Botón para actualizar el número de teléfono
+            ElevatedButton(
+              onPressed: () {
+                // Mostrar el diálogo para ingresar el código de verificación
+                _showVerificationDialog(context);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.getBlueColor(context),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12.0),
+                minimumSize: const Size(double.infinity, 45),
+              ),
+              child: Text(
+                context.translate('profile.userDataPage.updatePhone'),
+                style: TextStyle(
+                  fontSize: responsiveFontSizes.bodyMedium(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              context.translate(
+                'profile.userDataPage.phoneVerificationDescription',
+              ),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: responsiveFontSizes.bodySmall(context),
+                color: AppTheme.getTextGreyColor(context),
+                fontStyle: FontStyle.italic,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -320,15 +486,6 @@ class _UserDataPageState extends State<UserDataPage> {
                 }
                 return null;
               },
-            ),
-            const SizedBox(height: 16),
-            // Selector de país y número de teléfono
-            CountryPhoneSelector(
-              phoneController: _phoneController,
-              initialCountryCode: _selectedCountry.code,
-              labelText: context.translate('profile.userDataPage.phone'),
-              onPhoneChanged: _updateCompletePhoneNumber,
-              onCountryChanged: _updateSelectedCountry,
             ),
             const SizedBox(height: 16),
             // Campo de fecha de nacimiento con formato MM/DD/YYYY
@@ -374,6 +531,25 @@ class _UserDataPageState extends State<UserDataPage> {
                   ),
                 ),
               ),
+            ),
+            const SizedBox(height: 16),
+            // Campo de número de póliza
+            TextFormField(
+              controller: _policyNumberController,
+              decoration: AppTheme.inputDecoration(
+                context,
+                labelText:
+                    context.translate('profile.userDataPage.policyNumber'),
+              ),
+              style: TextStyle(
+                fontSize: responsiveFontSizes.bodyMedium(context),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return context.translate('validation.requiredField');
+                }
+                return null;
+              },
             ),
           ],
         ),

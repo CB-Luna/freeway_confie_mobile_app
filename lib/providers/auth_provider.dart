@@ -166,7 +166,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Verificar si hay un nombre guardado en el almacenamiento seguro
+      // Verificar si hay un nombre y número de póliza guardados en el almacenamiento seguro
       final String? savedFullName = await getFullName();
 
       // Crear el objeto de usuario con la información obtenida
@@ -174,6 +174,7 @@ class AuthProvider with ChangeNotifier {
         username: _lastUsername ?? 'user',
         // Usar el nombre guardado si existe, de lo contrario usar el del servidor
         fullName: savedFullName ?? fullName,
+        // Usar el número de póliza guardado si existe, de lo contrario usar el del servidor
         policyNumber: policyNumber,
         nextPayment:
             expirationDate ?? DateTime.now().add(const Duration(days: 30)),
@@ -394,14 +395,14 @@ class AuthProvider with ChangeNotifier {
     try {
       await _secureStorage.write(key: _fullNameKey, value: fullName);
       debugPrint('Nombre completo guardado correctamente');
-      
+
       // Actualizar el objeto User si existe
       if (_currentUser != null) {
         _currentUser = _currentUser!.copyWith(fullName: fullName);
         // Notificar a los listeners para que actualicen la UI
         notifyListeners();
       }
-      
+
       return true;
     } catch (e) {
       debugPrint('Error al guardar nombre completo: $e');
@@ -412,9 +413,10 @@ class AuthProvider with ChangeNotifier {
   /// Lee el nombre completo del usuario desde el almacenamiento seguro
   Future<String?> getFullName() async {
     try {
-      return await _secureStorage.read(key: _fullNameKey);
+      final fullName = await _secureStorage.read(key: _fullNameKey);
+      return fullName;
     } catch (e) {
-      debugPrint('Error al leer nombre completo: $e');
+      debugPrint('Error al obtener nombre completo: $e');
       return null;
     }
   }
