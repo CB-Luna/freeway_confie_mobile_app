@@ -403,7 +403,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
         // Intentar obtener la fecha de nacimiento del usuario
         // Nota: Asumimos que podría estar en algún campo como nextPayment solo para tener una fecha
         // En una implementación real, deberías tener un campo específico para birthDate en el modelo User
-        final date = user.nextPayment;
+        final date = user.birthDate;
         // Formato MM/DD/YYYY que suelen usar los formularios en EE.UU.
         return '${date.month.toString().padLeft(2, '0')}/${date.day.toString().padLeft(2, '0')}/${date.year}';
       } catch (e) {

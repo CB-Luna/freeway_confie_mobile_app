@@ -71,7 +71,7 @@ class _UserDataPageState extends State<UserDataPage> {
         _fullNameController.text = savedName ?? user.fullName;
         _emailController.text = user.email ?? '';
         // Usar el número de póliza guardado si existe, de lo contrario usar el del objeto User
-        _policyNumberController.text = user.policyNumber;
+        _policyNumberController.text = user.policies.first.policyNumber;
 
         // Extraer el número de teléfono sin el código de país
         if (user.phone != null && user.phone!.isNotEmpty) {
@@ -269,20 +269,9 @@ class _UserDataPageState extends State<UserDataPage> {
         final currentUser = authProvider.currentUser;
 
         if (currentUser != null) {
-          // En una implementación real, aquí se enviarían los datos actualizados a la API
-          // incluyendo el número de teléfono completo (_completePhoneNumber)
-
           // En una implementación real, estos valores se enviarían a la API
           // y se actualizaría el usuario en el backend
           // Por ahora solo simulamos la actualización
-
-          // Usamos _completePhoneNumber para la actualización del perfil
-          final dataToUpdate = {
-            'fullName': _fullNameController.text,
-            'birthDate': _birthDate,
-            'phone': _completePhoneNumber,
-            'policyNumber': _policyNumberController.text,
-          };
 
           // Guardar el nombre completo y número de póliza actualizados en el almacenamiento seguro
           // Esto también actualizará el objeto User y notificará a los listeners

@@ -59,17 +59,19 @@ class _PolicyCardState extends State<PolicyCard>
       final expirationDate = DateTime.tryParse(widget.policy.expirationDate);
       isActive = expirationDate?.isAfter(DateTime.now()) ?? true;
     }
-
+    String? nextPaymentDate;
     // Usar la fecha de expiración como fecha del próximo pago si está disponible
-    final String rawNextPaymentDate = widget.policy.expirationDate;
-    final String nextPaymentDate = _formatDate(rawNextPaymentDate);
+    if (widget.policy.nextPaymentDate != null) {
+      final String? rawNextPaymentDate = widget.policy.nextPaymentDate;
+      nextPaymentDate = _formatDate(rawNextPaymentDate!);
+    }
 
     // Usar lineOfBusiness o un valor predeterminado para el tipo de póliza
     final String policyType = widget.policy.lineOfBusiness;
 
-    // Determinar si es Bluefire basado en el nombre del carrier
-    final bool isBluefire =
-        widget.policy.carrierName.toLowerCase().contains('bluefire');
+    // Determinar si tenemos la imagen del logo de la póliza en assets
+    final bool freewayLogo =
+        widget.policy.programName.toLowerCase().contains('freeway');
 
     // Obtener el ancho de la pantalla para cálculos responsive
     final screenWidth = MediaQuery.of(context).size.width;
@@ -94,9 +96,9 @@ class _PolicyCardState extends State<PolicyCard>
               spacing: 8,
               runSpacing: 12,
               children: [
-                // Icono del auto
+                // Icono del tipo de póliza
                 Image.asset(
-                  'assets/home/icons/${policyType.toLowerCase()}.png',
+                  'assets/home/idcardicons/policy_type/${policyType.toLowerCase().replaceAll(' ', '_')}.png',
                   width: screenWidth * 0.15,
                   height: screenWidth * 0.15,
                 ),
@@ -180,16 +182,16 @@ class _PolicyCardState extends State<PolicyCard>
               runSpacing: 8,
               children: [
                 // Logo
-                isBluefire
+                freewayLogo
                     ? Image.asset(
-                        'assets/home/icons/Bluefire.png',
-                        width: screenWidth * 0.2,
-                        height: screenWidth * 0.05,
-                      )
-                    : Image.asset(
                         AppTheme.getFreewayLogoType(context),
                         width: screenWidth * 0.2,
                         height: screenWidth * 0.1,
+                      )
+                    : Image.asset(
+                        'assets/home/idcardicons/logo_type/${widget.policy.programName.toLowerCase().replaceAll(' ', '_')}.png',
+                        width: screenWidth * 0.2,
+                        height: screenWidth * 0.05,
                       ),
                 const SizedBox(width: 8),
                 // Información de próximo pago
@@ -217,7 +219,7 @@ class _PolicyCardState extends State<PolicyCard>
                     const SizedBox(width: 8),
                     // Fecha del próximo pago
                     Text(
-                      nextPaymentDate,
+                      nextPaymentDate ?? 'N/A',
                       style: TextStyle(
                         fontFamily: 'Open Sans',
                         fontSize: responsiveFontSizes.bodyMedium(
@@ -368,7 +370,7 @@ class _PolicyCardState extends State<PolicyCard>
                                 if (context.mounted) {
                                   // Usar una única URL con número de póliza y código postal
                                   final String policyNumber =
-                                      widget.user.policyNumber;
+                                      widget.policy.policyNumber;
                                   final zipCode = widget.user.zipCode;
                                   final String urlString =
                                       'https://quickpay.freeway.com/PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';

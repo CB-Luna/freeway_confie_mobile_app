@@ -14,6 +14,7 @@ class PolicyModel {
   final String programName;
   final String organizationName;
   final String organizationCode;
+  final String? nextPaymentDate;
 
   PolicyModel({
     required this.policyId,
@@ -26,9 +27,11 @@ class PolicyModel {
     required this.programName,
     required this.organizationName,
     required this.organizationCode,
+    this.nextPaymentDate,
   });
 
-  factory PolicyModel.fromJson(Map<String, dynamic> json) => _$PolicyModelFromJson(json);
+  factory PolicyModel.fromJson(Map<String, dynamic> json) =>
+      _$PolicyModelFromJson(json);
 
   Map<String, dynamic> toJson() => _$PolicyModelToJson(this);
 }

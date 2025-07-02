@@ -111,9 +111,6 @@ class AuthProvider with ChangeNotifier {
       _authToken = response.token;
       await _secureStorage.write(key: _tokenKey, value: _authToken);
 
-      DateTime? expirationDate;
-      String policyType = 'Auto'; // Valor por defecto
-      String policyNumber = '';
       String fullName = 'Freeway User';
       String email = _lastUsername ?? 'user@example.com';
       String phone = '+1 (555) 123-4567';
@@ -122,9 +119,8 @@ class AuthProvider with ChangeNotifier {
       String zipCode = '12345';
       String city = 'City';
       String state = 'State';
-      String carrierName = '';
       DateTime? birthDate;
-      String policyUsaState = 'LA';
+      String gender = 'Male';
 
       // Usar la información del customer que viene directamente en la respuesta
       if (response.customer != null) {
@@ -140,21 +136,8 @@ class AuthProvider with ChangeNotifier {
         zipCode = primaryAddress.zip;
         city = primaryAddress.city;
         state = primaryAddress.state;
-        policyUsaState = primaryAddress.state;
         birthDate = DateTime.parse(customer.birthDate);
-
-        // Si hay pólizas disponibles, usar la información de la primera
-        if (response.policies.isNotEmpty) {
-          final policy = response.policies.first;
-          policyType = policy.lineOfBusiness;
-          policyNumber = policy.policyNumber;
-          carrierName = policy.carrierName;
-
-          // Parsear la fecha de expiración para usarla como próximo pago
-          if (policy.expirationDate.isNotEmpty) {
-            expirationDate = _parseDate(policy.expirationDate);
-          }
-        }
+        gender = customer.gender;
 
         debugPrint(
           'AuthProvider - Usuario obtenido directamente de la respuesta de login',
@@ -174,11 +157,6 @@ class AuthProvider with ChangeNotifier {
         username: _lastUsername ?? 'user',
         // Usar el nombre guardado si existe, de lo contrario usar el del servidor
         fullName: savedFullName ?? fullName,
-        // Usar el número de póliza guardado si existe, de lo contrario usar el del servidor
-        policyNumber: policyNumber,
-        nextPayment:
-            expirationDate ?? DateTime.now().add(const Duration(days: 30)),
-        policyType: policyType,
         customerId: 1001,
         email: email,
         phone: phone,
@@ -187,12 +165,11 @@ class AuthProvider with ChangeNotifier {
             ? 'es_US'
             : 'en_US',
         birthDate: birthDate,
+        gender: gender,
         street: street,
         zipCode: zipCode,
         city: city,
         state: state,
-        carrierName: carrierName,
-        policyUsaState: policyUsaState,
         // Guardar la información completa del customer y policies
         customerData: response.customer,
         policies: response.policies,
@@ -217,28 +194,6 @@ class AuthProvider with ChangeNotifier {
       _errorMessage = 'Error al completar el login: $e';
       notifyListeners();
       return false;
-    }
-  }
-
-  /// Método para parsear fechas desde la API
-  DateTime? _parseDate(String dateStr) {
-    try {
-      // Intentar convertir el valor numérico a fecha
-      // El formato parece ser un número entero (posiblemente días desde una fecha de referencia)
-      final int? days = int.tryParse(dateStr);
-      if (days != null) {
-        // Asumiendo que es un número de días desde el 30 de diciembre de 1899 (formato Excel/Lotus)
-        final DateTime baseDate = DateTime(1899, 12, 30);
-        final DateTime resultDate = baseDate.add(Duration(days: days));
-        debugPrint(
-          'AuthProvider - Fecha parseada: $resultDate desde valor: $dateStr',
-        );
-        return resultDate;
-      }
-      return null;
-    } catch (e) {
-      debugPrint('AuthProvider - Error al parsear fecha: $e');
-      return null;
     }
   }
 

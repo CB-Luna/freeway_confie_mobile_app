@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet_card/flutter_wallet_card.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:uuid/uuid.dart';
@@ -39,6 +40,7 @@ class AppleWalletService {
   Future<bool> addInsuranceCardToAppleWallet({
     required BuildContext context,
     required User user,
+    required PolicyModel policy,
     VoidCallback? onSuccess,
     VoidCallback? onCanceled,
     Function(Object)? onError,
@@ -60,7 +62,9 @@ class AppleWalletService {
       final String passId = _uuid.v4();
 
       // Obtener la fecha de vencimiento de la póliza formateada
-      final String expirationDate = user.nextPayment.toString().split(' ')[0];
+      final String expirationDate = policy.expirationDate;
+
+      if (!context.mounted) return false;
 
       // Crear la estructura del pase para Apple Wallet
       final Map<String, dynamic> passData = {
@@ -85,12 +89,12 @@ class AppleWalletService {
             {
               'key': 'carrier',
               'label': 'Carrier',
-              'value': user.carrierName ?? 'Freeway Insurance',
+              'value': policy.carrierName,
             },
             {
               'key': 'policy',
               'label': 'Policy Number',
-              'value': user.policyNumber,
+              'value': policy.policyNumber,
             }
           ],
           'auxiliaryFields': [
@@ -107,7 +111,7 @@ class AppleWalletService {
           ],
           'barcode': {
             'format': 'PKBarcodeFormatCode128',
-            'message': user.policyNumber,
+            'message': policy.policyNumber,
             'messageEncoding': 'iso-8859-1',
             'altText': context.translate('idCard.notProofOfCoverage'),
           },

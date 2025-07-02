@@ -5,6 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:pdf/pdf.dart';
@@ -31,8 +32,8 @@ class IdCardPrinter {
   }
 
   /// Genera un PDF a partir de una imagen
-  static Future<Uint8List> generatePdf(
-      Map<String, String> translations, Uint8List imageBytes, User user,
+  static Future<Uint8List> generatePdf(Map<String, String> translations,
+      Uint8List imageBytes, User user, PolicyModel policy,
       {required BuildContext context}) async {
     final pdf = pw.Document();
     final image = pw.MemoryImage(imageBytes);
@@ -71,7 +72,7 @@ class IdCardPrinter {
                 pw.Image(image, width: cardWidth, height: cardHeight),
                 pw.SizedBox(height: 30),
                 pw.Text(
-                  '${translations['policyNumber'] ?? 'Policy Number'}: ${user.policyNumber}',
+                  '${translations['policyNumber'] ?? 'Policy Number'}: ${policy.policyNumber}',
                   style: const pw.TextStyle(fontSize: 14),
                 ),
                 pw.SizedBox(height: 10),
@@ -95,6 +96,7 @@ class IdCardPrinter {
     BuildContext context,
     GlobalKey key,
     User user,
+    PolicyModel policy,
     Function(bool) onComplete,
   ) async {
     try {
@@ -112,13 +114,13 @@ class IdCardPrinter {
       };
 
       // Generar el PDF
-      final pdfBytes =
-          await generatePdf(translations, imageBytes, user, context: context);
+      final pdfBytes = await generatePdf(translations, imageBytes, user, policy,
+          context: context);
 
       // Mostrar el diálogo de impresión
       await Printing.layoutPdf(
         onLayout: (PdfPageFormat format) async => pdfBytes,
-        name: 'Freeway_ID_Card_${user.policyNumber}',
+        name: 'Freeway_ID_Card_${policy.policyNumber}',
         // Personalizar opciones según la plataforma
         dynamicLayout: true,
         usePrinterSettings: true,
@@ -136,6 +138,7 @@ class IdCardPrinter {
     BuildContext context,
     GlobalKey key,
     User user,
+    PolicyModel policy,
     Function(bool) onComplete,
   ) async {
     try {
@@ -154,13 +157,13 @@ class IdCardPrinter {
       };
 
       // Generar el PDF
-      final pdfBytes =
-          await generatePdf(translations, imageBytes, user, context: context);
+      final pdfBytes = await generatePdf(translations, imageBytes, user, policy,
+          context: context);
 
       // Guardar el PDF
       final result = await Printing.sharePdf(
         bytes: pdfBytes,
-        filename: 'Freeway_ID_Card_${user.policyNumber}.pdf',
+        filename: 'Freeway_ID_Card_${policy.policyNumber}.pdf',
       );
 
       onComplete(result);

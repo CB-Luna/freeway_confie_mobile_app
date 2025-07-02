@@ -81,6 +81,8 @@ flutter:
     - assets/home/idcardicons/
     - assets/home/idcardicons/add_apple_wallet.png
     - assets/home/idcardicons/card_id.png
+    - assets/home/idcardicons/policy_type/
+    - assets/home/idcardicons/logo_type/
     - assets/home/animations/
     - assets/splash/
     - assets/profile/
@@ -95,6 +97,7 @@ flutter:
     - assets/location/
     - assets/loading/
     - assets/i18n/
+    - assets/Coupon.pkpass
 
 flutter_launcher_icons:
   android: true

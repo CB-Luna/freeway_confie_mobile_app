@@ -1,5 +1,6 @@
 import 'package:add_to_google_wallet/add_to_google_wallet.dart';
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:uuid/uuid.dart';
@@ -28,6 +29,7 @@ class GoogleWalletService {
   Future<void> addInsuranceCardToGoogleWallet({
     required BuildContext context,
     required User user,
+    required PolicyModel policy,
     VoidCallback? onSuccess,
     VoidCallback? onCanceled,
     Function(Object)? onError,
@@ -36,8 +38,8 @@ class GoogleWalletService {
     final String passId = const Uuid().v4();
 
     // Fechas estáticas para demo
-    final effectiveDateStr = '06/18/2023';
-    final expirationDateStr = '12/18/2026';
+    final effectiveDateStr = policy.effectiveDate;
+    final expirationDateStr = policy.expirationDate;
 
     // Crear un JSON simplificado para la tarjeta de seguro
     final String passJson = """
@@ -78,12 +80,12 @@ class GoogleWalletService {
               {
                 "id": "carrier",
                 "header": "Carrier",
-                "body": "${user.carrierName ?? 'Freeway Insurance'}"
+                "body": "${policy.carrierName}"
               },
               {
                 "id": "policy_number",
                 "header": "Policy Number",
-                "body": "${user.policyNumber}"
+                "body": "${policy.policyNumber}"
               },
               {
                 "id": "state",
@@ -103,7 +105,7 @@ class GoogleWalletService {
             ],
             "barcode": {
               "type": "CODE_128",
-              "value": "${user.policyNumber}",
+              "value": "${policy.policyNumber}",
               "alternateText": "${context.translate('idCard.notProofOfCoverage')}"
             },
             "hexBackgroundColor": "#ffffff",

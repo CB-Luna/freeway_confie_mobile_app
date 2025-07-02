@@ -99,11 +99,12 @@ class HomePolicyProvider with ChangeNotifier {
       lineOfBusiness: policy.lineOfBusiness,
       effectiveDate: policy.effectiveDate,
       // Modificamos la fecha de expiración para que sea una fecha pasada
-      expirationDate: '2022-01-01',
+      expirationDate: policy.expirationDate,
       createdDate: policy.createdDate,
       programName: policy.programName,
       organizationName: policy.organizationName,
       organizationCode: policy.organizationCode,
+      nextPaymentDate: policy.nextPaymentDate,
     );
   }
 
