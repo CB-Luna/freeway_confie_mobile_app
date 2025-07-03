@@ -571,14 +571,15 @@ class _IdCardPageState extends State<IdCardPage> {
 
       try {
         // Intentar conectar con el servidor local
+        final String serverIp = Platform.isAndroid ? '10.0.2.2' : '192.168.1.71';
         debugPrint(
-          'Intentando conectar con el servidor local en http://localhost:3000/generate-pass',
+          'Intentando conectar con el servidor local en http://$serverIp:3000/generate-pass',
         );
 
         // Crear los datos para el pase dinámico según la estructura que espera el servidor
         final Map<String, dynamic> passData = {
           'passType':
-              'boardingPass', // Usamos boardingPass porque es la única plantilla disponible
+              'generic', // Usamos la nueva plantilla genérica sin icono de avión
           'serialNumber': 'user-${user.customerId}',
           'description': 'Freeway Insurance Card',
           'organizationName': 'Freeway Insurance',
@@ -587,19 +588,11 @@ class _IdCardPageState extends State<IdCardPage> {
           'passTypeIdentifier':
               passTypeIdentifier, // Debe coincidir con tu certificado
           'data': {
-            // Añadir el campo transitType requerido para boardingPass
-            'transitType': 'PKTransitTypeAir',
-            'headerFields': [
-              {
-                'key': 'policy',
-                'label': 'POLICY',
-                'value': widget.policy.policyNumber,
-              }
-            ],
+            'headerFields': [],
             'primaryFields': [
               {
                 'key': 'name',
-                'label': 'INSURED',
+                'label': 'NAMED INSURED',
                 'value': user.fullName,
               }
             ],
@@ -610,15 +603,27 @@ class _IdCardPageState extends State<IdCardPage> {
                 'value': widget.policy.carrierName,
               },
               {
-                'key': 'state',
-                'label': 'STATE',
-                'value': user.state,
+                'key': 'policy',
+                'label': 'POLICY NUMBER',
+                'value': widget.policy.policyNumber,
               }
             ],
             'auxiliaryFields': [
               {
+                'key': 'state',
+                'label': 'STATE',
+                'value': user.state,
+              },
+              {
+                'key': 'effectiveDate',
+                'label': 'EFFECTIVE DATE',
+                'value': widget.policy.effectiveDate.isNotEmpty 
+                    ? widget.policy.effectiveDate 
+                    : DateTime.now().toString().split(' ')[0],
+              },
+              {
                 'key': 'expiration',
-                'label': 'EXPIRATION',
+                'label': 'EXPIRATION DATE',
                 'value': widget.policy.expirationDate,
               }
             ],
@@ -630,21 +635,21 @@ class _IdCardPageState extends State<IdCardPage> {
                     'This is a digital representation of your insurance card. Not a proof of coverage.',
               }
             ],
-            // Colores personalizados para el pase
-            'foregroundColor': 'rgb(255, 255, 255)',
-            'backgroundColor': 'rgb(0, 71, 187)', // Azul Freeway
-            'labelColor': 'rgb(220, 220, 220)',
+            // Colores personalizados para el pase - Usando colores que coincidan con la segunda imagen
+            'foregroundColor': 'rgb(0, 71, 187)', // Azul para el texto
+            'backgroundColor': 'rgb(255, 255, 255)', // Fondo blanco
+            'labelColor': 'rgb(128, 128, 128)', // Gris para las etiquetas
           },
         };
 
         Uint8List pkPassData;
 
         try {
-          // Para iOS Simulator, necesitamos usar una IP especial
-          // 'localhost' en el simulador se refiere al propio simulador, no a tu máquina host
+          // Usar la dirección IP de la máquina local en lugar de localhost
+          // Esto ayuda a resolver problemas de conexión entre el simulador y la máquina host
           final String serverUrl = Platform.isAndroid
               ? 'http://10.0.2.2:3000/generate-pass' // IP especial para emulador Android
-              : 'http://localhost:3000/generate-pass'; // Para iOS, probaremos con localhost primero
+              : 'http://192.168.1.71:3000/generate-pass'; // Usar la IP real de la máquina
 
           debugPrint('Conectando con el servidor en: $serverUrl');
 
