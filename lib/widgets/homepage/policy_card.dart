@@ -4,6 +4,8 @@ import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/id_card_page.dart';
 import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/policy_logo_utils.dart';
+import 'package:freeway_app/utils/policy_type_icon_utils.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:intl/intl.dart';
@@ -96,9 +98,9 @@ class _PolicyCardState extends State<PolicyCard>
               spacing: 8,
               runSpacing: 12,
               children: [
-                // Icono del tipo de póliza
-                Image.asset(
-                  'assets/home/idcardicons/policy_type/${policyType.toLowerCase().replaceAll(' ', '_')}.png',
+                // Icono del tipo de póliza - Verificar si existe un icono específico
+                PolicyTypeIconUtils.getPolicyTypeIcon(
+                  policyType,
                   width: screenWidth * 0.15,
                   height: screenWidth * 0.15,
                 ),
@@ -181,18 +183,13 @@ class _PolicyCardState extends State<PolicyCard>
               spacing: 8,
               runSpacing: 8,
               children: [
-                // Logo
-                freewayLogo
-                    ? Image.asset(
-                        AppTheme.getFreewayLogoType(context),
-                        width: screenWidth * 0.2,
-                        height: screenWidth * 0.1,
-                      )
-                    : Image.asset(
-                        'assets/home/idcardicons/logo_type/${widget.policy.programName.toLowerCase().replaceAll(' ', '_')}.png',
-                        width: screenWidth * 0.2,
-                        height: screenWidth * 0.05,
-                      ),
+                // Logo - Verificar si existe un logo específico para la póliza
+                PolicyLogoUtils.getPolicyLogo(
+                  context, 
+                  widget.policy.programName,
+                  width: screenWidth * 0.2,
+                  height: freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,
+                ),
                 const SizedBox(width: 8),
                 // Información de próximo pago
                 Wrap(
