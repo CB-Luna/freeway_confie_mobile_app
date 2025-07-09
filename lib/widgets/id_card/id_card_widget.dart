@@ -114,7 +114,7 @@ class IdCardWidget extends StatelessWidget {
                       const SizedBox(height: 4),
                       // Nombre del asegurado
                       Text(
-                        user.fullName,
+                        policy.insuredName,
                         style: TextStyle(
                           fontSize: responsiveFontSizes.titleMedium(context),
                           color: AppTheme.getPrimaryColor(context),

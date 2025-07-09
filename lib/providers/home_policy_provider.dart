@@ -29,22 +29,19 @@ class HomePolicyProvider with ChangeNotifier {
 
   // Obtener pólizas por tipo (Auto, Roadside Assistance, etc.)
   List<PolicyModel> getPoliciesByType(String policyType) {
-    // 1: Roadside Assistance, 2: Auto, 3: Inactive (simulado)
+    // 1: Active, 2: Inactive
     switch (policyType) {
-      case 'Roadside Assistance': // Roadside Assistance
-        return _policies
-            .where(
-              (policy) =>
-                  policy.lineOfBusiness.toLowerCase().contains('roadside') ||
-                  policy.lineOfBusiness.toLowerCase().contains('assistance'),
-            )
-            .toList();
-      case 'Auto': // Auto
-        return _policies
-            .where(
-              (policy) => policy.lineOfBusiness.toLowerCase().contains('auto'),
-            )
-            .toList();
+      case 'Active': // Auto
+        final now = DateTime.now();
+        return _policies.where((policy) {
+          try {
+            final expirationDate = DateTime.parse(policy.expirationDate);
+            return expirationDate
+                .isAfter(now); // Consideramos activa si no expiró
+          } catch (e) {
+            return false;
+          }
+        }).toList();
       case 'Inactive': // Inactive - Simulamos pólizas inactivas basadas en la fecha de expiración
         final now = DateTime.now();
         return _policies.where((policy) {
@@ -78,6 +75,7 @@ class HomePolicyProvider with ChangeNotifier {
     if (_policies.isEmpty) {
       return PolicyModel(
         policyId: '999',
+        insuredName: 'John Doe',
         policyNumber: 'CAAAPO000380829',
         carrierName: 'BlueFire Insurance',
         lineOfBusiness: 'Auto',
@@ -94,6 +92,7 @@ class HomePolicyProvider with ChangeNotifier {
     final policy = _policies.first;
     return PolicyModel(
       policyId: policy.policyId,
+      insuredName: policy.insuredName,
       policyNumber: policy.policyNumber,
       carrierName: policy.carrierName,
       lineOfBusiness: policy.lineOfBusiness,

@@ -73,7 +73,7 @@ class GoogleWalletService {
             "header": {
               "defaultValue": {
                 "language": "${context.translate('idCard.languageCode')}-${context.translate('idCard.countryCode')}",
-                "value": "${user.fullName}"
+                "value": "${policy.insuredName}"
               }
             },
             "textModulesData": [

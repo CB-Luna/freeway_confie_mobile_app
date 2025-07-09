@@ -4,7 +4,7 @@ import 'package:freeway_app/data/models/auth/policy_model.dart';
 class User {
   final String username;
   final String fullName;
-  final int customerId; // Añadido para poder hacer la llamada a la API
+  final String customerId; // Añadido para poder hacer la llamada a la API
   final String? email; // Añadido para información de contacto
   final String? phone; // Añadido para información de contacto
   final String? avatar; // URL de la imagen de avatar del usuario
@@ -52,7 +52,7 @@ class User {
   User copyWith({
     String? username,
     String? fullName,
-    int? customerId,
+    String? customerId,
     String? email,
     String? phone,
     String? avatar,

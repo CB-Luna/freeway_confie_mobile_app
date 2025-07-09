@@ -64,7 +64,7 @@ class IdCardPrinter {
                 ),
                 pw.SizedBox(height: 20),
                 pw.Text(
-                  user.fullName,
+                  policy.insuredName,
                   style: const pw.TextStyle(fontSize: 18),
                 ),
                 pw.SizedBox(height: 30),

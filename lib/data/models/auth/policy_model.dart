@@ -5,6 +5,7 @@ part 'policy_model.g.dart';
 @JsonSerializable()
 class PolicyModel {
   final String policyId;
+  final String insuredName;
   final String policyNumber;
   final String effectiveDate;
   final String expirationDate;
@@ -18,6 +19,7 @@ class PolicyModel {
 
   PolicyModel({
     required this.policyId,
+    required this.insuredName,
     required this.policyNumber,
     required this.effectiveDate,
     required this.expirationDate,

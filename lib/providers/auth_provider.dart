@@ -157,7 +157,7 @@ class AuthProvider with ChangeNotifier {
         username: _lastUsername ?? 'user',
         // Usar el nombre guardado si existe, de lo contrario usar el del servidor
         fullName: savedFullName ?? fullName,
-        customerId: 1001,
+        customerId: customerId,
         email: email,
         phone: phone,
         avatar: null, // No disponible en la API

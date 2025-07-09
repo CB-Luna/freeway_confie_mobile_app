@@ -69,7 +69,7 @@ class _PolicyCardState extends State<PolicyCard>
     }
 
     // Usar lineOfBusiness o un valor predeterminado para el tipo de póliza
-    final String policyType = widget.policy.lineOfBusiness;
+    final String policyLineOfBusiness = widget.policy.lineOfBusiness;
 
     // Determinar si tenemos la imagen del logo de la póliza en assets
     final bool freewayLogo =
@@ -100,7 +100,7 @@ class _PolicyCardState extends State<PolicyCard>
               children: [
                 // Icono del tipo de póliza - Verificar si existe un icono específico
                 PolicyTypeIconUtils.getPolicyTypeIcon(
-                  policyType,
+                  policyLineOfBusiness,
                   width: screenWidth * 0.15,
                   height: screenWidth * 0.15,
                 ),
@@ -111,7 +111,7 @@ class _PolicyCardState extends State<PolicyCard>
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        policyType,
+                        policyLineOfBusiness,
                         style: TextStyle(
                           fontSize:
                               responsiveFontSizes.policyCardTitle(context),
@@ -185,7 +185,7 @@ class _PolicyCardState extends State<PolicyCard>
               children: [
                 // Logo - Verificar si existe un logo específico para la póliza
                 PolicyLogoUtils.getPolicyLogo(
-                  context, 
+                  context,
                   widget.policy.programName,
                   width: screenWidth * 0.2,
                   height: freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,

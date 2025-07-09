@@ -48,7 +48,8 @@ class _HomePageState extends State<HomePage> {
 
     if (mounted) {
       setState(() {
-        _userName = savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
+        _userName =
+            savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
         _isLoading = false;
       });
     }
@@ -65,7 +66,7 @@ class _HomePageState extends State<HomePage> {
         final customerId = authProvider.currentUser!.customerId;
         debugPrint('HomePage - Customer ID: $customerId');
 
-        if (customerId <= 0) {
+        if (customerId.isEmpty) {
           debugPrint(
             'HomePage - ADVERTENCIA: customerId inválido: $customerId',
           );
@@ -174,27 +175,28 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 5),
                     Center(
                       child: _isLoading
-                        ? const SizedBox(
-                            height: 24,
-                            width: 24,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
+                          ? const SizedBox(
+                              height: 24,
+                              width: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                              ),
+                            )
+                          : Text(
+                              context.translateWithArgs(
+                                'home.greeting',
+                                args: [_userName],
+                              ),
+                              style: TextStyle(
+                                fontFamily: 'Open Sans',
+                                fontSize:
+                                    responsiveFontSizes.titleMedium(context),
+                                fontWeight: FontWeight.w700,
+                                height: 24 / 20,
+                                letterSpacing: 0,
+                                color: AppTheme.getTitleTextColor(context),
+                              ),
                             ),
-                          )
-                        : Text(
-                            context.translateWithArgs(
-                              'home.greeting',
-                              args: [_userName],
-                            ),
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontSize: responsiveFontSizes.titleMedium(context),
-                          fontWeight: FontWeight.w700,
-                          height: 24 / 20,
-                          letterSpacing: 0,
-                          color: AppTheme.getTitleTextColor(context),
-                        ),
-                      ),
                     ),
                     const SizedBox(height: 4),
 
@@ -206,7 +208,6 @@ class _HomePageState extends State<HomePage> {
                       ),
                       child: CardSwiperSection(
                         user: user,
-                        policyNumber: 'CAAAPO000380840',
                       ),
                     ),
 

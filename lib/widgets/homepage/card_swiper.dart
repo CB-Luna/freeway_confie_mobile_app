@@ -10,15 +10,12 @@ import '../../providers/auth_provider.dart';
 import '../../providers/home_policy_provider.dart';
 import 'policy_card.dart';
 import 'policy_inactive_card.dart';
-import 'roadside_assist.dart';
 
 class CardSwiperSection extends StatefulWidget {
   final User user;
-  final String policyNumber;
 
   const CardSwiperSection({
     required this.user,
-    required this.policyNumber,
     super.key,
   });
 
@@ -93,11 +90,11 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
         // Lista de widgets de tarjetas con datos de la API
         final List<Widget> cards = [];
 
-        // Pólizas tipo 2 (Auto Policy)
-        final autoPolicies = policyProvider.getPoliciesByType('Auto');
-        debugPrint('Auto Policies (type 2): ${autoPolicies.length}');
-        if (autoPolicies.isNotEmpty) {
-          for (final policy in autoPolicies) {
+        // Pólizas Activas (Active)
+        final activePolicies = policyProvider.getPoliciesByType('Active');
+        debugPrint('Active Policies (type 1): ${activePolicies.length}');
+        if (activePolicies.isNotEmpty) {
+          for (final policy in activePolicies) {
             cards.add(
               PolicyCard(
                 user: widget.user,
@@ -107,24 +104,9 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
           }
         }
 
-        // Pólizas tipo 1 (Roadside Assistance)
-        final roadsidePolicies =
-            policyProvider.getPoliciesByType('Roadside Assistance');
-        debugPrint('Roadside Policies (type 1): ${roadsidePolicies.length}');
-        if (roadsidePolicies.isNotEmpty) {
-          for (final policy in roadsidePolicies) {
-            cards.add(
-              RoadsideAssist(
-                policyNumber: policy.policyNumber,
-                policy: policy,
-              ),
-            );
-          }
-        }
-
-        // Pólizas tipo 3 (Inactive)
+        // Pólizas Inactivas (Inactive)
         final inactivePolicies = policyProvider.getPoliciesByType('Inactive');
-        debugPrint('Inactive Policies (type 3): ${inactivePolicies.length}');
+        debugPrint('Inactive Policies (type 2): ${inactivePolicies.length}');
         if (inactivePolicies.isNotEmpty) {
           for (final policy in inactivePolicies) {
             cards.add(

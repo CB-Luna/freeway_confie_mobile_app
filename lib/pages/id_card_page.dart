@@ -46,11 +46,12 @@ class _IdCardPageState extends State<IdCardPage> {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final user = authProvider.currentUser;
+    final token = authProvider.authToken;
 
     final screenWidth = MediaQuery.of(context).size.width;
 
     // Si no hay usuario autenticado, mostrar un mensaje
-    if (user == null) {
+    if (user == null || token == null) {
       return Scaffold(
         backgroundColor: AppTheme.getBackgroundHeaderColor(context),
         appBar: AppBar(
@@ -592,7 +593,7 @@ class _IdCardPageState extends State<IdCardPage> {
               {
                 'key': 'name',
                 'label': 'NAMED INSURED',
-                'value': user.fullName,
+                'value': widget.policy.insuredName,
               }
             ],
             'secondaryFields': [
@@ -645,7 +646,8 @@ class _IdCardPageState extends State<IdCardPage> {
 
         try {
           // Usar el endpoint de producción en lugar del servidor local
-          const String serverUrl = 'https://cbl.virtalus.cbluna-dev.com/generate-pass';
+          const String serverUrl =
+              'https://cbl.virtalus.cbluna-dev.com/generate-pass';
 
           debugPrint('Conectando con el servidor en: $serverUrl');
           debugPrint('Datos del pase: ${jsonEncode(passData)}');

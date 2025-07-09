@@ -16,12 +16,12 @@ class NotificationProvider with ChangeNotifier {
   int get notificationCount => _notifications.length;
 
   // Método para obtener las notificaciones desde la API
-  Future<void> fetchNotifications(int customerId) async {
+  Future<void> fetchNotifications(String customerId) async {
     debugPrint(
       'NotificationProvider - Iniciando fetchNotifications para customerId: $customerId',
     );
 
-    if (customerId <= 0) {
+    if (customerId.isEmpty) {
       debugPrint(
         'NotificationProvider - ADVERTENCIA: customerId inválido: $customerId',
       );
