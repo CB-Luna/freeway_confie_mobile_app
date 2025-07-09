@@ -4,6 +4,8 @@ import 'package:freeway_app/data/models/auth/policy_model.dart';
 class User {
   final String username;
   final String fullName;
+  final String firstName;
+  final String lastName;
   final String customerId; // Añadido para poder hacer la llamada a la API
   final String? email; // Añadido para información de contacto
   final String? phone; // Añadido para información de contacto
@@ -24,6 +26,8 @@ class User {
   User({
     required this.username,
     required this.fullName,
+    required this.firstName,
+    required this.lastName,
     required this.customerId,
     required this.street,
     required this.zipCode,
@@ -52,6 +56,8 @@ class User {
   User copyWith({
     String? username,
     String? fullName,
+    String? firstName,
+    String? lastName,
     String? customerId,
     String? email,
     String? phone,
@@ -70,6 +76,8 @@ class User {
     return User(
       username: username ?? this.username,
       fullName: fullName ?? this.fullName,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
       customerId: customerId ?? this.customerId,
       email: email ?? this.email,
       phone: phone ?? this.phone,

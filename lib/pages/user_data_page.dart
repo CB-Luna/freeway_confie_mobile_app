@@ -18,7 +18,8 @@ class UserDataPage extends StatefulWidget {
 
 class _UserDataPageState extends State<UserDataPage> {
   final _formKey = GlobalKey<FormState>();
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _policyNumberController = TextEditingController();
@@ -46,7 +47,8 @@ class _UserDataPageState extends State<UserDataPage> {
 
   @override
   void dispose() {
-    _fullNameController.dispose();
+    _firstNameController.dispose();
+    _lastNameController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _policyNumberController.dispose();
@@ -68,7 +70,8 @@ class _UserDataPageState extends State<UserDataPage> {
 
       setState(() {
         // Usar el nombre guardado si existe, de lo contrario usar el del objeto User
-        _fullNameController.text = savedName ?? user.fullName;
+        _firstNameController.text = user.firstName;
+        _lastNameController.text = user.lastName;
         _emailController.text = user.email ?? '';
         // Usar el número de póliza guardado si existe, de lo contrario usar el del objeto User
         _policyNumberController.text = user.policies.first.policyNumber;
@@ -108,7 +111,8 @@ class _UserDataPageState extends State<UserDataPage> {
     }
 
     // Añadir listeners para detectar cambios
-    _fullNameController.addListener(_onFieldChanged);
+    _firstNameController.addListener(_onFieldChanged);
+    _lastNameController.addListener(_onFieldChanged);
     _emailController.addListener(_onFieldChanged);
     _phoneController.addListener(_onFieldChanged);
     _policyNumberController.addListener(_onFieldChanged);
@@ -273,9 +277,11 @@ class _UserDataPageState extends State<UserDataPage> {
           // y se actualizaría el usuario en el backend
           // Por ahora solo simulamos la actualización
 
-          // Guardar el nombre completo y número de póliza actualizados en el almacenamiento seguro
+          // Guardar el nombre completo
           // Esto también actualizará el objeto User y notificará a los listeners
-          await authProvider.saveFullName(_fullNameController.text);
+          await authProvider.saveFullName(
+            '${_firstNameController.text} ${_lastNameController.text}',
+          );
 
           // Nota: No podemos actualizar directamente el objeto User porque no tiene un setter
           // y el AuthProvider no tiene un método updateCurrentUser
@@ -462,10 +468,27 @@ class _UserDataPageState extends State<UserDataPage> {
             ),
             const SizedBox(height: 16),
             TextFormField(
-              controller: _fullNameController,
+              controller: _firstNameController,
               decoration: AppTheme.inputDecoration(
                 context,
-                labelText: context.translate('profile.userDataPage.fullName'),
+                labelText: context.translate('profile.userDataPage.firstName'),
+              ),
+              style: TextStyle(
+                fontSize: responsiveFontSizes.bodyMedium(context),
+              ),
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return context.translate('validation.requiredField');
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            TextFormField(
+              controller: _lastNameController,
+              decoration: AppTheme.inputDecoration(
+                context,
+                labelText: context.translate('profile.userDataPage.lastName'),
               ),
               style: TextStyle(
                 fontSize: responsiveFontSizes.bodyMedium(context),

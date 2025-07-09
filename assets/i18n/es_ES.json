@@ -252,6 +252,8 @@
     "userDataPage": {
       "userData": "Datos Personales",
       "fullName": "Nombre Completo",
+      "firstName": "Nombre",
+      "lastName": "Apellido",
       "email": "Correo Electrónico",
       "phone": "Teléfono",
       "birthDate": "Fecha de Nacimiento",

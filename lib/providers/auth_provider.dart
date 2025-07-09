@@ -112,6 +112,8 @@ class AuthProvider with ChangeNotifier {
       await _secureStorage.write(key: _tokenKey, value: _authToken);
 
       String fullName = 'Freeway User';
+      String firstName = 'Freeway';
+      String lastName = 'User';
       String email = _lastUsername ?? 'user@example.com';
       String phone = '+1 (555) 123-4567';
       String customerId = '1001';
@@ -129,6 +131,8 @@ class AuthProvider with ChangeNotifier {
         final primaryAddress = customer.primaryAddress;
 
         fullName = customer.fullName;
+        firstName = customer.firstName;
+        lastName = customer.lastName;
         email = customer.email;
         phone = _formatPhoneNumber(primaryPhone.phoneNumber);
         customerId = customer.customerId;
@@ -157,6 +161,8 @@ class AuthProvider with ChangeNotifier {
         username: _lastUsername ?? 'user',
         // Usar el nombre guardado si existe, de lo contrario usar el del servidor
         fullName: savedFullName ?? fullName,
+        firstName: firstName,
+        lastName: lastName,
         customerId: customerId,
         email: email,
         phone: phone,
