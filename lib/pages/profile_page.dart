@@ -28,13 +28,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Future<void> _loadUserName() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final savedName = await authProvider.getFullName();
 
     if (mounted) {
       setState(() {
-        _userName = savedName ??
-            (authProvider.currentUser?.fullName ??
-                context.translate('profile.defaultUser'));
+        _userName = authProvider.currentUser?.fullName ??
+            context.translate('profile.defaultUser');
         _isLoading = false;
       });
     }

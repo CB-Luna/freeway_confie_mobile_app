@@ -44,12 +44,10 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _loadUserName() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final savedName = await authProvider.getFullName();
 
     if (mounted) {
       setState(() {
-        _userName =
-            savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
+        _userName = authProvider.currentUser?.fullName ?? 'Freeway User';
         _isLoading = false;
       });
     }

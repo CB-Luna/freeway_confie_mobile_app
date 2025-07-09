@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -7,6 +8,7 @@ import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/contactcenter/request_call.dart';
 import 'package:freeway_app/widgets/custom/country_phone_selector.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class UserDataPage extends StatefulWidget {
@@ -65,9 +67,6 @@ class _UserDataPageState extends State<UserDataPage> {
     final user = authProvider.currentUser;
 
     if (user != null) {
-      // Obtener el nombre y número de póliza guardados en el almacenamiento seguro
-      final String? savedName = await authProvider.getFullName();
-
       setState(() {
         // Usar el nombre guardado si existe, de lo contrario usar el del objeto User
         _firstNameController.text = user.firstName;
@@ -259,35 +258,56 @@ class _UserDataPageState extends State<UserDataPage> {
 
   Future<void> _saveChanges() async {
     if (_formKey.currentState!.validate()) {
+      // Mostrar el indicador de carga
       setState(() {
         _isLoading = true;
       });
 
       try {
-        // Simulamos una llamada a la API para guardar los cambios
-        await Future.delayed(const Duration(seconds: 1));
-
-        // Actualizamos los datos del usuario en el provider
-        if (!mounted) return;
         final authProvider = Provider.of<AuthProvider>(context, listen: false);
         final currentUser = authProvider.currentUser;
 
         if (currentUser != null) {
-          // En una implementación real, estos valores se enviarían a la API
-          // y se actualizaría el usuario en el backend
-          // Por ahora solo simulamos la actualización
+          // Formatear la fecha de nacimiento al formato requerido por la API (yyyy-MM-dd)
+          final String formattedBirthDate =
+              DateFormat('yyyy-MM-dd').format(_birthDate);
 
-          // Guardar el nombre completo
-          // Esto también actualizará el objeto User y notificará a los listeners
-          await authProvider.saveFullName(
-            '${_firstNameController.text} ${_lastNameController.text}',
+          // Obtener el servicio de autenticación
+          final authService = AuthService();
+
+          // Llamar al método updateUserData del AuthService
+          final bool success = await authService.updateUserData(
+            username: currentUser.email ?? '',
+            firstName: _firstNameController.text,
+            lastName: _lastNameController.text,
+            phoneNumber: _completePhoneNumber,
+            birthDate: formattedBirthDate,
+            policyNumber: _policyNumberController.text,
           );
 
-          // Nota: No podemos actualizar directamente el objeto User porque no tiene un setter
-          // y el AuthProvider no tiene un método updateCurrentUser
-          // En una implementación real, se llamaría a un método del AuthProvider para actualizar el usuario
+          if (success && mounted) {
+            // Actualizar el objeto User completo en el provider
+            await authProvider.updateUserData(
+              firstName: _firstNameController.text,
+              lastName: _lastNameController.text,
+              phone: _completePhoneNumber,
+              birthDate: _birthDate,
+              street: _streetController.text,
+              city: _cityController.text,
+              state: _stateController.text,
+              zipCode: _zipCodeController.text,
+            );
+            
+            // Nota: El método updateUserData ya maneja la actualización del fullName y la notificación a los listeners
 
-          if (mounted) {
+            // Cerrar el LoadingView
+            if (mounted && Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+
+            if (!mounted) return;
+
+            // Mostrar mensaje de éxito
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text(
@@ -296,9 +316,36 @@ class _UserDataPageState extends State<UserDataPage> {
                 backgroundColor: Colors.green,
               ),
             );
+
+            // Resetear el estado de cambios
+            setState(() {
+              _hasChanges = false;
+            });
+          } else {
+            // Cerrar el LoadingView en caso de error
+            if (mounted && Navigator.canPop(context)) {
+              Navigator.pop(context);
+            }
+
+            // Mostrar mensaje de error
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    context.translate('profile.userDataPage.saveError'),
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
+            }
           }
         }
       } catch (e) {
+        // Cerrar el LoadingView en caso de error
+        if (mounted && Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -310,10 +357,10 @@ class _UserDataPageState extends State<UserDataPage> {
           );
         }
       } finally {
+        // Actualizar estado para indicar que ya no está cargando
         if (mounted) {
           setState(() {
             _isLoading = false;
-            _hasChanges = false;
           });
         }
       }

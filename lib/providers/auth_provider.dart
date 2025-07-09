@@ -370,6 +370,64 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
+  
+  /// Actualiza los datos del usuario actual con los nuevos valores proporcionados
+  /// Utiliza el método copyWith del modelo User para crear una nueva instancia con los datos actualizados
+  /// Retorna true si la actualización fue exitosa, false en caso contrario
+  Future<bool> updateUserData({
+    String? firstName,
+    String? lastName,
+    String? email,
+    String? phone,
+    DateTime? birthDate,
+    String? street,
+    String? zipCode,
+    String? city,
+    String? state,
+    String? policyNumber,
+  }) async {
+    try {
+      // Verificar si hay un usuario autenticado
+      if (!_isAuthenticated || _currentUser == null) {
+        debugPrint('No hay usuario autenticado para actualizar datos');
+        return false;
+      }
+      
+      // Crear una copia del usuario con los nuevos datos
+      final updatedUser = _currentUser!.copyWith(
+        firstName: firstName,
+        lastName: lastName,
+        email: email,
+        phone: phone,
+        birthDate: birthDate,
+        street: street,
+        zipCode: zipCode,
+        city: city,
+        state: state,
+        // Si se proporciona firstName y lastName, actualizar también el fullName
+        fullName: (firstName != null && lastName != null) 
+            ? '$firstName $lastName' 
+            : null,
+      );
+      
+      // Actualizar el usuario actual
+      _currentUser = updatedUser;
+      
+      // Si se actualizó el nombre completo, guardarlo en el almacenamiento seguro
+      if (firstName != null && lastName != null) {
+        await saveFullName('$firstName $lastName');
+      }
+      
+      // Notificar a los listeners para que actualicen la UI
+      notifyListeners();
+      
+      debugPrint('Datos del usuario actualizados correctamente');
+      return true;
+    } catch (e) {
+      debugPrint('Error al actualizar datos del usuario: $e');
+      return false;
+    }
+  }
 
   /// Lee el nombre completo del usuario desde el almacenamiento seguro
   Future<String?> getFullName() async {

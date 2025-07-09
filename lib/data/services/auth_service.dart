@@ -114,4 +114,42 @@ class AuthService {
       throw ApiError(message: e.toString());
     }
   }
+
+  // Método para actualizar los datos del usuario
+  Future<bool> updateUserData({
+    required String username,
+    required String firstName,
+    required String lastName,
+    required String phoneNumber,
+    required String birthDate,
+    required String policyNumber,
+    String verificationType = 'Unknown',
+  }) async {
+    try {
+      final response = await _dio.post(
+        '/api/Mobile/User',
+        data: {
+          'userName': username,
+          'firstName': firstName,
+          'lastName': lastName,
+          'phoneNumber': phoneNumber,
+          'birthDate': birthDate,
+          'policyNumber': policyNumber,
+          'verificationType': verificationType,
+        },
+        options: Options(
+          headers: {
+            'X-API-KEY': _apiKey,
+          },
+        ),
+      );
+
+      // Si el código de estado es 200, los datos se actualizaron correctamente
+      return response.statusCode == 200;
+    } on DioException catch (e) {
+      throw ApiError.fromDioError(e);
+    } catch (e) {
+      throw ApiError(message: e.toString());
+    }
+  }
 }
