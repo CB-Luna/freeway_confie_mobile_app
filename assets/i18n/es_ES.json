@@ -131,7 +131,11 @@
     "downloadCompleted": "Descarga completada",
     "preparingForPrint": "Preparando para imprimir...",
     "downloadCancelled": "Descarga cancelada",
-    "pdfTitle": "Tarjeta de Seguro Freeway",
+    "pdfTitle": "Tarjeta de ID de Freeway Insurance",
+    "chooseFormat": "Elegir Formato",
+    "chooseFormatDescription": "Selecciona el formato en el que deseas guardar tu tarjeta de ID",
+    "formatPDF": "PDF",
+    "formatImage": "Imagen",
     "policyNumber": "Número de Póliza"
   },
   "quoteCallcenter": {

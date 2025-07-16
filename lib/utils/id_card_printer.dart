@@ -116,11 +116,55 @@ class IdCardPrinter {
     }
   }
 
-  /// Guarda la tarjeta de ID como PDF
+  /// Guarda la tarjeta de ID como PDF o imagen según el formato solicitado
   static Future<void> saveIdCard(
     BuildContext context,
     GlobalKey key,
     User user,
+    PolicyModel policy,
+    Function(bool) onComplete,
+    {bool asImage = false}
+  ) async {
+    try {
+      if (asImage) {
+        // Guardar como imagen
+        await saveIdCardAsImage(context, key, policy, onComplete);
+      } else {
+        // Guardar como PDF (comportamiento original)
+        // Capturar la imagen de la tarjeta
+        final imageBytes = await captureWidget(key);
+        if (imageBytes == null) {
+          throw Exception('No se pudo capturar la imagen de la tarjeta');
+        }
+        if (!context.mounted) return;
+
+        // Obtener las traducciones necesarias
+        final translations = {
+          'pdfTitle': context.translate('idCard.pdfTitle'),
+        };
+
+        // Generar el PDF
+        final pdfBytes = await generatePdf(translations, imageBytes, user, policy,
+            context: context);
+
+        // Guardar el PDF
+        final result = await Printing.sharePdf(
+          bytes: pdfBytes,
+          filename: 'Freeway_ID_Card_${policy.policyNumber}.pdf',
+        );
+
+        onComplete(result);
+      }
+    } catch (e) {
+      debugPrint('Error al guardar: $e');
+      onComplete(false);
+    }
+  }
+
+  /// Guarda la tarjeta de ID como imagen
+  static Future<void> saveIdCardAsImage(
+    BuildContext context,
+    GlobalKey key,
     PolicyModel policy,
     Function(bool) onComplete,
   ) async {
@@ -132,24 +176,17 @@ class IdCardPrinter {
       }
       if (!context.mounted) return;
 
-      // Obtener las traducciones necesarias
-      final translations = {
-        'pdfTitle': context.translate('idCard.pdfTitle'),
-      };
-
-      // Generar el PDF
-      final pdfBytes = await generatePdf(translations, imageBytes, user, policy,
-          context: context);
-
-      // Guardar el PDF
+      // Usar la biblioteca printing para compartir la imagen
+      // Aunque la biblioteca está diseñada para PDFs, podemos usarla para compartir cualquier tipo de bytes
+      // El sistema operativo determinará cómo manejar el archivo basado en su extensión
       final result = await Printing.sharePdf(
-        bytes: pdfBytes,
-        filename: 'Freeway_ID_Card_${policy.policyNumber}.pdf',
+        bytes: imageBytes,
+        filename: 'Freeway_ID_Card_${policy.policyNumber}.png',
       );
 
       onComplete(result);
     } catch (e) {
-      debugPrint('Error al guardar: $e');
+      debugPrint('Error al guardar imagen: $e');
       onComplete(false);
     }
   }

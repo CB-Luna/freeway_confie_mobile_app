@@ -207,7 +207,7 @@ class _IdCardPageState extends State<IdCardPage> {
                                 children: [
                                   IconButton(
                                     icon: Icon(
-                                      Icons.download_outlined,
+                                      Icons.share_outlined,
                                       color: AppTheme.getIconColor(context),
                                     ),
                                     onPressed: () {
@@ -360,6 +360,38 @@ class _IdCardPageState extends State<IdCardPage> {
 
   // Método para manejar el guardado de la tarjeta de ID
   void _handleSaveIdCard(BuildContext context, User user, PolicyModel policy) {
+    // Mostrar un diálogo para elegir el formato
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: Text(context.translate('idCard.chooseFormat')),
+          content: Text(
+            context.translate('idCard.chooseFormatDescription')
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _saveIdCardWithFormat(context, user, policy, false); // PDF
+              },
+              child: Text(context.translate('idCard.formatPDF')),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(dialogContext);
+                _saveIdCardWithFormat(context, user, policy, true); // Imagen
+              },
+              child: Text(context.translate('idCard.formatImage')),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // Método auxiliar para guardar la tarjeta en el formato seleccionado
+  void _saveIdCardWithFormat(BuildContext context, User user, PolicyModel policy, bool asImage) {
     setState(() {
       _isProcessingRequest = true;
     });
@@ -403,6 +435,7 @@ class _IdCardPageState extends State<IdCardPage> {
           }
         }
       },
+      asImage: asImage,
     );
   }
 

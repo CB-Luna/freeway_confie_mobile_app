@@ -132,7 +132,11 @@
     "downloadCompleted": "Download completed",
     "preparingForPrint": "Preparing for print...",
     "downloadCancelled": "Download cancelled",
-    "pdfTitle": "Freeway Insurance ID Card"
+    "pdfTitle": "Freeway Insurance ID Card",
+    "chooseFormat": "Choose Format",
+    "chooseFormatDescription": "Select the format in which you want to share your ID card",
+    "formatPDF": "PDF",
+    "formatImage": "Image"
   },
   "quoteCallcenter": {
     "back": "Back",
