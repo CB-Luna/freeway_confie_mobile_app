@@ -259,22 +259,6 @@ class _IdCardPageState extends State<IdCardPage> {
                           ),
                         ),
                       ),
-
-                      // Texto de aviso legal en la parte inferior
-                      Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 20.0,
-                          vertical: 20.0,
-                        ),
-                        child: Text(
-                          context.translate('idCard.notProofOfCoverage'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppTheme.getTextGreyColor(context),
-                            fontSize: responsiveFontSizes.bodyMedium(context),
-                          ),
-                        ),
-                      ),
                     ],
                   ),
                 ),

@@ -47,6 +47,10 @@ class IdCardWidget extends StatelessWidget {
             offset: const Offset(0, 4),
           ),
         ],
+        border: Border.all(
+          color: AppTheme.getBoxShadowColor(context),
+          width: 1,
+        ),
       ),
       child: Column(
         children: [
@@ -303,15 +307,18 @@ class IdCardWidget extends StatelessWidget {
             ),
           ),
 
-          // Footer con código de barras
-          Container(
-            height: screenWidth * 0.2,
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Center(
-              child: Image.asset(
-                'assets/home/idcardicons/barcode.png',
-                width: screenWidth,
-                fit: BoxFit.contain,
+          // Texto de aviso legal en la parte inferior
+          Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 20.0,
+            ),
+            child: Text(
+              context.translate('idCard.notProofOfCoverage'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppTheme.getTextGreyColor(context),
+                fontSize: responsiveFontSizes.bodyMedium(context),
               ),
             ),
           ),

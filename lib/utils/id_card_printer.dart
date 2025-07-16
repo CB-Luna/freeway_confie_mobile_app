@@ -62,25 +62,10 @@ class IdCardPrinter {
                     fontWeight: pw.FontWeight.bold,
                   ),
                 ),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  policy.insuredName,
-                  style: const pw.TextStyle(fontSize: 18),
-                ),
                 pw.SizedBox(height: 30),
                 // Larger image size for better visibility
                 pw.Image(image, width: cardWidth, height: cardHeight),
                 pw.SizedBox(height: 30),
-                pw.Text(
-                  '${translations['policyNumber'] ?? 'Policy Number'}: ${policy.policyNumber}',
-                  style: const pw.TextStyle(fontSize: 14),
-                ),
-                pw.SizedBox(height: 10),
-                pw.Text(
-                  translations['norProofOfCoverage'] ??
-                      'Not proof of coverage.',
-                  style: const pw.TextStyle(fontSize: 12),
-                ),
               ],
             ),
           );
@@ -109,8 +94,6 @@ class IdCardPrinter {
       // Obtener las traducciones necesarias
       final translations = {
         'pdfTitle': context.translate('idCard.pdfTitle'),
-        'policyNumber': context.translate('idCard.policyNumberLabel'),
-        'norProofOfCoverage': context.translate('idCard.notProofOfCoverage'),
       };
 
       // Generar el PDF
@@ -152,8 +135,6 @@ class IdCardPrinter {
       // Obtener las traducciones necesarias
       final translations = {
         'pdfTitle': context.translate('idCard.pdfTitle'),
-        'policyNumber': context.translate('idCard.policyNumberLabel'),
-        'norProofOfCoverage': context.translate('idCard.notProofOfCoverage')
       };
 
       // Generar el PDF
