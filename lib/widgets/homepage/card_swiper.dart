@@ -3,7 +3,9 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
@@ -138,6 +140,50 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
     return _buildCardSwiper(cards);
   }
 
+  Widget _buildEmptyCards(BuildContext context, bool isSmallScreen) {
+    return Card(
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15),
+      ),
+      color: AppTheme.getCardColor(context),
+      child: Container(
+        constraints: BoxConstraints(
+          maxHeight: isSmallScreen ? 150 : 200,
+        ),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Animación Lottie para estado vacío (tamaño reducido)
+              SizedBox(
+                width: isSmallScreen ? 100 : 120,
+                height: isSmallScreen ? 100 : 120,
+                child: Lottie.asset(
+                  'assets/home/animations/No Card Data.json',
+                  fit: BoxFit.contain,
+                  repeat: true,
+                  animate: true,
+                ),
+              ),
+              const SizedBox(height: 8),
+              // Texto informativo
+              Text(
+                context.translate('home.noCardsAvailable'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppTheme.getTextGreyColor(context),
+                  fontSize: responsiveFontSizes.bodySmall(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildCardSwiper(List<Widget> cards) {
     return Column(
       children: [
@@ -145,7 +191,10 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
         SizedBox(
           width: double.infinity,
           child: cards.isEmpty
-              ? Center(child: Text(context.translate('home.noCardsAvailable')))
+              ? _buildEmptyCards(
+                  context,
+                  MediaQuery.of(context).size.width < 600,
+                )
               : cards.length == 1
                   // Si solo hay una tarjeta, mostrarla directamente sin efecto de swipe
                   ? cards[0]

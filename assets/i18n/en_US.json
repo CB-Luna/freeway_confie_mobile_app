@@ -95,7 +95,7 @@
       "location": "Location"
     },
     "errors": {
-      "invalidCustomerId": "Error: Invalid customer ID"
+      "invalidCustomerId": "Error: This user has no associated customer ID"
     },
     "policyCard": {
       "active": "Active",

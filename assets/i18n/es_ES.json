@@ -94,7 +94,7 @@
       "location": "Ubicación"
     },
     "errors": {
-      "invalidCustomerId": "Error: ID de cliente inválido"
+      "invalidCustomerId": "Error: Este usuario no tiene un ID de cliente asociado"
     },
     "policyCard": {
       "active": "Activa",
