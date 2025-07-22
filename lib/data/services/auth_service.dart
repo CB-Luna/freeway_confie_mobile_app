@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../core/errors/api_error.dart';
 import '../../core/network/api_client.dart';
@@ -30,12 +31,25 @@ class AuthService {
         ),
       );
 
+      // Imprimir la respuesta para depuración
+      debugPrint('API Response: ${response.data}');
+      
       // Ahora la API devuelve directamente un token en lugar de requerir 2FA
-      return LoginResponse.fromJson(response.data);
+      try {
+        return LoginResponse.fromJson(response.data);
+      } catch (parseError) {
+        debugPrint('Error al parsear la respuesta: $parseError');
+        // Intentar identificar qué campo está causando el problema
+        final Map<String, dynamic> data = response.data;
+        debugPrint('Campos en la respuesta: ${data.keys.join(', ')}');
+        
+        // Relanzar el error con más información
+        throw ApiError(message: 'Error al procesar la respuesta: $parseError');
+      }
     } on DioException catch (e) {
       throw ApiError.fromDioError(e);
     } catch (e) {
-      throw ApiError(message: e.toString());
+      throw ApiError(message: 'Error en loginStep1: ${e.toString()}');
     }
   }
 

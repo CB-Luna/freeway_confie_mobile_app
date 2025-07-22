@@ -19,8 +19,6 @@ import 'profile_settings_switch.dart';
 class ProfileSettingsList extends StatelessWidget {
   const ProfileSettingsList({super.key});
 
-
-
   /// Muestra un diálogo de confirmación para habilitar la biometría
   Future<bool> _showBiometricConfirmationDialog(
     BuildContext context,
@@ -123,6 +121,7 @@ class ProfileSettingsList extends StatelessWidget {
               },
             ),
             const ProfileDivider(),
+            // Biometría
             Consumer<BiometricProvider>(
               builder: (context, biometricProvider, child) {
                 // Establecer el contexto para las traducciones

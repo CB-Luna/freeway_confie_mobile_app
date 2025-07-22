@@ -127,6 +127,7 @@ class AuthProvider with ChangeNotifier {
       // Usar la información del customer que viene directamente en la respuesta
       if (response.customer != null) {
         final customer = response.customer!;
+        // Manejo de campos que ahora son opcionales
         final primaryPhone = customer.primaryPhone;
         final primaryAddress = customer.primaryAddress;
 
@@ -134,14 +135,24 @@ class AuthProvider with ChangeNotifier {
         firstName = customer.firstName;
         lastName = customer.lastName;
         email = customer.email;
-        phone = _formatPhoneNumber(primaryPhone.phoneNumber);
-        customerId = customer.customerId;
-        street = primaryAddress.street;
-        zipCode = primaryAddress.zip;
-        city = primaryAddress.city;
-        state = primaryAddress.state;
+        phone = primaryPhone != null ? _formatPhoneNumber(primaryPhone.phoneNumber) : '';
+        customerId = customer.customerId ?? '';
+        
+        // Manejo de dirección primaria que ahora es opcional
+        if (primaryAddress != null) {
+          street = primaryAddress.street;
+          zipCode = primaryAddress.zip;
+          city = primaryAddress.city;
+          state = primaryAddress.state;
+        } else {
+          street = '';
+          zipCode = '';
+          city = '';
+          state = '';
+        }
+        
         birthDate = DateTime.parse(customer.birthDate);
-        gender = customer.gender;
+        gender = customer.gender ?? '';
 
         debugPrint(
           'AuthProvider - Usuario obtenido directamente de la respuesta de login',
@@ -153,14 +164,15 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Verificar si hay un nombre y número de póliza guardados en el almacenamiento seguro
-      final String? savedFullName = await getFullName();
+      // Siempre usar la información más reciente del usuario que inicia sesión
+      // Eliminar cualquier información guardada previamente para evitar conflictos
+      await saveFullName(fullName);
 
       // Crear el objeto de usuario con la información obtenida
       _currentUser = User(
         username: _lastUsername ?? 'user',
-        // Usar el nombre guardado si existe, de lo contrario usar el del servidor
-        fullName: savedFullName ?? fullName,
+        // Usar siempre el nombre del usuario actual que viene del servidor
+        fullName: fullName,
         firstName: firstName,
         lastName: lastName,
         customerId: customerId,
@@ -227,8 +239,9 @@ class AuthProvider with ChangeNotifier {
     return digitsOnly;
   }
 
-  /// Método simple para cerrar sesión - solo limpia el estado
+  /// Método para cerrar sesión - limpia el estado y el almacenamiento seguro
   Future<void> logout() async {
+    // Limpiar variables en memoria
     _currentUser = null;
     _isAuthenticated = false;
     _errorMessage = null;
@@ -236,8 +249,18 @@ class AuthProvider with ChangeNotifier {
     _lastPassword = null;
     _requiresTwoFactor = false;
     _authToken = null;
+    
+    // Limpiar almacenamiento seguro
+    await _secureStorage.delete(key: _tokenKey);
+    // Eliminar el nombre completo guardado para evitar conflictos con nuevos inicios de sesión
+    await _secureStorage.delete(key: _fullNameKey);
+    
+    // Opcional: si quieres mantener las credenciales guardadas, comenta estas líneas
+    // await _secureStorage.delete(key: _usernameKey);
+    // await _secureStorage.delete(key: _passwordKey);
+    
     notifyListeners();
-    debugPrint('AuthProvider: estado de autenticación limpiado');
+    debugPrint('AuthProvider: estado de autenticación y almacenamiento seguro limpiados');
   }
 
   /// Método para cerrar sesión y navegar a la pantalla de login
