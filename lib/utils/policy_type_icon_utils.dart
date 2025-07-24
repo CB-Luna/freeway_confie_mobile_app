@@ -60,8 +60,11 @@ class PolicyTypeIconUtils {
 
   /// Obtiene el widget de imagen para el icono del tipo de póliza
   /// Si no existe un icono específico, devuelve el icono predeterminado
-  static Widget getPolicyTypeIcon(String policyType,
-      {double? width, double? height}) {
+  static Widget getPolicyTypeIcon(
+    String policyType, {
+    double? width,
+    double? height,
+  }) {
     return Image.asset(
       getPolicyTypeIconPath(policyType),
       width: width,

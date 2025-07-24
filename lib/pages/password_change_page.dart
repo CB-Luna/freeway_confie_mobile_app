@@ -87,7 +87,7 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       final authService = AuthService();
 
       // Mostrar LoadingView durante el proceso
-      showDialog(
+      await showDialog(
         context: context,
         barrierDismissible: false,
         builder: (context) => const LoadingView(),

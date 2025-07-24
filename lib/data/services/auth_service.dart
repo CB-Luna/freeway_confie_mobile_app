@@ -130,7 +130,7 @@ class AuthService {
   }
 
   // Método para actualizar los datos del usuario
-  Future<bool> updateUserData({
+  Future<Map<String, dynamic>> updateUserData({
     required String username,
     required String firstName,
     required String lastName,
@@ -158,8 +158,12 @@ class AuthService {
         ),
       );
 
-      // Si el código de estado es 200, los datos se actualizaron correctamente
-      return response.statusCode == 200;
+      // Devolver la respuesta completa de la API
+      if (response.statusCode == 200) {
+        return response.data as Map<String, dynamic>;
+      } else {
+        throw ApiError(message: 'Error updating user data: ${response.statusCode}');
+      }
     } on DioException catch (e) {
       throw ApiError.fromDioError(e);
     } catch (e) {

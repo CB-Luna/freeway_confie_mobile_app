@@ -146,6 +146,80 @@ class _UserDataPageState extends State<UserDataPage> {
     });
   }
 
+  // Método para actualizar el número de teléfono
+  Future<void> _updatePhone(BuildContext context) async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final currentUser = authProvider.currentUser;
+
+      if (currentUser != null) {
+        // Obtener el servicio de autenticación
+        final authService = AuthService();
+
+        // Llamar al método updateUserData del AuthService con solo el número de teléfono
+        final Map<String, dynamic> response = await authService.updateUserData(
+          username: currentUser.email ?? '',
+          firstName: currentUser.firstName,
+          lastName: currentUser.lastName,
+          phoneNumber: _completePhoneNumber,
+          birthDate: DateFormat('yyyy-MM-dd').format(currentUser.birthDate),
+          policyNumber: '',
+        );
+
+        if (mounted) {
+          // Verificar si se requiere verificación de teléfono
+          final bool phoneConfirmationSent = response['phoneConfirmationSent'] ?? false;
+
+          if (phoneConfirmationSent) {
+            // Si se requiere verificación, mostrar el diálogo
+            await _showVerificationDialog(context);
+          } else {
+            // Si no se requiere verificación, actualizar directamente
+            await authProvider.updateUserData(
+              phone: _completePhoneNumber,
+            );
+
+            // Mostrar mensaje de éxito
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  context.translate('profile.userDataPage.phoneUpdateSuccess'),
+                ),
+                backgroundColor: AppTheme.getGreenColor(context),
+                duration: const Duration(seconds: 3),
+              ),
+            );
+
+            setState(() {
+              _hasChanges = true; // Marcar que hay cambios para guardar
+            });
+          }
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              context.translate('profile.userDataPage.saveError'),
+            ),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
+
   // Método para mostrar el diálogo de verificación de código
   Future<void> _showVerificationDialog(BuildContext context) async {
     // Resetear el controlador del código de verificación
@@ -278,7 +352,7 @@ class _UserDataPageState extends State<UserDataPage> {
           final authService = AuthService();
 
           // Llamar al método updateUserData del AuthService
-          final bool success = await authService.updateUserData(
+          await authService.updateUserData(
             username: currentUser.email ?? '',
             firstName: _firstNameController.text,
             lastName: _lastNameController.text,
@@ -286,8 +360,11 @@ class _UserDataPageState extends State<UserDataPage> {
             birthDate: formattedBirthDate,
             policyNumber: _policyNumberController.text,
           );
+          
+          // Continuamos con el flujo normal ya que estamos guardando todos los cambios
 
-          if (success && mounted) {
+          // Si no hay excepciones, consideramos que fue exitoso
+          if (mounted) {
             // Actualizar el objeto User completo en el provider
             await authProvider.updateUserData(
               firstName: _firstNameController.text,
@@ -462,8 +539,8 @@ class _UserDataPageState extends State<UserDataPage> {
             // Botón para actualizar el número de teléfono
             ElevatedButton(
               onPressed: () {
-                // Mostrar el diálogo para ingresar el código de verificación
-                _showVerificationDialog(context);
+                // Llamar al método que maneja la actualización del teléfono
+                _updatePhone(context);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.getBlueColor(context),

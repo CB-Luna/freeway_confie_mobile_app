@@ -27,8 +27,12 @@ class PolicyLogoUtils {
 
   /// Obtiene el widget de imagen para el logo de la póliza
   /// Si no existe un logo específico, devuelve el logo de Freeway
-  static Widget getPolicyLogo(BuildContext context, String programName,
-      {double? width, double? height}) {
+  static Widget getPolicyLogo(
+    BuildContext context,
+    String programName, {
+    double? width,
+    double? height,
+  }) {
     final logoPath = getPolicyLogoPath(programName);
 
     if (logoPath != null) {

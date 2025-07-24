@@ -367,7 +367,7 @@ class _IdCardPageState extends State<IdCardPage> {
         return AlertDialog(
           title: Text(context.translate('idCard.chooseFormat')),
           content: Text(
-            context.translate('idCard.chooseFormatDescription')
+            context.translate('idCard.chooseFormatDescription'),
           ),
           actions: [
             TextButton(
@@ -391,7 +391,12 @@ class _IdCardPageState extends State<IdCardPage> {
   }
 
   // Método auxiliar para guardar la tarjeta en el formato seleccionado
-  void _saveIdCardWithFormat(BuildContext context, User user, PolicyModel policy, bool asImage) {
+  void _saveIdCardWithFormat(
+    BuildContext context,
+    User user,
+    PolicyModel policy,
+    bool asImage,
+  ) {
     setState(() {
       _isProcessingRequest = true;
     });

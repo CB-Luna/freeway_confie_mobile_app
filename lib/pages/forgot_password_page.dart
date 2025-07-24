@@ -24,14 +24,16 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
   final _authService = AuthService();
-  
+
   bool _isLoading = false;
   bool _codeSent = false;
-  bool _obscureNewPassword = true; // Para controlar la visibilidad de la nueva contraseña
-  bool _obscureConfirmPassword = true; // Para controlar la visibilidad de la confirmación
+  bool _obscureNewPassword =
+      true; // Para controlar la visibilidad de la nueva contraseña
+  bool _obscureConfirmPassword =
+      true; // Para controlar la visibilidad de la confirmación
   String _errorMessage = '';
   String _verificationType = 'EmailCode'; // Por defecto usamos email
-  
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -64,9 +66,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           // Mostrar mensaje de éxito
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(_verificationType == 'EmailCode' 
-                ? context.translate('auth.resetPasswordEmailSent')
-                : context.translate('auth.resetPasswordSmsSent')),
+              content: Text(
+                _verificationType == 'EmailCode'
+                    ? context.translate('auth.resetPasswordEmailSent')
+                    : context.translate('auth.resetPasswordSmsSent'),
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -76,7 +80,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _isLoading = false;
           _errorMessage = e.message;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage),
@@ -88,7 +92,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _isLoading = false;
           _errorMessage = e.toString();
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage),
@@ -98,7 +102,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
       }
     }
   }
-  
+
   // Método para restablecer la contraseña con el código
   Future<void> _handleResetPassword() async {
     if (_formKey.currentState!.validate()) {
@@ -126,10 +130,10 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
               backgroundColor: Colors.green,
             ),
           );
-          
+
           // Navegar a la pantalla de login después de un breve retraso
           await Future.delayed(const Duration(seconds: 2));
-          Navigator.of(context).pushReplacement(
+          await Navigator.of(context).pushReplacement(
             MaterialPageRoute(
               builder: (context) => const LoginPage(),
             ),
@@ -140,7 +144,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _isLoading = false;
           _errorMessage = e.message;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage),
@@ -152,7 +156,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _isLoading = false;
           _errorMessage = e.toString();
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(_errorMessage),
@@ -193,9 +197,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        _codeSent 
-                          ? context.translate('auth.resetPasswordCodeInstructions')
-                          : context.translate('auth.forgotPasswordInstructions'),
+                        _codeSent
+                            ? context
+                                .translate('auth.resetPasswordCodeInstructions')
+                            : context
+                                .translate('auth.forgotPasswordInstructions'),
                         style: TextStyle(
                           fontSize: responsiveFontSizes.bodyMedium(context),
                           color: AppTheme.getTextGreyColor(context),
@@ -212,13 +218,17 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                           ),
                           child: Row(
                             children: [
-                              Icon(Icons.error_outline, color: Colors.red.shade700),
+                              Icon(
+                                Icons.error_outline,
+                                color: Colors.red.shade700,
+                              ),
                               const SizedBox(width: 12),
                               Expanded(
                                 child: Text(
                                   _errorMessage,
                                   style: TextStyle(
-                                    fontSize: responsiveFontSizes.bodyMedium(context),
+                                    fontSize:
+                                        responsiveFontSizes.bodyMedium(context),
                                     color: Colors.red.shade700,
                                   ),
                                 ),
@@ -236,7 +246,8 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             TextFormField(
                               controller: _usernameController,
                               keyboardType: TextInputType.emailAddress,
-                              enabled: !_codeSent, // Deshabilitar después de enviar el código
+                              enabled:
+                                  !_codeSent, // Deshabilitar después de enviar el código
                               decoration: InputDecoration(
                                 labelText: context.translate('auth.email'),
                                 border: const OutlineInputBorder(),
@@ -244,11 +255,14 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               ),
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
-                                  return context.translate('auth.pleaseEnterEmail');
+                                  return context
+                                      .translate('auth.pleaseEnterEmail');
                                 }
                                 // Validación básica de email
-                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                                  return context.translate('auth.pleaseEnterValidEmail');
+                                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                                    .hasMatch(value)) {
+                                  return context
+                                      .translate('auth.pleaseEnterValidEmail');
                                 }
                                 return null;
                               },
@@ -258,20 +272,26 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 if (value != newValue) {
                                   _usernameController.value = TextEditingValue(
                                     text: newValue,
-                                    selection: TextSelection.collapsed(offset: newValue.length),
+                                    selection: TextSelection.collapsed(
+                                      offset: newValue.length,
+                                    ),
                                   );
                                 }
                               },
                             ),
                             const SizedBox(height: 16),
-                            
+
                             // Selector de tipo de verificación (email o SMS)
                             if (!_codeSent) ...[
                               Row(
                                 children: [
                                   Expanded(
                                     child: RadioListTile<String>(
-                                      title: Text(context.translate('auth.verificationEmail')),
+                                      title: Text(
+                                        context.translate(
+                                          'auth.verificationEmail',
+                                        ),
+                                      ),
                                       value: 'EmailCode',
                                       groupValue: _verificationType,
                                       onChanged: (value) {
@@ -283,7 +303,10 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   ),
                                   Expanded(
                                     child: RadioListTile<String>(
-                                      title: Text(context.translate('auth.verificationSms')),
+                                      title: Text(
+                                        context
+                                            .translate('auth.verificationSms'),
+                                      ),
                                       value: 'SmsCode',
                                       groupValue: _verificationType,
                                       onChanged: (value) {
@@ -297,7 +320,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                               ),
                               const SizedBox(height: 16),
                             ],
-                            
+
                             // Campos adicionales que aparecen después de enviar el código
                             if (_codeSent) ...[
                               // Campo para el código de verificación
@@ -306,113 +329,143 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                 keyboardType: TextInputType.number,
                                 maxLength: 6,
                                 decoration: InputDecoration(
-                                  labelText: context.translate('auth.verificationCode'),
+                                  labelText: context
+                                      .translate('auth.verificationCode'),
                                   border: const OutlineInputBorder(),
                                   prefixIcon: const Icon(Icons.lock_clock),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return context.translate('auth.pleaseEnterCode');
+                                    return context
+                                        .translate('auth.pleaseEnterCode');
                                   }
                                   if (value.length != 6) {
-                                    return context.translate('auth.invalidCodeLength');
+                                    return context
+                                        .translate('auth.invalidCodeLength');
                                   }
                                   return null;
                                 },
                               ),
                               const SizedBox(height: 16),
-                              
+
                               // Campo para la nueva contraseña
                               TextFormField(
                                 controller: _newPasswordController,
                                 obscureText: _obscureNewPassword,
                                 decoration: InputDecoration(
-                                  labelText: context.translate('auth.newPassword'),
+                                  labelText:
+                                      context.translate('auth.newPassword'),
                                   border: const OutlineInputBorder(),
                                   prefixIcon: const Icon(Icons.lock_outline),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                                      _obscureNewPassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        _obscureNewPassword = !_obscureNewPassword;
+                                        _obscureNewPassword =
+                                            !_obscureNewPassword;
                                       });
                                     },
                                   ),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return context.translate('auth.pleaseEnterNewPassword');
+                                    return context.translate(
+                                      'auth.pleaseEnterNewPassword',
+                                    );
                                   }
                                   if (value.length < 8) {
-                                    return context.translate('auth.passwordTooShort');
+                                    return context
+                                        .translate('auth.passwordTooShort');
                                   }
                                   // Validar complejidad de la contraseña
-                                  if (!RegExp(r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$').hasMatch(value)) {
-                                    return context.translate('auth.passwordRequirements');
+                                  if (!RegExp(
+                                    r'^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[\W_]).{8,}$',
+                                  ).hasMatch(value)) {
+                                    return context
+                                        .translate('auth.passwordRequirements');
                                   }
                                   return null;
                                 },
                               ),
                               const SizedBox(height: 16),
-                              
+
                               // Campo para confirmar la nueva contraseña
                               TextFormField(
                                 controller: _confirmPasswordController,
                                 obscureText: _obscureConfirmPassword,
                                 decoration: InputDecoration(
-                                  labelText: context.translate('auth.confirmPassword'),
+                                  labelText:
+                                      context.translate('auth.confirmPassword'),
                                   border: const OutlineInputBorder(),
                                   prefixIcon: const Icon(Icons.lock_outline),
                                   suffixIcon: IconButton(
                                     icon: Icon(
-                                      _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                                      _obscureConfirmPassword
+                                          ? Icons.visibility_off
+                                          : Icons.visibility,
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        _obscureConfirmPassword = !_obscureConfirmPassword;
+                                        _obscureConfirmPassword =
+                                            !_obscureConfirmPassword;
                                       });
                                     },
                                   ),
                                 ),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return context.translate('auth.pleaseConfirmPassword');
+                                    return context.translate(
+                                      'auth.pleaseConfirmPassword',
+                                    );
                                   }
                                   if (value != _newPasswordController.text) {
-                                    return context.translate('auth.passwordsDoNotMatch');
+                                    return context
+                                        .translate('auth.passwordsDoNotMatch');
                                   }
                                   return null;
                                 },
                               ),
                             ],
-                            
+
                             const SizedBox(height: 32),
-                            
+
                             // Botón principal (cambia según el paso)
                             SizedBox(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: _codeSent ? _handleResetPassword : _handleSendCode,
+                                onPressed: _codeSent
+                                    ? _handleResetPassword
+                                    : _handleSendCode,
                                 style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppTheme.getPrimaryColor(context),
+                                  backgroundColor:
+                                      AppTheme.getPrimaryColor(context),
                                   foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16),
                                   textStyle: TextStyle(
-                                    fontSize: responsiveFontSizes.bodyLarge(context),
+                                    fontSize:
+                                        responsiveFontSizes.bodyLarge(context),
                                     fontWeight: FontWeight.bold,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
-                                child: Text(_codeSent
-                                    ? context.translate('auth.resetPasswordButton')
-                                    : context.translate('auth.sendVerificationCode')),
+                                child: Text(
+                                  _codeSent
+                                      ? context
+                                          .translate('auth.resetPasswordButton')
+                                      : context.translate(
+                                          'auth.sendVerificationCode',
+                                        ),
+                                ),
                               ),
                             ),
-                            
+
                             // Botón para volver atrás (solo visible después de enviar el código)
                             if (_codeSent) ...[
                               const SizedBox(height: 16),
@@ -427,9 +480,12 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   });
                                 },
                                 style: TextButton.styleFrom(
-                                  foregroundColor: AppTheme.getPrimaryColor(context),
+                                  foregroundColor:
+                                      AppTheme.getPrimaryColor(context),
                                 ),
-                                child: Text(context.translate('auth.backToSendCode')),
+                                child: Text(
+                                  context.translate('auth.backToSendCode'),
+                                ),
                               ),
                             ],
                           ],
