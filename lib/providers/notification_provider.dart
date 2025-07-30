@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 
-import '../data/services/notification_service.dart';
+// import '../data/services/notification_service.dart';
 import '../models/notification_model.dart';
 
 class NotificationProvider with ChangeNotifier {
-  final NotificationService _service = NotificationService();
+  // By the moment we are not using the notification service
+  // final NotificationService _service = NotificationService();
   List<NotificationModel> _notifications = [];
   bool _isLoading = false;
   String? _errorMessage;
@@ -25,8 +26,8 @@ class NotificationProvider with ChangeNotifier {
       debugPrint(
         'NotificationProvider - ADVERTENCIA: customerId inválido: $customerId',
       );
-      _errorMessage = 'ID de cliente inválido';
-      _notifications = NotificationModel.getDummyNotifications();
+      _errorMessage = null;
+      _notifications = [];
       notifyListeners();
       return;
     }
@@ -40,7 +41,7 @@ class NotificationProvider with ChangeNotifier {
         'NotificationProvider - Llamando al servicio para obtener notificaciones',
       );
       // Enviamos un customerId valido y de ejemplo
-      _notifications = await _service.getNotifications(1);
+      _notifications = [];
       debugPrint(
         'NotificationProvider - Notificaciones obtenidas: ${_notifications.length}',
       );
@@ -53,7 +54,7 @@ class NotificationProvider with ChangeNotifier {
         debugPrint('NotificationProvider - No se encontraron notificaciones');
       }
     } catch (e) {
-      _errorMessage = e.toString();
+      _errorMessage = null;
       debugPrint(
         'NotificationProvider - Error al obtener notificaciones: $_errorMessage',
       );
@@ -62,7 +63,7 @@ class NotificationProvider with ChangeNotifier {
       debugPrint(
         'NotificationProvider - Usando datos de ejemplo como fallback',
       );
-      _notifications = NotificationModel.getDummyNotifications();
+      _notifications = [];
       debugPrint(
         'NotificationProvider - Datos de ejemplo cargados: ${_notifications.length} notificaciones',
       );

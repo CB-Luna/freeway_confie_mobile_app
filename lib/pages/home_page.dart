@@ -64,19 +64,6 @@ class _HomePageState extends State<HomePage> {
         final customerId = authProvider.currentUser!.customerId;
         debugPrint('HomePage - Customer ID: $customerId');
 
-        if (customerId.isEmpty) {
-          debugPrint(
-            'HomePage - ADVERTENCIA: customerId inválido: $customerId',
-          );
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('home.errors.invalidCustomerId')),
-              duration: const Duration(seconds: 3),
-            ),
-          );
-          return;
-        }
-
         // Ya no necesitamos cargar políticas porque las tenemos en authProvider.currentUser.policies
         debugPrint(
           'HomePage - Usando políticas del usuario actual: ${authProvider.currentUser!.policies.length} pólizas disponibles',
