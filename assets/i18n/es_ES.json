@@ -273,7 +273,8 @@
       "saveSuccess": "Contraseña actualizada correctamente",
       "saveError": "Error al actualizar la contraseña",
       "passwordMismatch": "Las contraseñas no coinciden",
-      "passwordRequirements": "La contraseña debe tener al menos 8 caracteres e incluir un número"
+      "passwordRequirements": "La contraseña debe tener al menos 8 caracteres e incluir un número",
+      "updating": "Actualizando contraseña..."
     },
     "userDataPage": {
       "userData": "Datos Personales",

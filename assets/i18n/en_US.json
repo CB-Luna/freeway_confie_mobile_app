@@ -273,7 +273,8 @@
       "saveSuccess": "Password updated successfully",
       "saveError": "Error updating password",
       "passwordMismatch": "Passwords do not match",
-      "passwordRequirements": "Password must be at least 8 characters long and include a number"
+      "passwordRequirements": "Password must be at least 8 characters long and include a number",
+      "updating": "Updating password..."
     },
     "userDataPage": {
       "userData": "Personal Information",

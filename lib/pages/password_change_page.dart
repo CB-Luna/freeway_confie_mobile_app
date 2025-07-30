@@ -70,6 +70,7 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
     }
 
     // Mostrar el indicador de carga
+    if (!mounted) return;
     setState(() {
       _isLoading = true;
     });
@@ -86,24 +87,21 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       // Crear una instancia del servicio de autenticación
       final authService = AuthService();
 
-      // Mostrar LoadingView durante el proceso
-      await showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => const LoadingView(),
+      // Añadir logs para depuración
+      debugPrint(
+        'Iniciando cambio de contraseña para: ${currentUser.username}',
       );
 
-      // Llamar al método de cambio de contraseña
+      // Llamar al método de cambio de contraseña sin mostrar un diálogo adicional
       final success = await authService.changePassword(
         username: currentUser.username,
         currentPassword: _currentPasswordController.text,
         newPassword: _newPasswordController.text,
       );
 
-      // Cerrar el LoadingView
-      if (mounted && Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
+      debugPrint('Resultado de cambio de contraseña: $success');
+
+      if (!mounted) return;
 
       if (success) {
         // Actualizar las credenciales guardadas si los biométricos están activados
@@ -112,49 +110,45 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
             currentUser.username,
             _newPasswordController.text,
           );
+          debugPrint('Credenciales actualizadas correctamente');
         }
 
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content:
-                  Text(context.translate('profile.passwordPage.saveSuccess')),
-              backgroundColor: Colors.green,
-            ),
-          );
+        if (!mounted) return;
 
-          // Cerrar la página después de actualizar la contraseña
-          Navigator.pop(context);
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content:
+                Text(context.translate('profile.passwordPage.saveSuccess')),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // Cerrar la página después de actualizar la contraseña
+        Navigator.pop(context);
       } else {
         // Manejar errores de la API
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                context.translate('profile.passwordPage.saveError'),
-              ),
-              backgroundColor: AppTheme.getRedColor(context),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      // Cerrar el LoadingView si sigue abierto
-      if (mounted && Navigator.canPop(context)) {
-        Navigator.pop(context);
-      }
-
-      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              '${context.translate('profile.passwordPage.saveError')}: $e',
+              context.translate('profile.passwordPage.saveError'),
             ),
             backgroundColor: AppTheme.getRedColor(context),
           ),
         );
       }
+    } catch (e) {
+      debugPrint('Error en cambio de contraseña: $e');
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${context.translate('profile.passwordPage.saveError')}: $e',
+          ),
+          backgroundColor: AppTheme.getRedColor(context),
+        ),
+      );
     } finally {
       if (mounted) {
         setState(() {
@@ -194,7 +188,9 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? LoadingView(
+              message: context.translate('profile.passwordPage.updating'),
+            )
           : GestureDetector(
               onTap: () => FocusScope.of(context).unfocus(),
               child: Container(
