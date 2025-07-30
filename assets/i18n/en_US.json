@@ -55,7 +55,7 @@
     "passwordResetSuccessful": "Your password has been reset successfully. You can now login with your new password.",
     "backToSendCode": "Back to send code",
     "verificationEmail": "Email",
-    "verificationSms": "SMS",
+    "verificationSms": "Text Message",
     "resetPasswordTryAgain": "Try with another email",
     "passwordMinLength": "Password must be at least 6 characters long",
     "passwordUppercase": "Password must contain at least one uppercase letter",

@@ -39,7 +39,7 @@
     "passwordResetSuccessful": "Tu contraseña ha sido restablecida con éxito. Ahora puedes iniciar sesión con tu nueva contraseña.",
     "backToSendCode": "Volver a enviar código",
     "verificationEmail": "Correo",
-    "verificationSms": "SMS",
+    "verificationSms": "Mensaje de Texto",
     "resetPasswordTryAgain": "Intentar con otro correo",
     "noAccount": "¿No tienes una cuenta? ",
     "authError": "Error de autenticación.",

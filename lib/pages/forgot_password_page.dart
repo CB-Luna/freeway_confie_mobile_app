@@ -32,7 +32,7 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   bool _obscureConfirmPassword =
       true; // Para controlar la visibilidad de la confirmación
   String _errorMessage = '';
-  String _verificationType = 'EmailCode'; // Por defecto usamos email
+  String _verificationType = 'SmsCode'; // Por defecto usamos email
 
   @override
   void dispose() {
@@ -288,11 +288,15 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   Expanded(
                                     child: RadioListTile<String>(
                                       title: Text(
-                                        context.translate(
-                                          'auth.verificationEmail',
+                                        context
+                                            .translate('auth.verificationSms'),
+                                        style: TextStyle(
+                                          fontSize: responsiveFontSizes
+                                              .bodyMedium(context),
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
-                                      value: 'EmailCode',
+                                      value: 'SmsCode',
                                       groupValue: _verificationType,
                                       onChanged: (value) {
                                         setState(() {
@@ -304,10 +308,16 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
                                   Expanded(
                                     child: RadioListTile<String>(
                                       title: Text(
-                                        context
-                                            .translate('auth.verificationSms'),
+                                        context.translate(
+                                          'auth.verificationEmail',
+                                        ),
+                                        style: TextStyle(
+                                          fontSize: responsiveFontSizes
+                                              .bodyMedium(context),
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                      value: 'SmsCode',
+                                      value: 'EmailCode',
                                       groupValue: _verificationType,
                                       onChanged: (value) {
                                         setState(() {
