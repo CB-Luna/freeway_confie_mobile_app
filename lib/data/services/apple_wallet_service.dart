@@ -13,9 +13,10 @@ import 'package:path_provider/path_provider.dart';
 /// Servicio para manejar la integración con Apple Wallet
 class AppleWalletService {
   // URL del endpoint para Apple Wallet
-  static const String _apiUrl = 'https://confie-wallet-api-np.azurewebsites.net/DownloadApplePassTask';
+  static const String _apiUrl =
+      'https://confie-wallet-api-np.azurewebsites.net/DownloadApplePassTask';
   static const String _apiKey = 'GfhGdjdx3rfGBBFkf';
-  
+
   // Headers para la petición
   final Map<String, String> _headers = {
     'Content-Type': 'application/json',
@@ -58,69 +59,79 @@ class AppleWalletService {
       debugPrint('=== INICIANDO PROCESO DE APPLE WALLET ===');
       debugPrint('Usuario: ${user.fullName}');
       debugPrint('Póliza: ${policy.policyNumber}');
-      
+
       // Verificar disponibilidad
       final bool available = await isAppleWalletAvailable();
       if (!available) {
         if (onError != null && context.mounted) {
-          onError(Exception(context.translate('idCard.appleWalletNotAvailable')));
+          onError(
+              Exception(context.translate('idCard.appleWalletNotAvailable')));
         }
         return false;
       }
 
       // Crear la carga útil para el servicio de Apple Wallet
       final payload = WalletPayload.fromUserAndPolicy(user, policy);
-      
+
       // Convertir a JSON para la petición
       final String payloadJson = jsonEncode(payload.toJson());
       debugPrint('Payload: $payloadJson');
-      
+
       // Realizar la petición al servicio
       final response = await http.post(
         Uri.parse(_apiUrl),
         headers: _headers,
         body: payloadJson,
       );
-      
+
       // Verificar la respuesta
       if (response.statusCode == 200) {
         // Decodificar la respuesta
         final responseData = jsonDecode(response.body);
         final walletResponse = AppleWalletResponse.fromJson(responseData);
-        
+
         debugPrint('Respuesta recibida: ${response.body}');
-        
+
         // Obtener el contenido base64 del archivo .pkpass
         final String base64Content = walletResponse.applePassData.fileContents;
-        
+
         // Decodificar el contenido base64 a bytes
         final List<int> bytes = base64Decode(base64Content);
-        
+
         // Guardar los bytes en un archivo temporal
         final tempDir = await getTemporaryDirectory();
         final file = File('${tempDir.path}/freeway_insurance.pkpass');
         await file.writeAsBytes(bytes);
-        
+
         // Generar el objeto PasskitFile desde el archivo
         final passkitFile = await FlutterWalletCard.generateFromFile(
           id: 'freeway-insurance-card',
           file: file,
         );
-        
+
         // Añadir el pase al Apple Wallet
         final completed = await FlutterWalletCard.addPasskit(passkitFile);
-        
+
         if (completed) {
           if (onSuccess != null) onSuccess();
           return true;
         } else {
-          throw Exception('No se pudo añadir el pase a Apple Wallet');
+          if (context.mounted) {
+            throw Exception(
+                context.translate('idCard.canceledAddingToAppleWallet'));
+          }
+          return false;
         }
       } else {
         // Error en la petición
         debugPrint('Error en la petición: ${response.statusCode}');
         debugPrint('Respuesta: ${response.body}');
-        throw Exception('Error en la petición: ${response.statusCode} ${response.reasonPhrase}');
+
+        if (context.mounted) {
+          throw Exception(
+              '${context.translate('common.error')}: ${response.statusCode} ${response.reasonPhrase}');
+        }
+        return false;
       }
     } catch (e) {
       debugPrint('Error añadiendo tarjeta a Apple Wallet: $e');
