@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'dart:io' show Platform;
 
-import 'package:apple_passkit/apple_passkit.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
+import 'package:freeway_app/data/services/apple_wallet_service.dart';
 import 'package:freeway_app/data/services/google_wallet_service.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/models/user_model.dart';
@@ -16,7 +14,6 @@ import 'package:freeway_app/utils/menu/circle_nav_bar.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/id_card/id_card_widget.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
-import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
 class IdCardPage extends StatefulWidget {
@@ -38,8 +35,7 @@ class _IdCardPageState extends State<IdCardPage> {
 
   // Servicios de Wallet
   final GoogleWalletService _googleWalletService = GoogleWalletService();
-  // El servicio de Apple Wallet se usa en el método _handleAddToAppleWallet
-  final _applePasskitPlugin = ApplePassKit();
+  final AppleWalletService _appleWalletService = AppleWalletService();
 
   @override
   Widget build(BuildContext context) {
@@ -175,7 +171,9 @@ class _IdCardPageState extends State<IdCardPage> {
                               if (Platform.isIOS)
                                 GestureDetector(
                                   onTap: () {
-                                    _handleAddToAppleWallet(context, user);
+                                    if (!_isProcessingRequest) {
+                                      _handleAddToAppleWallet(context, user);
+                                    }
                                   },
                                   child: Image.asset(
                                     'assets/home/idcardicons/add_apple_wallet.png',
@@ -509,13 +507,8 @@ class _IdCardPageState extends State<IdCardPage> {
     );
   }
 
-  // Constantes para la configuración del pase
-  static const String teamIdentifier =
-      'RMQ3LJU296'; // Team ID real de la cuenta de desarrollador
-  static const String passTypeIdentifier =
-      'pass.com.test.confieapp'; // Debe ser un Pass Type ID válido registrado en tu cuenta
-
-  void _handleAddToAppleWallet(BuildContext context, User user) async {
+  // Método para manejar la adición a Google Wallet
+  void _handleAddToAppleWallet(BuildContext context, User user) {
     setState(() {
       _isProcessingRequest = true;
     });
@@ -523,207 +516,17 @@ class _IdCardPageState extends State<IdCardPage> {
     // Mostrar un indicador de progreso
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(context.translate('idCard.addingToAppleWallet')),
+        content: Text(context.translate('idCard.addedToAppleWallet')),
         duration: const Duration(seconds: 2),
       ),
     );
 
-    try {
-      // Para iOS Simulator, necesitamos usar una IP especial o la IP local real
-      // En este caso, usaremos el archivo estático para pruebas
-
-      // Comentamos la creación de datos para el pase dinámico ya que no los usaremos por ahora
-      // Esta estructura servirá como referencia para cuando implementemos la conexión al servidor
-      /* 
-      final Map<String, dynamic> passData = {
-        "passType": "generic", // Tipo de pase: generic, boardingPass, eventTicket, etc.
-        "serialNumber": "user-${user.customerId}",
-        "description": "Freeway Insurance Card",
-        "organizationName": "Freeway Insurance",
-        "teamIdentifier": "A1B2C3D4E5", // Debe coincidir con tu certificado
-        "passTypeIdentifier": "pass.com.freeway.insurance", // Debe coincidir con tu certificado
-        "data": {
-          "headerFields": [
-            {
-              "key": "policy",
-              "label": "POLICY",
-              "value": user.policyNumber ?? "N/A"
-            }
-          ],
-          "primaryFields": [
-            {
-              "key": "name",
-              "label": "INSURED",
-              "value": user.fullName
-            }
-          ],
-          "secondaryFields": [
-            {
-              "key": "carrier",
-              "label": "CARRIER",
-              "value": user.carrierName != null ? user.carrierName : "Freeway Insurance"
-            },
-            {
-              "key": "state",
-              "label": "STATE",
-              "value": user.state
-            }
-          ],
-          "auxiliaryFields": [
-            {
-              "key": "expiration",
-              "label": "EXPIRATION",
-              "value": user.nextPayment.toString().split(' ')[0]
-            }
-          ],
-          "backFields": [
-            {
-              "key": "terms",
-              "label": "TERMS AND CONDITIONS",
-              "value": "This is a digital representation of your insurance card. Not a proof of coverage."
-            }
-          ]
-        }
-      };
-      */
-
-      // Para pruebas en simulador, podemos usar dos enfoques:
-      // 1. Conectarnos al servidor local y obtener el pase dinámicamente
-      // 2. Usar el archivo estático como fallback
-
-      try {
-        // Intentar conectar con el servidor de producción
-        debugPrint(
-          'Intentando conectar con el servidor en https://cbl.virtalus.cbluna-dev.com/generate-pass',
-        );
-
-        // Crear los datos para el pase dinámico según la estructura que espera el servidor
-        final Map<String, dynamic> passData = {
-          'passType':
-              'generic', // Usamos la nueva plantilla genérica sin icono de avión
-          'serialNumber': 'user-${user.customerId}',
-          'description': 'Freeway Insurance Card',
-          'organizationName': 'Freeway Insurance',
-          'teamIdentifier':
-              teamIdentifier, // Team ID real de la cuenta de desarrollador
-          'passTypeIdentifier':
-              passTypeIdentifier, // Debe coincidir con tu certificado
-          'data': {
-            'headerFields': [],
-            'primaryFields': [
-              {
-                'key': 'name',
-                'label': 'NAMED INSURED',
-                'value': widget.policy.insuredName,
-              }
-            ],
-            'secondaryFields': [
-              {
-                'key': 'carrier',
-                'label': 'CARRIER',
-                'value': widget.policy.carrierName,
-              },
-              {
-                'key': 'policy',
-                'label': 'POLICY NUMBER',
-                'value': widget.policy.policyNumber,
-              }
-            ],
-            'auxiliaryFields': [
-              {
-                'key': 'state',
-                'label': 'STATE',
-                'value': user.state,
-              },
-              {
-                'key': 'effectiveDate',
-                'label': 'EFFECTIVE DATE',
-                'value': widget.policy.effectiveDate.isNotEmpty
-                    ? widget.policy.effectiveDate
-                    : DateTime.now().toString().split(' ')[0],
-              },
-              {
-                'key': 'expiration',
-                'label': 'EXPIRATION DATE',
-                'value': widget.policy.expirationDate,
-              }
-            ],
-            'backFields': [
-              {
-                'key': 'terms',
-                'label': 'TERMS AND CONDITIONS',
-                'value':
-                    'This is a digital representation of your insurance card. Not a proof of coverage.',
-              }
-            ],
-            // Colores personalizados para el pase - Usando colores que coincidan con la segunda imagen
-            'foregroundColor': 'rgb(0, 71, 187)', // Azul para el texto
-            'backgroundColor': 'rgb(255, 255, 255)', // Fondo blanco
-            'labelColor': 'rgb(128, 128, 128)', // Gris para las etiquetas
-          },
-        };
-
-        Uint8List pkPassData;
-
-        try {
-          // Usar el endpoint de producción en lugar del servidor local
-          const String serverUrl =
-              'https://cbl.virtalus.cbluna-dev.com/generate-pass';
-
-          debugPrint('Conectando con el servidor en: $serverUrl');
-          debugPrint('Datos del pase: ${jsonEncode(passData)}');
-
-          // Hacer la llamada POST al servidor local
-          final response = await http.post(
-            Uri.parse(serverUrl),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: jsonEncode(passData),
-          );
-
-          debugPrint(
-            'Respuesta del servidor: ${response.statusCode}, ${response.reasonPhrase}',
-          );
-
-          if (response.statusCode == 200) {
-            // Convertir la respuesta a Uint8List
-            pkPassData = response.bodyBytes;
-            debugPrint('Archivo .pkpass recibido correctamente del servidor');
-          } else {
-            // Si hay un error, usar el archivo estático como fallback
-            debugPrint(
-              'Error al obtener el archivo .pkpass del servidor: ${response.statusCode}',
-            );
-            debugPrint('Usando archivo estático como fallback');
-            pkPassData = await getFlightPass();
-          }
-        } catch (serverError) {
-          // Si hay un error de conexión, usar el archivo estático como fallback
-          debugPrint('Error de conexión con el servidor: $serverError');
-          debugPrint('Usando archivo estático como fallback');
-          pkPassData = await getFlightPass();
-        }
-
-        // Añadir el pase a Apple Wallet
-        await _applePasskitPlugin.addPass(pkPassData);
-
-        if (!context.mounted) return;
-        setState(() {
-          _isProcessingRequest = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.translate('idCard.addedToAppleWallet')),
-            backgroundColor: Colors.green,
-            duration: const Duration(seconds: 2),
-          ),
-        );
-      } catch (serverError) {
-        debugPrint('Error al conectar con el servidor local: $serverError');
-
-        // Mostrar error
+    // Usar el servicio de Google Wallet
+    _appleWalletService.addInsuranceCardToAppleWallet(
+      context: context,
+      user: user,
+      policy: widget.policy,
+      onSuccess: () {
         if (mounted) {
           setState(() {
             _isProcessingRequest = false;
@@ -731,35 +534,42 @@ class _IdCardPageState extends State<IdCardPage> {
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: $serverError'),
+              content: Text(context.translate('idCard.addedToAppleWallet')),
+              backgroundColor: Colors.green,
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onCanceled: () {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(context.translate('idCard.cancelToAppleWallet')),
+              duration: const Duration(seconds: 2),
+            ),
+          );
+        }
+      },
+      onError: (error) {
+        if (mounted) {
+          setState(() {
+            _isProcessingRequest = false;
+          });
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error: $error'),
               backgroundColor: Colors.red,
               duration: const Duration(seconds: 3),
             ),
           );
         }
-      }
-    } catch (e) {
-      debugPrint('Error general al añadir pase a Apple Wallet: $e');
-
-      if (mounted) {
-        setState(() {
-          _isProcessingRequest = false;
-        });
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $e'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
-          ),
-        );
-      }
-    }
-  }
-
-  Future<Uint8List> getFlightPass() async {
-    final pkPass = await rootBundle.load('assets/Coupon.pkpass');
-    return pkPass.buffer
-        .asUint8List(pkPass.offsetInBytes, pkPass.lengthInBytes);
+      },
+    );
   }
 }
