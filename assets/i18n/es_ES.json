@@ -87,6 +87,9 @@
     "greeting": "Hola, {0}",
     "loadingPolicies": "Cargando pólizas...",
     "noCardsAvailable": "No hay tarjetas disponibles",
+    "noPolicyFound": "No se encontró ninguna póliza.\nActualice su perfil para conectar una póliza existente o añada una nueva.",
+    "updateProfile": "Actualizar Perfil",
+    "addInsurance": "+ Añadir Seguro",
     "addProducts": "Agregar Productos",
     "roadsideHelp": {
       "needHelp": "¿Necesitas Asistencia en Carretera?",

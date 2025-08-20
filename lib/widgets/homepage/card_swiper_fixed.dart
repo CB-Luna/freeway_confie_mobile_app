@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/user_model.dart';
-import 'package:freeway_app/pages/add_insurance.dart';
-import 'package:freeway_app/pages/profile_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -158,35 +156,27 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Animación Lottie para estado vacío
-                SizedBox(
-                  width: isSmallScreen ? 80 : 100,
-                  height: isSmallScreen ? 80 : 100,
-                  child: Lottie.asset(
-                    'assets/home/animations/No Card Data.json',
-                    fit: BoxFit.contain,
-                    repeat: true,
-                    animate: true,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                // Texto informativo con el nuevo mensaje
-                SizedBox(
-                  width: isSmallScreen ? 200 : 250,
-                  child: Text(
-                    context.translate('home.noPolicyFound'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppTheme.getTextGreyColor(context),
-                      fontSize: responsiveFontSizes.bodySmall(context),
-                      height: 1.3,
-                    ),
-                  ),
-                ),
-              ],
+            // Animación Lottie para estado vacío
+            SizedBox(
+              width: isSmallScreen ? 80 : 100,
+              height: isSmallScreen ? 80 : 100,
+              child: Lottie.asset(
+                'assets/home/animations/No Card Data.json',
+                fit: BoxFit.contain,
+                repeat: true,
+                animate: true,
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Texto informativo con el nuevo mensaje
+            Text(
+              context.translate('home.noPolicyFound'),
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                color: AppTheme.getTextGreyColor(context),
+                fontSize: responsiveFontSizes.bodyMedium(context),
+                height: 1.3,
+              ),
             ),
             const SizedBox(height: 16),
             // Botones de acción
@@ -196,13 +186,8 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                 // Botón para actualizar perfil
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const ProfilePage(),
-                        ),
-                      );
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/profile');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.getPrimaryColor(context),
@@ -225,13 +210,8 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                 // Botón para añadir seguro
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () async {
-                      await Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddInsurancePage(),
-                        ),
-                      );
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/add_insurance');
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.getSecondaryColor(context),
