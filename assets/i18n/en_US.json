@@ -88,9 +88,10 @@
     "greeting": "Hello, {0}",
     "loadingPolicies": "Loading policies...",
     "noCardsAvailable": "No cards available",
-    "noPolicyFound": "No policy found\nUpdate your profile to connect an existing policy or add a new insurance policy.",
-    "updateProfile": "Update Profile",
-    "addInsurance": "+ Add Insurance",
+    "noPolicyTitle": "Your Wallet is Empty.",
+    "noPolicyFound": "Update your profile to add a policy or get a new quote today.",
+    "updateProfile": "View my profile",
+    "addInsurance": "Get quote",
     "addProducts": "Add Products",
     "roadsideHelp": {
       "needHelp": "Need Roadside Assistance?",

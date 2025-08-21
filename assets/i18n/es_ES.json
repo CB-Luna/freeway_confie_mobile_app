@@ -87,9 +87,10 @@
     "greeting": "Hola, {0}",
     "loadingPolicies": "Cargando pólizas...",
     "noCardsAvailable": "No hay tarjetas disponibles",
-    "noPolicyFound": "No se encontró ninguna póliza.\nActualice su perfil para conectar una póliza existente o añada una nueva.",
-    "updateProfile": "Actualizar Perfil",
-    "addInsurance": "+ Añadir Seguro",
+    "noPolicyTitle": "Tu Billetera está Vacía.",
+    "noPolicyFound": "Actualiza tu perfil para agregar una póliza u obtén una nueva cotización hoy.",
+    "updateProfile": "Ver mi perfil",
+    "addInsurance": "Obtener cotización",
     "addProducts": "Agregar Productos",
     "roadsideHelp": {
       "needHelp": "¿Necesitas Asistencia en Carretera?",
@@ -401,6 +402,7 @@
     "error": "Error: Faltan dependencias"
   },
   "addInsurance": {
+    "addInsurance": "Agregar Seguro",
     "title": "Más Formas de Obtener Cobertura",
     "vehicleInsurance": "Seguro de Vehículo",
     "propertyInsurance": "Seguro de Propiedad",

@@ -3,11 +3,10 @@ import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
-import 'package:freeway_app/pages/profile_page.dart';
+import 'package:freeway_app/pages/user_data_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
-import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/auth_provider.dart';
@@ -150,43 +149,44 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
       ),
       color: AppTheme.getCardColor(context),
       child: Container(
-        constraints: BoxConstraints(
-          maxHeight: isSmallScreen ? 220 : 280,
-        ),
+        width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Animación Lottie para estado vacío
-                SizedBox(
-                  width: isSmallScreen ? 80 : 100,
-                  height: isSmallScreen ? 80 : 100,
-                  child: Lottie.asset(
-                    'assets/home/animations/No Card Data.json',
-                    fit: BoxFit.contain,
-                    repeat: true,
-                    animate: true,
-                  ),
+            SizedBox(
+              width: isSmallScreen ? 45 : 65,
+              height: isSmallScreen ? 45 : 65,
+              child: Image.asset(
+                'assets/home/animations/empty_wallet.png',
+                fit: BoxFit.contain,
+              ),
+            ),
+            const SizedBox(width: 6),
+            SizedBox(
+              width: isSmallScreen ? 200 : 250,
+              child: Text(
+                context.translate('home.noPolicyTitle'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppTheme.getPrimaryColor(context),
+                  fontSize: responsiveFontSizes.bodyMedium(context),
                 ),
-                const SizedBox(width: 12),
-                // Texto informativo con el nuevo mensaje
-                SizedBox(
-                  width: isSmallScreen ? 200 : 250,
-                  child: Text(
-                    context.translate('home.noPolicyFound'),
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppTheme.getTextGreyColor(context),
-                      fontSize: responsiveFontSizes.bodySmall(context),
-                      height: 1.3,
-                    ),
-                  ),
+              ),
+            ),
+            const SizedBox(height: 6),
+            // Texto informativo con el nuevo mensaje
+            SizedBox(
+              width: isSmallScreen ? 300 : 350,
+              child: Text(
+                context.translate('home.noPolicyFound'),
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: AppTheme.getTextGreyColor(context),
+                  fontSize: responsiveFontSizes.bodySmall(context),
                 ),
-              ],
+              ),
             ),
             const SizedBox(height: 16),
             // Botones de acción
@@ -200,12 +200,12 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => const ProfilePage(),
+                          builder: (context) => const UserDataPage(),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.getPrimaryColor(context),
+                      backgroundColor: AppTheme.getGreenColor(context),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -218,6 +218,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                         fontSize: responsiveFontSizes.button(context),
                         fontWeight: FontWeight.w500,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -234,7 +235,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.getSecondaryColor(context),
+                      backgroundColor: AppTheme.getPrimaryColor(context),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
@@ -247,6 +248,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                         fontSize: responsiveFontSizes.button(context),
                         fontWeight: FontWeight.w500,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
