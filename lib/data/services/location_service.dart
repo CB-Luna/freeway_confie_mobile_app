@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 
@@ -40,7 +41,7 @@ class LocationService {
     try {
       debugPrint('Validando código postal: $zipCode');
       final response = await http.get(
-        Uri.parse('https://api.zippopotam.us/us/$zipCode'),
+        Uri.parse('$envThirdsPartyZipcode$zipCode'),
       );
 
       if (response.statusCode == 200) {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -463,25 +464,25 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
       switch (insuranceType) {
         case 'homeowners':
           urlString =
-              'https://www.freeway.com/homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.homeowners')} - $placeName, $stateAbbreviation';
           break;
         case 'renters':
           urlString =
-              'https://www.freeway.com/renters-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}renters-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.renters')} - $placeName, $stateAbbreviation';
           break;
         case 'mobile_home':
           urlString =
-              'https://www.freeway.com/mobile-home-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}mobile-home-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.mobileHome')} - $placeName, $stateAbbreviation';
           break;
         default:
           urlString =
-              'https://www.freeway.com/homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.homeowners')} - $placeName, $stateAbbreviation';
       }

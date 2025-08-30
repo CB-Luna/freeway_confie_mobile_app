@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_wallet_card/flutter_wallet_card.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/data/models/wallet/wallet_payload.dart';
 import 'package:freeway_app/models/user_model.dart';
@@ -13,14 +14,13 @@ import 'package:path_provider/path_provider.dart';
 /// Servicio para manejar la integración con Apple Wallet
 class AppleWalletService {
   // URL del endpoint para Apple Wallet
-  static const String _apiUrl =
-      'https://confie-wallet-api-np.azurewebsites.net/DownloadApplePassTask';
-  static const String _apiKey = 'GfhGdjdx3rfGBBFkf';
+  static const String downloadAppleEndpoint =
+      '$envWallet//DownloadApplePassTask';
 
   // Headers para la petición
   final Map<String, String> _headers = {
     'Content-Type': 'application/json',
-    'X-API-KEY': _apiKey,
+    'X-API-KEY': apiKeyWallet,
   };
 
   /// Verifica si Apple Wallet está disponible en el dispositivo
@@ -65,7 +65,8 @@ class AppleWalletService {
       if (!available) {
         if (onError != null && context.mounted) {
           onError(
-              Exception(context.translate('idCard.appleWalletNotAvailable')));
+            Exception(context.translate('idCard.appleWalletNotAvailable')),
+          );
         }
         return false;
       }
@@ -79,7 +80,7 @@ class AppleWalletService {
 
       // Realizar la petición al servicio
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse(downloadAppleEndpoint),
         headers: _headers,
         body: payloadJson,
       );
@@ -118,7 +119,8 @@ class AppleWalletService {
         } else {
           if (context.mounted) {
             throw Exception(
-                context.translate('idCard.canceledAddingToAppleWallet'));
+              context.translate('idCard.canceledAddingToAppleWallet'),
+            );
           }
           return false;
         }
@@ -129,7 +131,8 @@ class AppleWalletService {
 
         if (context.mounted) {
           throw Exception(
-              '${context.translate('common.error')}: ${response.statusCode} ${response.reasonPhrase}');
+            '${context.translate('common.error')}: ${response.statusCode} ${response.reasonPhrase}',
+          );
         }
         return false;
       }

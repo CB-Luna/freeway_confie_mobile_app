@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -535,54 +536,53 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
       switch (insuranceType) {
         case 'health_insurance':
           urlString =
-              'https://www.freeway.com/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.health')} - $placeName, $stateAbbreviation';
           break;
         case 'dental_insurance':
           urlString =
-              'https://www.freeway.com/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
           break;
         case 'telemedicine':
           urlString =
-              'https://buy.freeway.com/product/telemedicine/step-2#form__step_2';
+              '$urlBaseEmbedBuyProduct/telemedicine/step-2#form__step_2';
           title = context.translate('personalProtection.telemedicine');
           break;
         case 'pet_insurance':
           urlString =
-              'https://www.freeway.com/pet-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/pet-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.pet')} - $placeName, $stateAbbreviation';
           break;
         case 'life_insurance':
           urlString =
-              'https://www.freeway.com/life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.life')} - $placeName, $stateAbbreviation';
           break;
         case 'travel_club_add':
-          urlString =
-              'https://buy.freeway.com/product/ad-d/step-2?#form__step_2';
+          urlString = '$urlBaseEmbedBuyProduct/ad-d/step-2?#form__step_2';
           title = context.translate('personalProtection.accidentalDeath');
           break;
         case 'identity_theft_protection':
           urlString =
-              'https://buy.freeway.com/product/identity-theft/step-2#form__step_2';
+              '$urlBaseEmbedBuyProduct/identity-theft/step-2#form__step_2';
           title = context.translate('personalProtection.identityTheft');
           break;
         case 'mexican_car_insurance':
-          urlString = 'https://quote.sanborns.com/guest/fastquote/77001';
+          urlString = '$urlBaseEmbedQuote/guest/fastquote/77001';
           title = context.translate('personalProtection.mexicanCar');
           break;
         case 'hospital_indemnity':
           urlString =
-              'https://buy.freeway.com/product/hospital-indemnity/step-2?#form__step_2';
+              '$urlBaseEmbedBuyProduct/hospital-indemnity/step-2?#form__step_2';
           title = context.translate('personalProtection.hospitalIndemnity');
           break;
         default:
-          urlString = 'https://www.freeway.com/';
+          urlString = urlBaseEmbed;
           title = context.translate('personalProtection.title');
       }
 

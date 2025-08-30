@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/errors/api_error.dart';
@@ -13,9 +14,6 @@ import '../models/auth/register_response.dart';
 
 class AuthService {
   final Dio _dio;
-  static const String _apiKey =
-      'jEk40pLbflj4vQ6RyhQmI3JxDAXjUhdWrEjYBgQRAuSs8X6ged161peEtM4mM8sT';
-  static const String _baseUrl = 'https://confie-customer-np.azurewebsites.net';
 
   AuthService() : _dio = ApiClient.createDio();
 
@@ -30,7 +28,7 @@ class AuthService {
         ).toJson(),
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -70,7 +68,7 @@ class AuthService {
         ).toJson(),
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -85,12 +83,12 @@ class AuthService {
 
   Future<RegisterResponse> register(RegisterRequest request) async {
     try {
-      final url = Uri.parse('$_baseUrl/api/Mobile/Register');
+      final url = Uri.parse('$envLogin/api/Mobile/Register');
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': _apiKey,
+          'X-API-KEY': apiKeyLogin,
         },
         body: jsonEncode(request.toJson()),
       );
@@ -147,7 +145,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -185,7 +183,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -219,7 +217,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -258,7 +256,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );

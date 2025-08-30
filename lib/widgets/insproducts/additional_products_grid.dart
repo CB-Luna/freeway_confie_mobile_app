@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -534,51 +535,51 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
 
       switch (insuranceType) {
         case 'auto_club':
-          urlString = 'https://www.freeway.com/insurance-options/auto-club/';
+          urlString = '${urlBaseEmbed}insurance-options/auto-club/';
           title = context.translate('additionalProducts.autoClub');
           break;
         case 'windshield_repair':
           urlString =
-              'https://buy.freeway.com/product/windshield-repair/step-1?';
+              '${urlBaseEmbedBuyProduct}product/windshield-repair/step-1?';
           title = context.translate('additionalProducts.windshieldRepair');
           break;
         case 'vrr_online_california':
           urlString =
-              'https://www.carregistration.com/freeway?affid=FWAY&cid=web&utm=&utm_source=FreeWay-Insurance&utm_medium=web&utm_campaign=Freeway&utm_id=Freeway+Insurance&utm_term=web';
+              '${urlBaseEmbedCarRegistration}freeway?affid=FWAY&cid=web&utm=&utm_source=FreeWay-Insurance&utm_medium=web&utm_campaign=Freeway&utm_id=Freeway+Insurance&utm_term=web';
           title = context.translate('additionalProducts.vrrOnlineCalifornia');
           break;
         case 'tire_hazard_protection':
           urlString =
-              'https://buy.freeway.com/product/paintless-dent-repair/step-1';
+              '${urlBaseEmbedBuyProduct}product/paintless-dent-repair/step-1';
           title = context.translate('additionalProducts.tireHazardProtection');
           break;
         case 'dent_repair':
           urlString =
-              'https://buy.freeway.com/product/paintless-dent-repair/step-1';
+              '${urlBaseEmbedBuyProduct}product/paintless-dent-repair/step-1';
           title = context.translate('additionalProducts.dentRepair');
           break;
         case 'pet_health':
           urlString =
-              'https://www.freeway.com/insurance-options/pet-health-and-discount-services/';
+              '${urlBaseEmbed}insurance-options/pet-health-and-discount-services/';
           title = context.translate('additionalProducts.petHealth');
           break;
         case 'auto_loan':
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title = context.translate('additionalProducts.autoLoan');
           break;
         case 'tax_preparation':
           urlString =
-              'https://www.taxmax.com/TaxCalculation/ExtLand.aspx?type=confie&id=97265a19-8630-44e4-a427-d476ef0d33cd';
+              '$urlBaseEmbedTaxmax/TaxCalculation/ExtLand.aspx?type=confie&id=97265a19-8630-44e4-a427-d476ef0d33cd';
           title = context.translate('additionalProducts.taxPreparation');
           break;
         case 'one_stop_dui':
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title = context.translate('additionalProducts.oneStopDui');
           break;
         default:
-          urlString = 'https://www.freeway.com/';
+          urlString = urlBaseEmbed;
           title = context.translate('additionalProducts.title');
       }
 

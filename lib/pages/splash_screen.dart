@@ -15,7 +15,6 @@ class _SplashScreenState extends State<SplashScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation1;
-  late Animation<double> _animation2;
   bool _isError = false;
 
   @override
@@ -33,13 +32,6 @@ class _SplashScreenState extends State<SplashScreen>
       ),
     );
 
-    _animation2 = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: const Interval(0.4, 1.0, curve: Curves.easeOut),
-      ),
-    );
-
     _loadSplashScreen();
   }
 
@@ -51,7 +43,6 @@ class _SplashScreenState extends State<SplashScreen>
       // Precarga las imágenes en segundo plano
       await Future.wait([
         _preloadImage('assets/splash/Welcome Screen.png'),
-        _preloadImage('assets/splash/Onboarding.png'),
       ]);
 
       if (mounted) {
@@ -156,16 +147,6 @@ class _SplashScreenState extends State<SplashScreen>
             opacity: _animation1,
             child: Image.asset(
               'assets/splash/Welcome Screen.png',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const SizedBox.shrink();
-              },
-            ),
-          ),
-          FadeTransition(
-            opacity: _animation2,
-            child: Image.asset(
-              'assets/splash/Onboarding.png',
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
                 return const SizedBox.shrink();

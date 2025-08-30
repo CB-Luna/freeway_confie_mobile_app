@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -474,28 +475,28 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
       switch (insuranceType) {
         case 'business_insurance':
           urlString =
-              'https://www.freeway.com/business-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/business-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('businessInsurance.businessInsurance')} - $placeName, $stateAbbreviation';
           break;
         case 'landlord':
           urlString =
-              'https://www.freeway.com/landlord-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/landlord-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('businessInsurance.landlord')} - $placeName, $stateAbbreviation';
           break;
         case 'commercial_auto':
           urlString =
-              'https://www.freeway.com/commercial-vehicle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '$urlBaseEmbed/commercial-vehicle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('businessInsurance.commercialAuto')} - $placeName, $stateAbbreviation';
           break;
         case 'rideshare_insurance':
-          urlString = 'https://rate.freeway.com/';
+          urlString = urlBaseEmbedRate;
           title = context.translate('businessInsurance.rideShareInsurance');
           break;
         default:
-          urlString = 'https://www.freeway.com/';
+          urlString = urlBaseEmbed;
           title = context.translate('businessInsurance.title');
       }
 

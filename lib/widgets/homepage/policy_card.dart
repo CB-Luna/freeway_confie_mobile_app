@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/id_card_page.dart';
@@ -370,7 +371,7 @@ class _PolicyCardState extends State<PolicyCard>
                                       widget.policy.policyNumber;
                                   final zipCode = widget.user.zipCode;
                                   final String urlString =
-                                      'https://quickpay.freeway.com/PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
+                                      '${urlBaseEmbedQuickPay}PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
                                   final String title =
                                       context.translate('payment.title');
 

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
@@ -525,47 +526,47 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       switch (insuranceType) {
         case 'auto':
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
           title =
               '${context.translate('vehicleInsurance.auto')} - $placeName, $stateAbbreviation';
           break;
         case 'motorcycle':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-moto/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.motorcycle')} - $placeName, $stateAbbreviation';
           break;
         case 'motorhome':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-casa-rodante/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/cotizacion-seguro-de-casa-rodante/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.motorhome')} - $placeName, $stateAbbreviation';
           break;
         case 'rv_motorhome':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-casa-movil-y-casa-prefabricada/?zipCodeForm=$zipCode&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/cotizacion-seguro-de-casa-movil-y-casa-prefabricada/?zipCodeForm=$zipCode&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.rvMotorhome')} - $placeName, $stateAbbreviation';
           break;
         case 'snowmobile':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-para-moto-de-nieve/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/cotizacion-seguro-para-moto-de-nieve/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.snowmobile')} - $placeName, $stateAbbreviation';
           break;
         case 'classic_car':
           urlString =
-              'https://triton.freeway.com/?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedTriton?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title = context.translate('vehicleInsurance.classicCar');
           break;
         case 'sr22':
           urlString =
-              'https://triton.freeway.com/?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedTriton?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title = context.translate('vehicleInsurance.sr22Insurance');
           break;
         default:
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
           title =
               '${context.translate('vehicleInsurance.auto')} - $placeName, $stateAbbreviation';
       }

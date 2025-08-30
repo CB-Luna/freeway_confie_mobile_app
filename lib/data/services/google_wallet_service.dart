@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer' as developer;
 
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/data/models/wallet/wallet_payload.dart';
 import 'package:freeway_app/models/user_model.dart';
@@ -12,14 +13,13 @@ import 'package:url_launcher/url_launcher.dart';
 /// Servicio para manejar la integración con Google Wallet
 class GoogleWalletService {
   // URL del endpoint para Google Wallet
-  static const String _apiUrl =
-      'https://confie-wallet-api-np.azurewebsites.net/DownloadGooglePassTask';
-  static const String _apiKey = 'GfhGdjdx3rfGBBFkf';
+  static const String downloadGoogleEndpoint =
+      '$envWallet/DownloadGooglePassTask';
 
   // Headers para la petición
   final Map<String, String> _headers = {
     'Content-Type': 'application/json',
-    'X-API-KEY': _apiKey,
+    'X-API-KEY': apiKeyWallet,
   };
 
   /// Verifica si Google Wallet está disponible en el dispositivo
@@ -67,7 +67,7 @@ class GoogleWalletService {
 
       // Realizar la petición al servicio
       final response = await http.post(
-        Uri.parse(_apiUrl),
+        Uri.parse(downloadGoogleEndpoint),
         headers: _headers,
         body: payloadJson,
       );
@@ -89,7 +89,8 @@ class GoogleWalletService {
         } else {
           if (context.mounted) {
             throw Exception(
-                '${context.translate('common.error')}: ${context.translate('idCard.cancelToGoogleWallet')}');
+              '${context.translate('common.error')}: ${context.translate('idCard.cancelToGoogleWallet')}',
+            );
           }
         }
       } else {
@@ -98,7 +99,8 @@ class GoogleWalletService {
         developer.log('Respuesta: ${response.body}');
         if (context.mounted) {
           throw Exception(
-              '${context.translate('common.error')}: ${response.statusCode} ${response.reasonPhrase}');
+            '${context.translate('common.error')}: ${response.statusCode} ${response.reasonPhrase}',
+          );
         }
       }
     } catch (e, stackTrace) {

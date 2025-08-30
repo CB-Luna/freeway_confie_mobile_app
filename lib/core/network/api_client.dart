@@ -1,15 +1,14 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:freeway_app/data/constants.dart';
+
 import '../errors/api_error.dart';
 
 class ApiClient {
-  // URL para el entorno de producción
-  static const String baseUrl = 'https://confie-customer-np.azurewebsites.net';
-
   static Dio createDio() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
+        baseUrl: envLogin,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         headers: {

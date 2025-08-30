@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -550,11 +551,11 @@ class OfficeListItem extends StatelessWidget {
                     String url;
                     if (Theme.of(context).platform == TargetPlatform.iOS) {
                       // URL para Apple Maps (iOS)
-                      url = 'https://maps.apple.com/?q=$name&ll=$lat,$lng';
+                      url = '$envThirdsPartyAppleMap?q=$name&ll=$lat,$lng';
                     } else {
                       // URL para Google Maps (Android y otros)
                       url =
-                          'https://www.google.com/maps/search/?api=1&query=$lat,$lng';
+                          '$envThirdsPartyGoogleMap/search/?api=1&query=$lat,$lng';
                     }
 
                     // Abrir la URL
