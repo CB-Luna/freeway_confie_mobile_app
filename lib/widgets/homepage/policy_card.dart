@@ -187,7 +187,7 @@ class _PolicyCardState extends State<PolicyCard>
                 // Logo - Verificar si existe un logo específico para la póliza
                 PolicyLogoUtils.getPolicyLogo(
                   context,
-                  widget.policy.programName,
+                  widget.policy.carrierLogoUrl,
                   width: screenWidth * 0.2,
                   height: freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,
                 ),
