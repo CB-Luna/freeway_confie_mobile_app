@@ -275,39 +275,43 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                   // Si solo hay una tarjeta, mostrarla directamente sin efecto de swipe
                   ? cards[0]
                   // Si hay múltiples tarjetas, usar el CardSwiper
-                  : CardSwiper(
-                      controller: controller,
-                      cardsCount: cards.length,
-                      onSwipe: (previousIndex, currentIndex, direction) {
-                        setState(() {
-                          this.currentIndex =
-                              (currentIndex ?? 0) % cards.length;
-                        });
-                        return true;
-                      },
-                      cardBuilder: (
-                        context,
-                        index,
-                        percentThresholdX,
-                        percentThresholdY,
-                      ) =>
-                          SizedBox(
-                        width: double.infinity,
-                        child: cards[index % cards.length],
+                  : SizedBox(
+                      // Definir una altura explícita para el CardSwiper
+                      height: 220, // Altura aproximada de una tarjeta de póliza
+                      child: CardSwiper(
+                        controller: controller,
+                        cardsCount: cards.length,
+                        onSwipe: (previousIndex, currentIndex, direction) {
+                          setState(() {
+                            this.currentIndex =
+                                (currentIndex ?? 0) % cards.length;
+                          });
+                          return true;
+                        },
+                        cardBuilder: (
+                          context,
+                          index,
+                          percentThresholdX,
+                          percentThresholdY,
+                        ) =>
+                            SizedBox(
+                          width: double.infinity,
+                          child: cards[index % cards.length],
+                        ),
+                        allowedSwipeDirection:
+                            const AllowedSwipeDirection.symmetric(
+                          horizontal: true,
+                        ),
+                        isLoop: true,
+                        padding: const EdgeInsets.all(0),
+                        scale: 0.0,
+                        backCardOffset: const Offset(0, 0),
+                        numberOfCardsDisplayed: 1,
+                        duration: const Duration(milliseconds: 300),
                       ),
-                      allowedSwipeDirection:
-                          const AllowedSwipeDirection.symmetric(
-                        horizontal: true,
-                      ),
-                      isLoop: true,
-                      padding: const EdgeInsets.all(0),
-                      scale: 0.0,
-                      backCardOffset: const Offset(0, 0),
-                      numberOfCardsDisplayed: 1,
-                      duration: const Duration(milliseconds: 300),
                     ),
         ),
-        // Indicadores de página - solo mostrarlos si hay más de una tarjeta
+        // // Indicadores de página - solo mostrarlos si hay más de una tarjeta
         if (cards.length > 1) ...[
           const SizedBox(height: 8),
           Row(

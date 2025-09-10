@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:freeway_app/locatordevice/presentation/pages/location_details_view.dart';
 import 'package:provider/provider.dart';
@@ -30,6 +31,21 @@ void main() {
   };
 
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // Configurar modo inmersivo para Android (ocultar controles de navegación del sistema)
+  SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+    overlays: [SystemUiOverlay.top],
+  );
+  
+  // Configurar color transparente para la barra de estado
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+    ),
+  );
   debugPrint('Iniciando aplicación Freeway Insurance');
   runApp(
     MultiProvider(

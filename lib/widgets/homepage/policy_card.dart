@@ -194,43 +194,46 @@ class _PolicyCardState extends State<PolicyCard>
                 ),
                 const SizedBox(width: 8),
                 // Información de próximo pago
-                Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    Icon(
-                      Icons.credit_card,
-                      color: AppTheme.getGreenColor(context),
-                      size: screenWidth * 0.05, // Reducido ligeramente
-                    ),
-                    const SizedBox(width: 4),
-                    // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
-                    Text(
-                      context.translate('home.policyCard.nextPayment'),
-                      style: TextStyle(
-                        fontSize: responsiveFontSizes.bodyMedium(
-                          context,
-                        ), // Reducido para asegurar que quepa
-                        color: AppTheme.getTextGreyColor(context),
+                Visibility(
+                  visible: nextPaymentDate != null,
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      Icon(
+                        Icons.credit_card,
+                        color: AppTheme.getGreenColor(context),
+                        size: screenWidth * 0.05, // Reducido ligeramente
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(width: 8),
-                    // Fecha del próximo pago
-                    Text(
-                      nextPaymentDate ?? 'N/A',
-                      style: TextStyle(
-                        fontFamily: 'Open Sans',
-                        fontSize: responsiveFontSizes.bodyMedium(
-                          context,
-                        ), // Reducido para asegurar que quepa
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.getTextGreyColor(context),
+                      const SizedBox(width: 4),
+                      // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
+                      Text(
+                        context.translate('home.policyCard.nextPayment'),
+                        style: TextStyle(
+                          fontSize: responsiveFontSizes.bodyMedium(
+                            context,
+                          ), // Reducido para asegurar que quepa
+                          color: AppTheme.getTextGreyColor(context),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      // Fecha del próximo pago
+                      Text(
+                        nextPaymentDate ?? 'N/A',
+                        style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: responsiveFontSizes.bodyMedium(
+                            context,
+                          ), // Reducido para asegurar que quepa
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.getTextGreyColor(context),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -41,6 +41,38 @@ class _CircleNavBarState extends State<CircleNavBar>
     );
   }
 
+  // Método para calcular el offset adecuado según el dispositivo
+  Offset _calculateOffset(BuildContext context) {
+    if (Platform.isIOS) {
+      // En iOS, usamos un offset fijo
+      return const Offset(0, -15);
+    } else {
+      // En Android, calculamos el offset basado en MediaQuery
+      final mediaQuery = MediaQuery.of(context);
+      final bottomPadding = mediaQuery.padding.bottom;
+      final viewInsets = mediaQuery.viewInsets.bottom;
+      final deviceHeight = mediaQuery.size.height;
+
+      // Detectar si es un dispositivo con navegación por gestos
+      final hasGestureNavigation = bottomPadding > 15;
+
+      // Ajustar el offset según el tipo de navegación
+      if (hasGestureNavigation) {
+        // Si tiene navegación por gestos, necesitamos un offset mayor
+        return Offset(0, -bottomPadding);
+      } else if (viewInsets > 0) {
+        // Si el teclado está visible
+        return const Offset(0, -15);
+      } else if (deviceHeight > 700) {
+        // Para dispositivos grandes
+        return const Offset(0, -30);
+      } else {
+        // Para dispositivos más pequeños
+        return const Offset(0, -15);
+      }
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -51,7 +83,7 @@ class _CircleNavBarState extends State<CircleNavBar>
   Widget build(BuildContext context) {
     // Usamos la utilidad de tamaños responsivos para manejar el escalado
     return Transform.translate(
-      offset: Platform.isIOS ? const Offset(0, -15) : const Offset(0, -45),
+      offset: _calculateOffset(context),
       child: Container(
         width: 410,
         margin: const EdgeInsets.only(top: 12),
