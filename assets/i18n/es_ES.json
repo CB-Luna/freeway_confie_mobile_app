@@ -188,13 +188,22 @@
       "imSafe": "Estoy a Salvo"
     },
     "bluefireClaim": {
-      "title": "Reclamos de Bluefire Insurance",
-      "instructions": "Para iniciar el proceso, por favor ingresa el\nNúmero de Póliza de Bluefire Insurance",
-      "cnmPolicyPrefix": "Si la póliza comienza con CNM,\npor favor llama al ",
-      "gspPolicyPrefix": "Si la póliza comienza con GSP,\npor favor llama al ",
-      "policyholderConfirmation": "Soy el titular de la póliza de Bluefire",
+      "title": "Bluefire Insurance",
+      "instructions": "Por favor reporta tu reclamo directamente a Bluefire Insurance.",
+      "cnmPolicyPrefix": "Para pólizas CNM, por favor llama al ",
+      "gspPolicyPrefix": "Para pólizas GSP, por favor llama al ",
+      "policyholderConfirmation": "Soy el titular de la póliza o estoy autorizado para reportar este reclamo.",
       "policyNumberInstructions": "Por favor ingresa el número completo de la póliza incluyendo las letras. No ingreses el guión ni ningún número después del guión. Ejemplo: TXA10000000",
       "startClaim": "Iniciar Mi Reclamo"
+    },
+    "customClaim": {
+      "reportDirectlyTo": "Por favor reporta tu reclamo directamente a {0}",
+      "pleaseCall": "Por favor llama al",
+      "toReportClaim": "para reportar tu reclamo.",
+      "pleaseVisit": "Por favor haz click en el botón para más información sobre cómo reportar tu reclamo.",
+      "orVisit": "o visita",
+      "contactInsurance": "Por favor contacta a tu compañía de seguros para reportar tu reclamo.",
+      "callNumber": "Llamar al {0}"
     }
   },
   "requestCall": {

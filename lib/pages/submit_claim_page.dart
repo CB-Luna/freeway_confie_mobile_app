@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
@@ -6,11 +7,16 @@ import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 import '../utils/menu/circle_nav_bar.dart';
-import '../widgets/submitclaim/bluefire_claim_card.dart';
+import '../widgets/submitclaim/custom_claim_card.dart';
 import '../widgets/submitclaim/safety_check_card.dart';
 
 class SubmitClaimPage extends StatefulWidget {
-  const SubmitClaimPage({super.key});
+  final PolicyModel? policy;
+  
+  const SubmitClaimPage({
+    this.policy,
+    super.key,
+  });
 
   @override
   State<SubmitClaimPage> createState() => _SubmitClaimPageState();
@@ -81,7 +87,7 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
               ),
               Center(
                 child: _showBluefireCard
-                    ? const BluefireClaimCard()
+                    ? CustomClaimCard(policy: widget.policy)
                     : SafetyCheckCard(
                         onSafetyConfirmed: () {
                           setState(() {

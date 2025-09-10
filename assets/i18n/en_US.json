@@ -182,19 +182,28 @@
     "title": "Submit a Claim",
     "back": "Back",
     "safetyCheck": {
-      "title": "Are You Safe?",
-      "helpMessage": "If you need immediate help, please call 911.",
+      "title": "Safety Check",
+      "helpMessage": "Are you safe? If you need emergency assistance, please call 911 immediately.",
       "call911": "Call 911",
       "imSafe": "I'm Safe"
     },
     "bluefireClaim": {
-      "title": "Bluefire Insurance Claims",
-      "instructions": "To start the process, please enter your\nBluefire Insurance Policy Number",
-      "cnmPolicyPrefix": "If the policy begins with CNM,\nplease call ",
-      "gspPolicyPrefix": "If the policy begins with GSP,\nplease call ",
-      "policyholderConfirmation": "I am the Bluefire policyholder",
+      "title": "Bluefire Insurance",
+      "instructions": "Please report your claim directly to Bluefire Insurance.",
+      "cnmPolicyPrefix": "For CNM policies, please call ",
+      "gspPolicyPrefix": "For GSP policies, please call ",
+      "policyholderConfirmation": "I am the policyholder or authorized to report this claim.",
       "policyNumberInstructions": "Please enter the full policy number including the letters. Do not enter the dash or any numbers after the dash. Example: TXA10000000",
       "startClaim": "Start My Claim"
+    },
+    "customClaim": {
+      "reportDirectlyTo": "Please report your claim directly to {0}",
+      "pleaseCall": "Please call",
+      "toReportClaim": "to report your claim.",
+      "pleaseVisit": "Please click the next button for more information on how to report your claim.",
+      "orVisit": "or visit",
+      "contactInsurance": "Please contact your insurance company to report your claim.",
+      "callNumber": "Call to {0}"
     }
   },
   "requestCall": {

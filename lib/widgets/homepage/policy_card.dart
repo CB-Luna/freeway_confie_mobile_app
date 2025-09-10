@@ -3,6 +3,7 @@ import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/id_card_page.dart';
+import 'package:freeway_app/pages/submit_claim_page.dart';
 import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/policy_logo_utils.dart';
@@ -300,7 +301,14 @@ class _PolicyCardState extends State<PolicyCard>
                           : (availableWidth * 0.33),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/submit-claim');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubmitClaimPage(
+                                policy: widget.policy,
+                              ),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.getPrimaryColor(context),
