@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
@@ -266,7 +268,8 @@ class _HomePageState extends State<HomePage> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: -5, // Cambiado de -10 a -5 para ajustar la posición
+              // Ajustar posición según la plataforma
+              bottom: (Platform.isIOS ? -15 : -45),
               child: CircleNavBar(
                 selectedPos: _selectedIndex,
                 onTap: (index) {

@@ -12,7 +12,7 @@ import '../widgets/submitclaim/safety_check_card.dart';
 
 class SubmitClaimPage extends StatefulWidget {
   final PolicyModel? policy;
-  
+
   const SubmitClaimPage({
     this.policy,
     super.key,
@@ -100,44 +100,41 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Transform.translate(
-        offset: const Offset(0, 0),
-        child: CircleNavBar(
-          selectedPos: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+      bottomNavigationBar: CircleNavBar(
+        selectedPos: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
 
-            switch (index) {
-              case 1:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddInsurancePage(),
-                  ),
-                ).then((_) => setState(() => _selectedIndex = 0));
-                break;
-              case 2:
-                LocatorDeviceModule.navigateToLocationView(context);
-                break;
-            }
-          },
-          tabItems: [
-            TabData(
-              Icons.home_outlined,
-              context.translate('home.navigation.myProducts'),
-            ),
-            TabData(
-              Icons.verified_user_outlined,
-              context.translate('home.navigation.addInsurance'),
-            ),
-            TabData(
-              Icons.location_on_outlined,
-              context.translate('home.navigation.location'),
-            ),
-          ],
-        ),
+          switch (index) {
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddInsurancePage(),
+                ),
+              ).then((_) => setState(() => _selectedIndex = 0));
+              break;
+            case 2:
+              LocatorDeviceModule.navigateToLocationView(context);
+              break;
+          }
+        },
+        tabItems: [
+          TabData(
+            Icons.home_outlined,
+            context.translate('home.navigation.myProducts'),
+          ),
+          TabData(
+            Icons.verified_user_outlined,
+            context.translate('home.navigation.addInsurance'),
+          ),
+          TabData(
+            Icons.location_on_outlined,
+            context.translate('home.navigation.location'),
+          ),
+        ],
       ),
     );
   }

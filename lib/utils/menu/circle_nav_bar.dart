@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -48,29 +50,32 @@ class _CircleNavBarState extends State<CircleNavBar>
   @override
   Widget build(BuildContext context) {
     // Usamos la utilidad de tamaños responsivos para manejar el escalado
-    return Container(
-      width: 410,
-      margin: const EdgeInsets.only(top: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.getCardColor(context),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getBoxShadowColor(context),
-            offset: const Offset(0, 4),
-            blurRadius: 15,
-            spreadRadius: 0,
+    return Transform.translate(
+      offset: Platform.isIOS ? const Offset(0, -15) : const Offset(0, -45),
+      child: Container(
+        width: 410,
+        margin: const EdgeInsets.only(top: 12),
+        decoration: BoxDecoration(
+          color: AppTheme.getCardColor(context),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(
-          widget.tabItems.length,
-          (index) => _buildNavItem(index, context),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.getBoxShadowColor(context),
+              offset: const Offset(0, 4),
+              blurRadius: 15,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(
+            widget.tabItems.length,
+            (index) => _buildNavItem(index, context),
+          ),
         ),
       ),
     );

@@ -92,42 +92,39 @@ class _AddInsurancePageState extends State<AddInsurancePage> {
           ],
         ),
       ),
-      bottomNavigationBar: Transform.translate(
-        offset: const Offset(0, -12),
-        child: CircleNavBar(
-          selectedPos: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+      bottomNavigationBar: CircleNavBar(
+        selectedPos: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
 
-            switch (index) {
-              case 0: // My Products
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const HomePage()),
-                );
-                break;
-              case 2: // Location
-                LocatorDeviceModule.navigateToLocationView(context);
-                break;
-            }
-          },
-          tabItems: [
-            TabData(
-              Icons.home_outlined,
-              context.translate('home.navigation.myProducts'),
-            ),
-            TabData(
-              Icons.verified_user_outlined,
-              context.translate('home.navigation.addInsurance'),
-            ),
-            TabData(
-              Icons.location_on_outlined,
-              context.translate('home.navigation.location'),
-            ),
-          ],
-        ),
+          switch (index) {
+            case 0: // My Products
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => const HomePage()),
+              );
+              break;
+            case 2: // Location
+              LocatorDeviceModule.navigateToLocationView(context);
+              break;
+          }
+        },
+        tabItems: [
+          TabData(
+            Icons.home_outlined,
+            context.translate('home.navigation.myProducts'),
+          ),
+          TabData(
+            Icons.verified_user_outlined,
+            context.translate('home.navigation.addInsurance'),
+          ),
+          TabData(
+            Icons.location_on_outlined,
+            context.translate('home.navigation.location'),
+          ),
+        ],
       ),
     );
   }
