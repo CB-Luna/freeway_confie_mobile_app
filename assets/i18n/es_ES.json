@@ -556,6 +556,7 @@
     "noResults": "No se encontraron resultados",
     "tryAgain": "Intentar de nuevo",
     "language_changed_to": "Idioma cambiado a {0}",
-    "loadingGif": "Cargando..."
+    "loadingGif": "Cargando...",
+    "errorOpeningPhone": "No se pudo abrir la aplicación de llamadas. Por favor, intenta manualmente."
   }
 }

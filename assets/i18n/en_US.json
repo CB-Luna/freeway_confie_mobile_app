@@ -466,7 +466,8 @@
     "noResults": "No results found",
     "tryAgain": "Try Again",
     "language_changed_to": "Language changed to {0}",
-    "loadingGif": "Loading..."
+    "loadingGif": "Loading...",
+    "errorOpeningPhone": "Could not open phone app. Please try manually."
   },
   "addInsurance": {
     "addInsurance": "Add Insurance",

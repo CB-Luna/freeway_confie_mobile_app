@@ -101,10 +101,11 @@ class _HeaderSectionState extends State<HeaderSection> {
   Future<void> _loadUserName() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final savedName = await authProvider.getFullName();
-    
+
     if (mounted) {
       setState(() {
-        _userName = savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
+        _userName =
+            savedName ?? (authProvider.currentUser?.fullName ?? 'Freeway User');
         _isLoading = false;
       });
     }
@@ -204,12 +205,8 @@ class _HeaderSectionState extends State<HeaderSection> {
                                   strokeWidth: 4,
                                   color: AppTheme.getIconColor(context),
                                 )
-                              // Usar un icono estático cuando no hay notificaciones
-                              : Icon(
-                                  Icons.notifications_outlined,
-                                  size: 24,
-                                  color: AppTheme.getIconColor(context),
-                                ),
+                              // Usar un espacio reservado cuando no hay notificaciones
+                              : Container(),
                         ),
                       ),
                     ),
