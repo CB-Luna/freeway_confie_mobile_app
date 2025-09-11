@@ -92,38 +92,35 @@ class _LocationDetailsViewContentState
             ),
           ),
           body: _buildBody(context, controller),
-          bottomNavigationBar: Transform.translate(
-            offset: const Offset(0, -12),
-            child: CircleNavBar(
-              selectedPos: 2,
-              onTap: (index) {
-                if (index == 0) {
-                  Navigator.pushReplacementNamed(context, '/home');
-                } else if (index == 1) {
-                  Navigator.pushReplacementNamed(context, '/add-insurance');
-                }
-              },
-              tabItems: [
-                TabData(
-                  Icons.home_outlined,
-                  isSmallScreen
-                      ? '' // En pantallas pequeñas, no mostrar texto
-                      : context.translate('home.navigation.myProducts'),
-                ),
-                TabData(
-                  Icons.verified_user_outlined,
-                  isSmallScreen
-                      ? ''
-                      : context.translate('home.navigation.addInsurance'),
-                ),
-                TabData(
-                  Icons.location_on_outlined,
-                  isSmallScreen
-                      ? ''
-                      : context.translate('home.navigation.location'),
-                ),
-              ],
-            ),
+          bottomNavigationBar: CircleNavBar(
+            selectedPos: 2,
+            onTap: (index) {
+              if (index == 0) {
+                Navigator.pushReplacementNamed(context, '/home');
+              } else if (index == 1) {
+                Navigator.pushReplacementNamed(context, '/add-insurance');
+              }
+            },
+            tabItems: [
+              TabData(
+                Icons.home_outlined,
+                isSmallScreen
+                    ? '' // En pantallas pequeñas, no mostrar texto
+                    : context.translate('home.navigation.myProducts'),
+              ),
+              TabData(
+                Icons.verified_user_outlined,
+                isSmallScreen
+                    ? ''
+                    : context.translate('home.navigation.addInsurance'),
+              ),
+              TabData(
+                Icons.location_on_outlined,
+                isSmallScreen
+                    ? ''
+                    : context.translate('home.navigation.location'),
+              ),
+            ],
           ),
         );
       },

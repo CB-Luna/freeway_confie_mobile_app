@@ -2,6 +2,7 @@ import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class SafetyCheckCard extends StatelessWidget {
   final VoidCallback onSafetyConfirmed;
@@ -37,7 +38,7 @@ class SafetyCheckCard extends StatelessWidget {
               style: TextStyle(
                 color: AppTheme.getPrimaryColor(context),
                 fontSize: responsiveFontSizes.titleLarge(context),
-                fontFamily: 'Lato',
+                fontFamily: 'Open Sans',
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -48,7 +49,7 @@ class SafetyCheckCard extends StatelessWidget {
             style: TextStyle(
               color: AppTheme.getSubtitleTextColor(context),
               fontSize: responsiveFontSizes.bodyLarge(context),
-              fontFamily: 'Lato',
+              fontFamily: 'Open Sans',
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -58,8 +59,29 @@ class SafetyCheckCard extends StatelessWidget {
             children: [
               Flexible(
                 child: ElevatedButton(
-                  onPressed: () {
-                    // TODO: Implement call 911
+                  onPressed: () async {
+                    try {
+                      // Crear la URI para abrir la aplicación de llamadas con el 911
+                      final Uri launchUri = Uri.parse('tel:911');
+
+                      // Abrir la aplicación de llamadas
+                      await launchUrl(
+                        launchUri,
+                        mode: LaunchMode.externalApplication,
+                      );
+                    } catch (e) {
+                      // Mostrar un mensaje de error si no se puede abrir la aplicación de llamadas
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              context.translate('common.errorOpeningPhone'),
+                            ),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                      }
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppTheme.getBackgroundOrangeColor(context),

@@ -1,6 +1,8 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/models/auth/policy_model.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/pages/id_card_page.dart';
+import 'package:acceptance_app/pages/submit_claim_page.dart';
 import 'package:acceptance_app/pages/webview_page.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/policy_logo_utils.dart';
@@ -125,7 +127,7 @@ class _PolicyCardState extends State<PolicyCard>
                         policyNumber,
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
-                          fontFamily: 'Lato',
+                          fontFamily: 'Open Sans',
                           fontSize:
                               responsiveFontSizes.policyCardSubtitle(context),
                           fontWeight: FontWeight.w600,
@@ -186,49 +188,52 @@ class _PolicyCardState extends State<PolicyCard>
                 // Logo - Verificar si existe un logo específico para la póliza
                 PolicyLogoUtils.getPolicyLogo(
                   context,
-                  widget.policy.programName,
+                  widget.policy.carrierLogoUrl,
                   width: screenWidth * 0.2,
                   height: freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,
                 ),
                 const SizedBox(width: 8),
                 // Información de próximo pago
-                Wrap(
-                  direction: Axis.horizontal,
-                  children: [
-                    Icon(
-                      Icons.credit_card,
-                      color: AppTheme.getGreenColor(context),
-                      size: screenWidth * 0.05, // Reducido ligeramente
-                    ),
-                    const SizedBox(width: 4),
-                    // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
-                    Text(
-                      context.translate('home.policyCard.nextPayment'),
-                      style: TextStyle(
-                        fontSize: responsiveFontSizes.bodyMedium(
-                          context,
-                        ), // Reducido para asegurar que quepa
-                        color: AppTheme.getTextGreyColor(context),
+                Visibility(
+                  visible: nextPaymentDate != null,
+                  child: Wrap(
+                    direction: Axis.horizontal,
+                    children: [
+                      Icon(
+                        Icons.credit_card,
+                        color: AppTheme.getGreenColor(context),
+                        size: screenWidth * 0.05, // Reducido ligeramente
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                    const SizedBox(width: 8),
-                    // Fecha del próximo pago
-                    Text(
-                      nextPaymentDate ?? 'N/A',
-                      style: TextStyle(
-                        fontFamily: 'Lato',
-                        fontSize: responsiveFontSizes.bodyMedium(
-                          context,
-                        ), // Reducido para asegurar que quepa
-                        fontWeight: FontWeight.w600,
-                        color: AppTheme.getTextGreyColor(context),
+                      const SizedBox(width: 4),
+                      // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
+                      Text(
+                        context.translate('home.policyCard.nextPayment'),
+                        style: TextStyle(
+                          fontSize: responsiveFontSizes.bodyMedium(
+                            context,
+                          ), // Reducido para asegurar que quepa
+                          color: AppTheme.getTextGreyColor(context),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 3,
-                    ),
-                  ],
+                      const SizedBox(width: 8),
+                      // Fecha del próximo pago
+                      Text(
+                        nextPaymentDate ?? 'N/A',
+                        style: TextStyle(
+                          fontFamily: 'Open Sans',
+                          fontSize: responsiveFontSizes.bodyMedium(
+                            context,
+                          ), // Reducido para asegurar que quepa
+                          fontWeight: FontWeight.w600,
+                          color: AppTheme.getTextGreyColor(context),
+                        ),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
@@ -280,7 +285,7 @@ class _PolicyCardState extends State<PolicyCard>
                           context.translate('home.policyCard.idCard'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontFamily: 'Lato',
+                            fontFamily: 'Open Sans',
                             fontSize:
                                 responsiveFontSizes.policyCardButton(context),
                             fontWeight: FontWeight.w700,
@@ -299,7 +304,14 @@ class _PolicyCardState extends State<PolicyCard>
                           : (availableWidth * 0.33),
                       child: ElevatedButton(
                         onPressed: () {
-                          Navigator.pushNamed(context, '/submit-claim');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => SubmitClaimPage(
+                                policy: widget.policy,
+                              ),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppTheme.getPrimaryColor(context),
@@ -315,7 +327,7 @@ class _PolicyCardState extends State<PolicyCard>
                           context.translate('home.policyCard.submitClaim'),
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            fontFamily: 'Lato',
+                            fontFamily: 'Open Sans',
                             fontSize:
                                 responsiveFontSizes.policyCardButton(context),
                             fontWeight: FontWeight.w700,
@@ -370,7 +382,7 @@ class _PolicyCardState extends State<PolicyCard>
                                       widget.policy.policyNumber;
                                   final zipCode = widget.user.zipCode;
                                   final String urlString =
-                                      'https://quickpay.freeway.com/PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
+                                      '${urlBaseEmbedQuickPay}PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
                                   final String title =
                                       context.translate('payment.title');
 
@@ -417,7 +429,7 @@ class _PolicyCardState extends State<PolicyCard>
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
-                                        fontFamily: 'Lato',
+                                        fontFamily: 'Open Sans',
                                         fontSize: responsiveFontSizes
                                             .policyCardButtonBig(context),
                                         fontWeight: FontWeight.w700,

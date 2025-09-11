@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/models/auth/policy_model.dart';
 import 'package:acceptance_app/locatordevice/locator_device_module.dart';
 import 'package:acceptance_app/pages/add_insurance.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
@@ -5,12 +6,17 @@ import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/menu/circle_nav_bar.dart';
-import '../widgets/submitclaim/bluefire_claim_card.dart';
-import '../widgets/submitclaim/safety_check_card.dart';
+import '../../utils/menu/circle_nav_bar.dart';
+import '../../widgets/submitclaim/custom_claim_card.dart';
+import '../../widgets/submitclaim/safety_check_card.dart';
 
 class SubmitClaimPage extends StatefulWidget {
-  const SubmitClaimPage({super.key});
+  final PolicyModel? policy;
+
+  const SubmitClaimPage({
+    this.policy,
+    super.key,
+  });
 
   @override
   State<SubmitClaimPage> createState() => _SubmitClaimPageState();
@@ -81,7 +87,7 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
               ),
               Center(
                 child: _showBluefireCard
-                    ? const BluefireClaimCard()
+                    ? CustomClaimCard(policy: widget.policy)
                     : SafetyCheckCard(
                         onSafetyConfirmed: () {
                           setState(() {
@@ -94,44 +100,41 @@ class _SubmitClaimPageState extends State<SubmitClaimPage> {
           ),
         ),
       ),
-      bottomNavigationBar: Transform.translate(
-        offset: const Offset(0, 0),
-        child: CircleNavBar(
-          selectedPos: _selectedIndex,
-          onTap: (index) {
-            setState(() {
-              _selectedIndex = index;
-            });
+      bottomNavigationBar: CircleNavBar(
+        selectedPos: _selectedIndex,
+        onTap: (index) {
+          setState(() {
+            _selectedIndex = index;
+          });
 
-            switch (index) {
-              case 1:
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const AddInsurancePage(),
-                  ),
-                ).then((_) => setState(() => _selectedIndex = 0));
-                break;
-              case 2:
-                LocatorDeviceModule.navigateToLocationView(context);
-                break;
-            }
-          },
-          tabItems: [
-            TabData(
-              Icons.home_outlined,
-              context.translate('home.navigation.myProducts'),
-            ),
-            TabData(
-              Icons.verified_user_outlined,
-              context.translate('home.navigation.addInsurance'),
-            ),
-            TabData(
-              Icons.location_on_outlined,
-              context.translate('home.navigation.location'),
-            ),
-          ],
-        ),
+          switch (index) {
+            case 1:
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const AddInsurancePage(),
+                ),
+              ).then((_) => setState(() => _selectedIndex = 0));
+              break;
+            case 2:
+              LocatorDeviceModule.navigateToLocationView(context);
+              break;
+          }
+        },
+        tabItems: [
+          TabData(
+            Icons.home_outlined,
+            context.translate('home.navigation.myProducts'),
+          ),
+          TabData(
+            Icons.verified_user_outlined,
+            context.translate('home.navigation.addInsurance'),
+          ),
+          TabData(
+            Icons.location_on_outlined,
+            context.translate('home.navigation.location'),
+          ),
+        ],
       ),
     );
   }

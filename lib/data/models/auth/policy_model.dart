@@ -13,6 +13,9 @@ class PolicyModel {
   final String lineOfBusiness;
   final String carrierName;
   final String programName;
+  String? carrierLogoUrl;
+  String? carrierClaimUrl;
+  String? carrierClaimPhone;
   final String organizationName;
   final String organizationCode;
   final String? nextPaymentDate;
@@ -29,6 +32,9 @@ class PolicyModel {
     required this.programName,
     required this.organizationName,
     required this.organizationCode,
+    this.carrierLogoUrl,
+    this.carrierClaimUrl,
+    this.carrierClaimPhone,
     this.nextPaymentDate,
   });
 

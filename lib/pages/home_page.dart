@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:acceptance_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
@@ -79,6 +81,38 @@ class _HomePageState extends State<HomePage> {
         debugPrint('HomePage - No hay usuario autenticado');
       }
       _isInitialized = true;
+    }
+  }
+
+  // Método para calcular el offset adecuado según el dispositivo
+  double _calculateOffset(BuildContext context) {
+    if (Platform.isIOS) {
+      // En iOS, usamos un offset fijo
+      return -15;
+    } else {
+      // En Android, calculamos el offset basado en MediaQuery
+      final mediaQuery = MediaQuery.of(context);
+      final bottomPadding = mediaQuery.padding.bottom;
+      final viewInsets = mediaQuery.viewInsets.bottom;
+      final deviceHeight = mediaQuery.size.height;
+
+      // Detectar si es un dispositivo con navegación por gestos
+      final hasGestureNavigation = bottomPadding > 15;
+
+      // Ajustar el offset según el tipo de navegación
+      if (hasGestureNavigation) {
+        // Si tiene navegación por gestos, necesitamos un offset mayor
+        return -bottomPadding / 1.5;
+      } else if (viewInsets > 0) {
+        // Si el teclado está visible
+        return -15;
+      } else if (deviceHeight > 700) {
+        // Para dispositivos grandes
+        return -30;
+      } else {
+        // Para dispositivos más pequeños
+        return -15;
+      }
     }
   }
 
@@ -172,7 +206,7 @@ class _HomePageState extends State<HomePage> {
                                 args: [_userName],
                               ),
                               style: TextStyle(
-                                fontFamily: 'Lato',
+                                fontFamily: 'Open Sans',
                                 fontSize:
                                     responsiveFontSizes.titleMedium(context),
                                 fontWeight: FontWeight.w700,
@@ -222,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                             context.translate('home.addProducts'),
                             style: TextStyle(
                               color: AppTheme.getSubtitleTextColor(context),
-                              fontFamily: 'Lato',
+                              fontFamily: 'Open Sans',
                               fontSize: responsiveFontSizes.bodyLarge(context),
                               fontWeight: FontWeight.w600,
                               height: 22 / 14,
@@ -266,7 +300,8 @@ class _HomePageState extends State<HomePage> {
             Positioned(
               left: 0,
               right: 0,
-              bottom: -5, // Cambiado de -10 a -5 para ajustar la posición
+              // Ajustar posición según la plataforma
+              bottom: _calculateOffset(context),
               child: CircleNavBar(
                 selectedPos: _selectedIndex,
                 onTap: (index) {

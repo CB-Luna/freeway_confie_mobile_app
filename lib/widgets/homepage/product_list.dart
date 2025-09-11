@@ -1,7 +1,11 @@
+import 'package:acceptance_app/data/constants.dart';
+import 'package:acceptance_app/pages/webview_page.dart';
+import 'package:acceptance_app/providers/auth_provider.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -54,6 +58,94 @@ class _ProductListState extends State<ProductList> {
     super.dispose();
   }
 
+  // Método para manejar el tap en un producto
+  Future<void> _handleProductTap(ProductItem product) async {
+    // Si es el producto de seguro de motocicleta (segundo producto)
+    if (product.imagePath == 'assets/home/icons/icon-motorcycle.png') {
+      await _handleMotorcycleInsurance(context);
+    }
+    // Si es el producto de seguro de inquilinos (tercer producto)
+    else if (product.imagePath == 'assets/home/icons/icon-renters.png') {
+      await _handleRentersInsurance(context);
+    }
+  }
+
+  // Método para manejar el seguro de motocicleta
+  Future<void> _handleMotorcycleInsurance(BuildContext context) async {
+    // Obtener información del usuario actual para prellenar formularios
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
+
+    // Preparar datos del usuario para pasar a los formularios
+    final Map<String, String> userData = {
+      'firstName': user?.fullName.split(' ').first ?? '',
+      'lastName': user?.fullName.split(' ').isNotEmpty == true &&
+              user!.fullName.split(' ').length > 1
+          ? user.fullName.split(' ').skip(1).join(' ')
+          : '',
+      'email': user?.email ?? '',
+      'phone': user?.phone ?? '',
+      'zipCode': user?.zipCode ?? '',
+    };
+
+    // URL para el seguro de motocicleta (tomada de vehicle_insurance_grid.dart)
+    final String zipCode = user?.zipCode ?? '';
+    final String urlString =
+        '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&first_name=${userData['firstName']}&last_name=${userData['lastName']}&email=${userData['email']}&phone=${userData['phone']}';
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebViewPage(
+          url: urlString,
+          title: context.translate('vehicleInsurance.motorcycle'),
+          userData: userData,
+          formType: 'motorcycle',
+        ),
+      ),
+    );
+  }
+
+  // Método para manejar el seguro de inquilinos
+  Future<void> _handleRentersInsurance(BuildContext context) async {
+    // Obtener información del usuario actual para prellenar formularios
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final user = authProvider.currentUser;
+
+    // Preparar datos del usuario para pasar a los formularios
+    final Map<String, String> userData = {
+      'firstName': user?.fullName.split(' ').first ?? '',
+      'lastName': user?.fullName.split(' ').isNotEmpty == true &&
+              user!.fullName.split(' ').length > 1
+          ? user.fullName.split(' ').skip(1).join(' ')
+          : '',
+      'email': user?.email ?? '',
+      'phone': user?.phone ?? '',
+      'zipCode': user?.zipCode ?? '',
+      'city': user?.city ?? '',
+      'state': user?.state ?? '',
+    };
+
+    // URL para el seguro de inquilinos (tomada de property_insurance_grid.dart)
+    final String zipCode = user?.zipCode ?? '';
+    final String city = user?.city ?? '';
+    final String state = user?.state ?? '';
+    final String urlString =
+        '${urlBaseEmbed}renters-insurance-quote-form/?zipcode=$zipCode&state=$state&city=$city';
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WebViewPage(
+          url: urlString,
+          title: 'Renters Insurance',
+          userData: userData,
+          formType: 'renters',
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     // Obtener el ancho de la pantalla para cálculos responsive
@@ -93,6 +185,7 @@ class _ProductListState extends State<ProductList> {
                     child: ProductCard(
                       product: product,
                       cardWidth: cardWidth,
+                      onProductTap: _handleProductTap,
                     ),
                   ),
                 )
@@ -183,10 +276,12 @@ class _ProductListState extends State<ProductList> {
 class ProductCard extends StatelessWidget {
   final ProductItem product;
   final double cardWidth;
+  final Function(ProductItem) onProductTap;
 
   const ProductCard({
     required this.product,
     required this.cardWidth,
+    required this.onProductTap,
     super.key,
   });
 
@@ -201,58 +296,66 @@ class ProductCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       shadowColor: AppTheme.getBoxShadowColor(context).withValues(alpha: 0.3),
-      child: Container(
-        width: cardWidth,
-        decoration: BoxDecoration(
-          color: product.backgroundColor,
-          borderRadius: BorderRadius.circular(12),
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [
-              product.backgroundColor,
-              product.backgroundColor.withValues(alpha: 0.85),
+      child: InkWell(
+        onTap: () async {
+          // Llamar a la función de callback con el producto seleccionado
+          onProductTap(product);
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          width: cardWidth,
+          decoration: BoxDecoration(
+            color: product.backgroundColor,
+            borderRadius: BorderRadius.circular(12),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                product.backgroundColor,
+                product.backgroundColor.withValues(alpha: 0.85),
+              ],
+            ),
+            boxShadow: [
+              BoxShadow(
+                color:
+                    AppTheme.getBoxShadowColor(context).withValues(alpha: 0.1),
+                blurRadius: 1,
+                offset: const Offset(0, 1),
+                spreadRadius: 0.5,
+              ),
             ],
           ),
-          boxShadow: [
-            BoxShadow(
-              color: AppTheme.getBoxShadowColor(context).withValues(alpha: 0.1),
-              blurRadius: 1,
-              offset: const Offset(0, 1),
-              spreadRadius: 0.5,
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(10),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: iconSize,
-                height: iconSize,
-                padding: EdgeInsets.all(iconSize * 0.15),
-                child: Image.asset(
-                  product.imagePath,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              SizedBox(width: cardWidth * 0.06),
-              Expanded(
-                child: Text(
-                  product.title,
-                  style: TextStyle(
-                    fontFamily: 'Lato',
-                    fontSize: responsiveFontSizes.bodyTextLocation(context),
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.black,
+          child: Padding(
+            padding: const EdgeInsets.all(10),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  width: iconSize,
+                  height: iconSize,
+                  padding: EdgeInsets.all(iconSize * 0.15),
+                  child: Image.asset(
+                    product.imagePath,
+                    fit: BoxFit.contain,
                   ),
-                  maxLines: 4,
-                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+                SizedBox(width: cardWidth * 0.06),
+                Expanded(
+                  child: Text(
+                    product.title,
+                    style: TextStyle(
+                      fontFamily: 'Lato',
+                      fontSize: responsiveFontSizes.bodyTextLocation(context),
+                      fontWeight: FontWeight.w600,
+                      color: AppTheme.black,
+                    ),
+                    maxLines: 4,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

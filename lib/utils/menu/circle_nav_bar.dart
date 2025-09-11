@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
 import 'package:flutter/material.dart';
@@ -39,6 +41,38 @@ class _CircleNavBarState extends State<CircleNavBar>
     );
   }
 
+  // Método para calcular el offset adecuado según el dispositivo
+  Offset _calculateOffset(BuildContext context) {
+    if (Platform.isIOS) {
+      // En iOS, usamos un offset fijo
+      return const Offset(0, -15);
+    } else {
+      // En Android, calculamos el offset basado en MediaQuery
+      final mediaQuery = MediaQuery.of(context);
+      final bottomPadding = mediaQuery.padding.bottom;
+      final viewInsets = mediaQuery.viewInsets.bottom;
+      final deviceHeight = mediaQuery.size.height;
+
+      // Detectar si es un dispositivo con navegación por gestos
+      final hasGestureNavigation = bottomPadding > 15;
+
+      // Ajustar el offset según el tipo de navegación
+      if (hasGestureNavigation) {
+        // Si tiene navegación por gestos, necesitamos un offset mayor
+        return Offset(0, -bottomPadding);
+      } else if (viewInsets > 0) {
+        // Si el teclado está visible
+        return const Offset(0, -15);
+      } else if (deviceHeight > 700) {
+        // Para dispositivos grandes
+        return const Offset(0, -30);
+      } else {
+        // Para dispositivos más pequeños
+        return const Offset(0, -15);
+      }
+    }
+  }
+
   @override
   void dispose() {
     _controller.dispose();
@@ -48,29 +82,32 @@ class _CircleNavBarState extends State<CircleNavBar>
   @override
   Widget build(BuildContext context) {
     // Usamos la utilidad de tamaños responsivos para manejar el escalado
-    return Container(
-      width: 410,
-      margin: const EdgeInsets.only(top: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.getCardColor(context),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppTheme.getBoxShadowColor(context),
-            offset: const Offset(0, 4),
-            blurRadius: 15,
-            spreadRadius: 0,
+    return Transform.translate(
+      offset: _calculateOffset(context),
+      child: Container(
+        width: 410,
+        margin: const EdgeInsets.only(top: 12),
+        decoration: BoxDecoration(
+          color: AppTheme.getCardColor(context),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(30),
+            topRight: Radius.circular(30),
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: List.generate(
-          widget.tabItems.length,
-          (index) => _buildNavItem(index, context),
+          boxShadow: [
+            BoxShadow(
+              color: AppTheme.getBoxShadowColor(context),
+              offset: const Offset(0, 4),
+              blurRadius: 15,
+              spreadRadius: 0,
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: List.generate(
+            widget.tabItems.length,
+            (index) => _buildNavItem(index, context),
+          ),
         ),
       ),
     );

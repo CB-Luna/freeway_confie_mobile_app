@@ -15,29 +15,17 @@ class PolicyLogoUtils {
     return availableLogos.contains(normalizedName);
   }
 
-  /// Obtiene la ruta del asset para el logo de la póliza
-  /// Si no existe un logo específico, devuelve null
-  static String? getPolicyLogoPath(String programName) {
-    final normalizedName = programName.toLowerCase().replaceAll(' ', '_');
-    if (availableLogos.contains(normalizedName)) {
-      return 'assets/home/idcardicons/logo_type/$normalizedName.png';
-    }
-    return 'assets/home/idcardicons/logo_type/default.png';
-  }
-
   /// Obtiene el widget de imagen para el logo de la póliza
   /// Si no existe un logo específico, devuelve el logo de Freeway
   static Widget getPolicyLogo(
     BuildContext context,
-    String programName, {
+    String? logoUrl, {
     double? width,
     double? height,
   }) {
-    final logoPath = getPolicyLogoPath(programName);
-
-    if (logoPath != null) {
-      return Image.asset(
-        logoPath,
+    if (logoUrl != null) {
+      return Image.network(
+        logoUrl,
         width: width,
         height: height,
         errorBuilder: (context, error, stackTrace) {
