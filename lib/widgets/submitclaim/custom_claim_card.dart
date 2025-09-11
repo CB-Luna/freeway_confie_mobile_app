@@ -30,8 +30,10 @@ class CustomClaimCard extends StatelessWidget {
 
     // Obtener información de la póliza
     final String insuranceCompany = policy?.carrierName ?? 'Freeway Insurance';
-    final String? claimPhone = policy?.carrierClaimPhone;
-    final String? claimUrl = policy?.carrierClaimUrl;
+    final String? claimPhone =
+        policy?.carrierClaimPhone == '' ? null : policy?.carrierClaimPhone;
+    final String? claimUrl =
+        policy?.carrierClaimUrl == '' ? null : policy?.carrierClaimUrl;
     final String? logoUrl = policy?.carrierLogoUrl;
 
     return Container(
