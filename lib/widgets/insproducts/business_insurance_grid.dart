@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -456,7 +457,7 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
       switch (insuranceType) {
         case 'business_insurance':
           urlString =
-              'https://www.freeway.com/business-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '${urlBaseEmbed}business-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('businessInsurance.businessInsurance')} - $placeName, $stateAbbreviation';
           break;

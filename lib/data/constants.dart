@@ -3,17 +3,17 @@ library;
 
 /// <<<<<<<< Embebed Forms Web >>>>>>>>>
 ///
-const String urlBaseEmbed = 'https://www.freeway.com/';
+const String urlBaseEmbed = 'https://www.acceptance.com/';
 
-const String urlBaseEmbedBuyProduct = 'https://buy.freeway.com/product/';
+const String urlBaseEmbedBuyProduct = 'https://buy.acceptance.com/product/';
 
 const String urlBaseEmbedCarRegistration = 'https://www.carregistration.com/';
 
-const String urlBaseEmbedTriton = 'https://triton.freeway.com/';
+const String urlBaseEmbedTriton = 'https://triton.acceptance.com/';
 
 const String urlBaseEmbedTaxmax = 'https://www.taxmax.com/';
 
-const String urlBaseEmbedRate = 'https://rate.freeway.com/';
+const String urlBaseEmbedRate = 'https://rate.acceptance.com/';
 
 const String urlBaseEmbedQuote = 'https://quote.sanborns.com/';
 

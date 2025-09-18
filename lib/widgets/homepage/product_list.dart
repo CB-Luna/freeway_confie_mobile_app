@@ -91,7 +91,7 @@ class _ProductListState extends State<ProductList> {
     // URL para el seguro de motocicleta (tomada de vehicle_insurance_grid.dart)
     final String zipCode = user?.zipCode ?? '';
     final String urlString =
-        '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&first_name=${userData['firstName']}&last_name=${userData['lastName']}&email=${userData['email']}&phone=${userData['phone']}';
+        '${urlBaseEmbed}motorcycle-insurance-quote-form/?zipcode=$zipCode&first_name=${userData['firstName']}&last_name=${userData['lastName']}&email=${userData['email']}&phone=${userData['phone']}';
 
     await Navigator.push(
       context,

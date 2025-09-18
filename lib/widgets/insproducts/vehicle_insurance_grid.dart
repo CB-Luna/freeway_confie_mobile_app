@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -502,13 +503,13 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
       switch (insuranceType) {
         case 'auto':
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
           title =
               '${context.translate('vehicleInsurance.auto')} - $placeName, $stateAbbreviation';
           break;
         case 'motorcycle':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-moto/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '${urlBaseEmbed}motorcycle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.motorcycle')} - $placeName, $stateAbbreviation';
           break;
@@ -526,7 +527,7 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           break;
         case 'snowmobile':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-para-moto-de-nieve/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedTriton?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.snowmobile')} - $placeName, $stateAbbreviation';
           break;

@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -455,13 +456,13 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
       switch (insuranceType) {
         case 'homeowners':
           urlString =
-              'https://www.freeway.com/homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}homeowners-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.homeowners')} - $placeName, $stateAbbreviation';
           break;
         case 'renters':
           urlString =
-              'https://www.freeway.com/renters-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}renters-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.renters')} - $placeName, $stateAbbreviation';
           break;

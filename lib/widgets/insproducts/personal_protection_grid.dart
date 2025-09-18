@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -492,13 +493,13 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
       switch (insuranceType) {
         case 'health_insurance':
           urlString =
-              'https://www.freeway.com/health-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '${urlBaseEmbed}life-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.health')} - $placeName, $stateAbbreviation';
           break;
         case 'dental_insurance':
           urlString =
-              'https://www.freeway.com/dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '${urlBaseEmbed}dental-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
           break;

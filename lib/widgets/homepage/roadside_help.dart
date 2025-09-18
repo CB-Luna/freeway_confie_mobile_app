@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
@@ -79,8 +80,8 @@ class _RoadsideHelpState extends State<RoadsideHelp>
               context,
               MaterialPageRoute(
                 builder: (context) => WebViewPage(
-                  url: 'https://buy.freeway.com/product/auto-club/step-1',
-                  title: 'Freeway Auto Club',
+                  url: '${urlBaseEmbed}our-products/auto-club/',
+                  title: 'Acceptance Auto Club',
                   userData: userData,
                   formType: 'auto_club',
                 ),
