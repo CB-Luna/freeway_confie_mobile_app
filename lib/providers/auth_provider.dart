@@ -331,7 +331,8 @@ class AuthProvider with ChangeNotifier {
       if (response.hasErrors) {
         // Usar el mensaje de error proporcionado por el servidor
         debugPrint(
-            'Error de registro desde servidor: ${response.errorMessage}');
+          'Error de registro desde servidor: ${response.errorMessage}',
+        );
         if (context.mounted) {
           // Usar el mensaje de error tal como viene del servidor
           _errorMessage = response.errorMessage;

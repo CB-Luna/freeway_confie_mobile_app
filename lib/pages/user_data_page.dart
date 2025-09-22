@@ -178,6 +178,7 @@ class _UserDataPageState extends State<UserDataPage> {
 
           if (phoneConfirmationSent) {
             // Si se requiere verificación, mostrar el diálogo
+            if (!context.mounted) return;
             await _showVerificationDialog(context);
           } else {
             // Si no se requiere verificación, actualizar directamente

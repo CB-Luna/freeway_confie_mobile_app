@@ -285,14 +285,11 @@ class AppleWalletResponse extends WalletResponse {
   final ApplePassData applePassData;
 
   AppleWalletResponse({
-    required int passId,
-    required int requestId,
-    required String passType,
+    required super.passId,
+    required super.requestId,
+    required super.passType,
     required this.applePassData,
   }) : super(
-          passId: passId,
-          requestId: requestId,
-          passType: passType,
           passData: applePassData,
         );
 
@@ -317,10 +314,10 @@ class ApplePassData {
   ApplePassData({
     required this.fileContents,
     required this.contentType,
+    required this.enableRangeProcessing,
     this.fileDownloadName,
     this.lastModified,
     this.entityTag,
-    required this.enableRangeProcessing,
   });
 
   factory ApplePassData.fromJson(Map<String, dynamic> json) {
@@ -340,14 +337,11 @@ class GoogleWalletResponse extends WalletResponse {
   final String googlePassUrl;
 
   GoogleWalletResponse({
-    required int passId,
-    required int requestId,
-    required String passType,
+    required super.passId,
+    required super.requestId,
+    required super.passType,
     required this.googlePassUrl,
   }) : super(
-          passId: passId,
-          requestId: requestId,
-          passType: passType,
           passData: googlePassUrl,
         );
 

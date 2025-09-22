@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/data/services/web_dialog_service.dart';
+import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/common/custom_dialog.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
-import 'package:freeway_app/pages/webview_page.dart';
 
 class ProductList extends StatefulWidget {
   const ProductList({super.key});
@@ -90,8 +90,7 @@ class _ProductListState extends State<ProductList> {
         context: context,
         title: context.translate('home.roadsideHelp.webDialogTitle'),
         message: context.translate('home.roadsideHelp.webDialogMessage'),
-        positiveButtonText:
-            context.translate('home.roadsideHelp.visitWebsite'),
+        positiveButtonText: context.translate('home.roadsideHelp.visitWebsite'),
         negativeButtonText: context.translate('home.roadsideHelp.cancel'),
       );
 
@@ -103,8 +102,7 @@ class _ProductListState extends State<ProductList> {
 
     if (shouldProceed && context.mounted) {
       // Obtener información del usuario actual para prellenar formularios
-      final authProvider =
-          Provider.of<AuthProvider>(context, listen: false);
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
       final user = authProvider.currentUser;
 
       // Preparar datos del usuario para pasar a los formularios
@@ -141,7 +139,7 @@ class _ProductListState extends State<ProductList> {
     // Obtener información del usuario actual para prellenar formularios
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.currentUser;
-    
+
     // Preparar datos del usuario para pasar a los formularios
     final Map<String, String> userData = {
       'firstName': user?.fullName.split(' ').first ?? '',
@@ -153,11 +151,12 @@ class _ProductListState extends State<ProductList> {
       'phone': user?.phone ?? '',
       'zipCode': user?.zipCode ?? '',
     };
-    
+
     // URL para el seguro de motocicleta (tomada de vehicle_insurance_grid.dart)
     final String zipCode = user?.zipCode ?? '';
-    final String urlString = '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&first_name=${userData['firstName']}&last_name=${userData['lastName']}&email=${userData['email']}&phone=${userData['phone']}';
-    
+    final String urlString =
+        '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&first_name=${userData['firstName']}&last_name=${userData['lastName']}&email=${userData['email']}&phone=${userData['phone']}';
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -170,13 +169,13 @@ class _ProductListState extends State<ProductList> {
       ),
     );
   }
-  
+
   // Método para manejar el seguro de inquilinos
   Future<void> _handleRentersInsurance(BuildContext context) async {
     // Obtener información del usuario actual para prellenar formularios
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final user = authProvider.currentUser;
-    
+
     // Preparar datos del usuario para pasar a los formularios
     final Map<String, String> userData = {
       'firstName': user?.fullName.split(' ').first ?? '',
@@ -190,13 +189,14 @@ class _ProductListState extends State<ProductList> {
       'city': user?.city ?? '',
       'state': user?.state ?? '',
     };
-    
+
     // URL para el seguro de inquilinos (tomada de property_insurance_grid.dart)
     final String zipCode = user?.zipCode ?? '';
     final String city = user?.city ?? '';
     final String state = user?.state ?? '';
-    final String urlString = '${urlBaseEmbed}renters-insurance-quote-form/?zipcode=$zipCode&state=$state&city=$city';
-    
+    final String urlString =
+        '${urlBaseEmbed}renters-insurance-quote-form/?zipcode=$zipCode&state=$state&city=$city';
+
     await Navigator.push(
       context,
       MaterialPageRoute(
@@ -386,7 +386,8 @@ class ProductCard extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: AppTheme.getBoxShadowColor(context).withValues(alpha: 0.1),
+                color:
+                    AppTheme.getBoxShadowColor(context).withValues(alpha: 0.1),
                 blurRadius: 1,
                 offset: const Offset(0, 1),
                 spreadRadius: 0.5,
