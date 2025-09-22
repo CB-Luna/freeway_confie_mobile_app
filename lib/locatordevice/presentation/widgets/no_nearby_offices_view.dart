@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
+import 'package:freeway_app/widgets/contactcenter/request_call.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
 class NoNearbyOfficesView extends StatelessWidget {
@@ -112,7 +113,13 @@ class NoNearbyOfficesView extends StatelessWidget {
         // Botón de ayuda
         ElevatedButton.icon(
           onPressed: () {
-            // Acción para el botón de ayuda
+            // Método para navegar a la página de contacto del agente
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const RequestCallPage(),
+              ),
+            );
           },
           icon: Icon(
             Icons.phone_in_talk_outlined,
