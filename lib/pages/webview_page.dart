@@ -36,15 +36,28 @@ class _WebViewPageState extends State<WebViewPage> {
               _isLoading = true;
             });
           },
-          onPageFinished: (String url) {
+          onPageFinished: (String url) async {
+            // Actualizar el estado de navegación
+            await _updateBackNavigationState();
+
             setState(() {
               _isLoading = false;
             });
 
             // Si tenemos datos de usuario, intentamos prellenar el formulario
             if (widget.userData != null) {
-              _injectFormFillingScript();
+              await _injectFormFillingScript();
             }
+
+            // Inyectar script para interceptar el botón Back de la página
+            await _injectBackButtonHandler();
+          },
+          onNavigationRequest: (NavigationRequest request) async {
+            // Actualizar el estado de navegación después de cada cambio de URL
+            Future.delayed(const Duration(milliseconds: 300), () {
+              _updateBackNavigationState();
+            });
+            return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('WebView error: ${error.description}');
@@ -448,6 +461,79 @@ class _WebViewPageState extends State<WebViewPage> {
     return '{$entries}';
   }
 
+  // Variable para rastrear si podemos navegar hacia atrás en el WebView
+  bool _canGoBack = false;
+
+  // Método para actualizar el estado de navegación hacia atrás
+  Future<void> _updateBackNavigationState() async {
+    final canGoBack = await _controller.canGoBack();
+    if (canGoBack != _canGoBack) {
+      setState(() {
+        _canGoBack = canGoBack;
+      });
+    }
+  }
+
+  // Método para inyectar un manejador para el botón Back de la página
+  Future<void> _injectBackButtonHandler() async {
+    // Script para interceptar el botón Back de la página
+    const script = '''
+      (function() {
+        // Interceptar el evento de clic en el botón Back de la página
+        document.addEventListener('click', function(event) {
+          // Buscar botones de "back", "return", "volver", etc.
+          if (event.target && 
+              (event.target.tagName === 'BUTTON' || 
+               event.target.tagName === 'A' || 
+               event.target.parentElement && event.target.parentElement.tagName === 'BUTTON' || 
+               event.target.parentElement && event.target.parentElement.tagName === 'A')) {
+            
+            var element = event.target;
+            var text = element.innerText || element.textContent || '';
+            var href = element.href || (element.parentElement ? element.parentElement.href : '');
+            text = text.toLowerCase();
+            
+            // Si es un botón de retorno o tiene una clase que lo identifique como tal
+            if (text.includes('back') || 
+                text.includes('return') || 
+                text.includes('volver') || 
+                text.includes('regresar') || 
+                text.includes('atrás') ||
+                (element.className && 
+                 (element.className.includes('back') || 
+                  element.className.includes('return')))) {
+              
+              // En lugar de usar un handler, simplemente usamos history.back()
+              // que es compatible con WebViewController
+              window.history.back();
+              
+              // Prevenir la navegación por defecto
+              event.preventDefault();
+              event.stopPropagation();
+              return false;
+            }
+          }
+        }, true);
+        
+        // También interceptar el evento popstate (cuando se presiona el botón back del navegador)
+        window.addEventListener('popstate', function(event) {
+          // No necesitamos hacer nada especial aquí, ya que el navegador manejará esto
+          // y el WebViewController detectará el cambio
+          console.log('Popstate event detected');
+        });
+        
+        console.log('Back button handler injected successfully');
+      })();
+    ''';
+
+    try {
+      await _controller.runJavaScript(script);
+      debugPrint('Script de manejo de botón Back inyectado correctamente');
+    } catch (e) {
+      debugPrint('Error al inyectar el manejador de botón Back: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -464,7 +550,15 @@ class _WebViewPageState extends State<WebViewPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppTheme.white),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () async {
+            // Si podemos navegar hacia atrás dentro del WebView, hacerlo
+            if (await _controller.canGoBack()) {
+              await _controller.goBack();
+            } else {
+              // Si no hay historial en el WebView, salir de la página
+              if (context.mounted) Navigator.of(context).pop();
+            }
+          },
         ),
         actions: [
           IconButton(

@@ -219,15 +219,16 @@ class ProfileSettingsList extends StatelessWidget {
               },
             ),
             const ProfileDivider(),
-            ProfileSettingsSwitch(
-              title: context.translate('profile.notifications'),
-              icon: Icons.notifications_none,
-              value: true,
-              onChanged: (value) {
-                // TODO: Implementar cambio de notificaciones
-              },
-            ),
-            const ProfileDivider(),
+            // TODO: Implementar cambio de notificaciones
+            // ProfileSettingsSwitch(
+            //   title: context.translate('profile.notifications'),
+            //   icon: Icons.notifications_none,
+            //   value: true,
+            //   onChanged: (value) {
+            //
+            //   },
+            // ),
+            // const ProfileDivider(),
             const Padding(
               padding: EdgeInsets.all(16.0),
               child: ProfileLogoutButton(),

@@ -324,24 +324,40 @@ class SignUpPageState extends State<SignUpPage> {
                   const SizedBox(
                     height: 16,
                   ),
-                  CountryPhoneSelector(
-                    phoneController: _phoneController,
-                    labelText: context.translate('auth.phoneNumber'),
-                    helperText: context.translate('auth.phoneNumberHelper'),
-                    initialCountryCode:
-                        'US', // Código de país predeterminado (Estados Unidos)
-                    showFlag: true,
-                    onPhoneChanged: (completeNumber) {
-                      // Actualizar el número completo con código de país cuando cambia
-                      setState(() {
-                        _completePhoneNumber = completeNumber;
-                      });
-                    },
-                    onCountryChanged: (country) {
-                      setState(() {
-                        _selectedCountry = country;
-                      });
-                    },
+                  // Widget personalizado para número de teléfono con código de país fijo de EE. UU. (+1)
+                  Stack(
+                    children: [
+                      CountryPhoneSelector(
+                        phoneController: _phoneController,
+                        labelText: context.translate('auth.phoneNumber'),
+                        helperText: context.translate('auth.phoneNumberHelper'),
+                        initialCountryCode: 'US', // Código de país fijo (Estados Unidos)
+                        showFlag: true,
+                        onPhoneChanged: (completeNumber) {
+                          // Actualizar el número completo con código de país cuando cambia
+                          setState(() {
+                            _completePhoneNumber = completeNumber;
+                          });
+                        },
+                        onCountryChanged: (country) {
+                          // Aunque el usuario no podrá cambiar el país, mantenemos esta función
+                          // para compatibilidad con el widget
+                          setState(() {
+                            _selectedCountry = country;
+                          });
+                        },
+                      ),
+                      // Capa transparente para bloquear interacciones con el selector de país
+                      Positioned(
+                        left: 0,
+                        top: 0,
+                        bottom: 0,
+                        width: 100, // Ancho suficiente para cubrir el selector de país
+                        child: Container(
+                          color: Colors.transparent,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
