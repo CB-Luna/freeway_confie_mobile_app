@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
-import 'package:freeway_app/utils/responsive_font_sizes.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -303,8 +303,9 @@ class LocationController extends ChangeNotifier {
 
   Future<void> _loadOffices() async {
     try {
-      final offices =
-          await getOffices.execute(currentPosition: state.currentPosition);
+      final offices = null;
+      // final offices =
+      //     await getOffices.execute(currentPosition: state.currentPosition);
       _updateState(offices: offices);
 
       if (state.currentPosition != null) {
@@ -738,17 +739,11 @@ class LocationController extends ChangeNotifier {
     // Verificar si el nuevo radio excede el límite máximo de 10 millas
     if (newRadius > 10.0) {
       // Mostrar un mensaje al usuario indicando que se ha alcanzado el límite
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.translate('office.maxRadius'),
-            style: TextStyle(
-              fontSize: responsiveFontSizes.snackBarText(context),
-            ),
-          ),
-          duration: const Duration(seconds: 2),
-          backgroundColor: AppTheme.getOrangeColor(context),
-        ),
+      showAppSnackBar(
+        context,
+        context.translate('office.maxRadius'),
+        const Duration(seconds: 2),
+        backgroundColor: AppTheme.getOrangeColor(context),
       );
       return; // Salir del método sin expandir más el radio
     }
@@ -766,19 +761,14 @@ class LocationController extends ChangeNotifier {
     _updateCameraZoomForRadius(newRadius);
 
     // Mostrar un mensaje al usuario
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.translateWithArgs(
-            'office.searchRadius',
-            args: ['${newRadius.toInt()}'],
-          ),
-          style: TextStyle(
-            fontSize: responsiveFontSizes.snackBarText(context),
-          ),
-        ),
-        duration: const Duration(seconds: 2),
+    showAppSnackBar(
+      context,
+      context.translateWithArgs(
+        'office.searchRadius',
+        args: ['${newRadius.toInt()}'],
       ),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getOrangeColor(context),
     );
   }
 

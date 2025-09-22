@@ -3,6 +3,7 @@ import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -115,25 +116,22 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
 
         if (!mounted) return;
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content:
-                Text(context.translate('profile.passwordPage.saveSuccess')),
-            backgroundColor: Colors.green,
-          ),
+        showAppSnackBar(
+          context,
+          context.translate('profile.passwordPage.saveSuccess'),
+          const Duration(seconds: 2),
+          backgroundColor: Colors.green,
         );
 
         // Cerrar la página después de actualizar la contraseña
         Navigator.pop(context);
       } else {
         // Manejar errores de la API
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.translate('profile.passwordPage.saveError'),
-            ),
-            backgroundColor: AppTheme.getRedColor(context),
-          ),
+        showAppSnackBar(
+          context,
+          context.translate('profile.passwordPage.saveError'),
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         );
       }
     } catch (e) {
@@ -141,13 +139,11 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            '${context.translate('profile.passwordPage.saveError')}: $e',
-          ),
-          backgroundColor: AppTheme.getRedColor(context),
-        ),
+      showAppSnackBar(
+        context,
+        '${context.translate('profile.passwordPage.saveError')}: $e',
+        const Duration(seconds: 2),
+        backgroundColor: AppTheme.getRedColor(context),
       );
     } finally {
       if (mounted) {

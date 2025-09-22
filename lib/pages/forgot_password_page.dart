@@ -5,6 +5,7 @@ import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/pages/login_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 
@@ -64,15 +65,13 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
         if (success) {
           // Mostrar mensaje de éxito
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                _verificationType == 'EmailCode'
-                    ? context.translate('auth.resetPasswordEmailSent')
-                    : context.translate('auth.resetPasswordSmsSent'),
-              ),
-              backgroundColor: Colors.green,
-            ),
+          showAppSnackBar(
+            context,
+            _verificationType == 'EmailCode'
+                ? context.translate('auth.resetPasswordEmailSent')
+                : context.translate('auth.resetPasswordSmsSent'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.green,
           );
         }
       } on ApiError catch (e) {
@@ -81,11 +80,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _errorMessage = e.message;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_errorMessage),
-            backgroundColor: Colors.red,
-          ),
+        showAppSnackBar(
+          context,
+          _errorMessage,
+          const Duration(seconds: 2),
+          backgroundColor: Colors.red,
         );
       } catch (e) {
         setState(() {
@@ -93,11 +92,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _errorMessage = e.toString();
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_errorMessage),
-            backgroundColor: Colors.red,
-          ),
+        showAppSnackBar(
+          context,
+          _errorMessage,
+          const Duration(seconds: 2),
+          backgroundColor: Colors.red,
         );
       }
     }
@@ -124,11 +123,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
 
         if (success) {
           // Mostrar mensaje de éxito
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('auth.passwordResetSuccessful')),
-              backgroundColor: Colors.green,
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('auth.passwordResetSuccessful'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.green,
           );
 
           // Navegar a la pantalla de login después de un breve retraso
@@ -145,11 +144,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _errorMessage = e.message;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_errorMessage),
-            backgroundColor: Colors.red,
-          ),
+        showAppSnackBar(
+          context,
+          _errorMessage,
+          const Duration(seconds: 2),
+          backgroundColor: Colors.red,
         );
       } catch (e) {
         setState(() {
@@ -157,11 +156,11 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
           _errorMessage = e.toString();
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(_errorMessage),
-            backgroundColor: Colors.red,
-          ),
+        showAppSnackBar(
+          context,
+          _errorMessage,
+          const Duration(seconds: 2),
+          backgroundColor: Colors.red,
         );
       }
     }

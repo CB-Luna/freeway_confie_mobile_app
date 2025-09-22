@@ -6,6 +6,7 @@ import 'package:freeway_app/pages/password_change_page.dart';
 import 'package:freeway_app/pages/user_data_page.dart';
 import 'package:freeway_app/providers/language_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -175,15 +176,15 @@ class ProfileSettingsList extends StatelessWidget {
 
                     if (!success && value && context.mounted) {
                       // Si falló al habilitar, mostrar un mensaje
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            context.translateWithArgs(
-                              'profile.biometricEnableFailed',
-                              args: [biometricProvider.biometricType],
-                            ),
-                          ),
+                      if (!context.mounted) return;
+                      showAppSnackBar(
+                        context,
+                        context.translateWithArgs(
+                          'profile.biometricEnableFailed',
+                          args: [biometricProvider.biometricType],
                         ),
+                        const Duration(seconds: 2),
+                        backgroundColor: AppTheme.getRedColor(context),
                       );
                     }
                   },

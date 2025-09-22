@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/custom/country_phone_selector.dart';
 import 'package:intl/intl.dart';
@@ -138,11 +139,11 @@ class SignUpPageState extends State<SignUpPage> {
         // Verificar si hay un mensaje de error
         if (authProvider.errorMessage != null) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(authProvider.errorMessage!),
-                backgroundColor: AppTheme.getRedColor(context),
-              ),
+            showAppSnackBar(
+              context,
+              authProvider.errorMessage!,
+              const Duration(seconds: 2),
+              backgroundColor: AppTheme.getRedColor(context),
             );
           }
         } else if (mounted) {
@@ -154,11 +155,11 @@ class SignUpPageState extends State<SignUpPage> {
         }
       } catch (e) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('${context.translate('auth.error')}: $e'),
-              backgroundColor: AppTheme.getRedColor(context),
-            ),
+          showAppSnackBar(
+            context,
+            '${context.translate('auth.error')}: $e',
+            const Duration(seconds: 2),
+            backgroundColor: AppTheme.getRedColor(context),
           );
         }
       } finally {
@@ -331,7 +332,8 @@ class SignUpPageState extends State<SignUpPage> {
                         phoneController: _phoneController,
                         labelText: context.translate('auth.phoneNumber'),
                         helperText: context.translate('auth.phoneNumberHelper'),
-                        initialCountryCode: 'US', // Código de país fijo (Estados Unidos)
+                        initialCountryCode:
+                            'US', // Código de país fijo (Estados Unidos)
                         showFlag: true,
                         onPhoneChanged: (completeNumber) {
                           // Actualizar el número completo con código de país cuando cambia
@@ -352,7 +354,8 @@ class SignUpPageState extends State<SignUpPage> {
                         left: 0,
                         top: 0,
                         bottom: 0,
-                        width: 100, // Ancho suficiente para cubrir el selector de país
+                        width:
+                            100, // Ancho suficiente para cubrir el selector de país
                         child: Container(
                           color: Colors.transparent,
                         ),

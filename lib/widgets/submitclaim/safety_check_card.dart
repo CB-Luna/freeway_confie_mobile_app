@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -65,17 +66,19 @@ class SafetyCheckCard extends StatelessWidget {
                       final Uri launchUri = Uri.parse('tel:911');
 
                       // Abrir la aplicación de llamadas
-                      await launchUrl(launchUri, mode: LaunchMode.externalApplication);
+                      await launchUrl(
+                        launchUri,
+                        mode: LaunchMode.externalApplication,
+                      );
                     } catch (e) {
                       // Mostrar un mensaje de error si no se puede abrir la aplicación de llamadas
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(context.translate('common.errorOpeningPhone')),
-                            backgroundColor: Colors.red,
-                          ),
-                        );
-                      }
+                      if (!context.mounted) return;
+                      showAppSnackBar(
+                        context,
+                        context.translate('common.errorOpeningPhone'),
+                        const Duration(seconds: 2),
+                        backgroundColor: AppTheme.getRedColor(context),
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(

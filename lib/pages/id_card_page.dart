@@ -11,6 +11,7 @@ import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/id_card_printer.dart';
 import 'package:freeway_app/utils/menu/circle_nav_bar.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/id_card/id_card_widget.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -310,11 +311,11 @@ class _IdCardPageState extends State<IdCardPage> {
     });
 
     // Mostrar un indicador de progreso
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.translate('idCard.preparingForPrint')),
-        duration: const Duration(seconds: 2),
-      ),
+    showAppSnackBar(
+      context,
+      context.translate('idCard.preparingForPrint'),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getBlueColor(context),
     );
 
     // Utilizar la clase IdCardPrinter para imprimir la tarjeta
@@ -331,20 +332,18 @@ class _IdCardPageState extends State<IdCardPage> {
           });
 
           if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.translate('idCard.printCompleted')),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
+            showAppSnackBar(
+              context,
+              context.translate('idCard.printCompleted'),
+              const Duration(seconds: 2),
+              backgroundColor: Colors.green,
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.translate('idCard.printError')),
-                backgroundColor: Colors.red,
-                duration: const Duration(seconds: 3),
-              ),
+            showAppSnackBar(
+              context,
+              context.translate('idCard.printError'),
+              const Duration(seconds: 3),
+              backgroundColor: Colors.red,
             );
           }
         }
@@ -396,11 +395,11 @@ class _IdCardPageState extends State<IdCardPage> {
     });
 
     // Mostrar un indicador de progreso
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.translate('idCard.preparingForDownload')),
-        duration: const Duration(seconds: 2),
-      ),
+    showAppSnackBar(
+      context,
+      context.translate('idCard.preparingForDownload'),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getBlueColor(context),
     );
 
     // Utilizar la clase IdCardPrinter para guardar la tarjeta
@@ -417,19 +416,18 @@ class _IdCardPageState extends State<IdCardPage> {
           });
 
           if (success) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.translate('idCard.downloadCompleted')),
-                backgroundColor: Colors.green,
-                duration: const Duration(seconds: 2),
-              ),
+            showAppSnackBar(
+              context,
+              context.translate('idCard.downloadCompleted'),
+              const Duration(seconds: 2),
+              backgroundColor: Colors.green,
             );
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(context.translate('idCard.downloadCancelled')),
-                duration: const Duration(seconds: 2),
-              ),
+            showAppSnackBar(
+              context,
+              context.translate('idCard.downloadCancelled'),
+              const Duration(seconds: 2),
+              backgroundColor: Colors.red,
             );
           }
         }
@@ -445,11 +443,11 @@ class _IdCardPageState extends State<IdCardPage> {
     });
 
     // Mostrar un indicador de progreso
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.translate('idCard.addedToGoogleWallet')),
-        duration: const Duration(seconds: 2),
-      ),
+    showAppSnackBar(
+      context,
+      context.translate('idCard.addedToGoogleWallet'),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getBlueColor(context),
     );
 
     // Usar el servicio de Google Wallet
@@ -463,12 +461,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('idCard.addedToGoogleWallet')),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('idCard.addedToGoogleWallet'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.green,
           );
         }
       },
@@ -478,11 +475,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('idCard.cancelToGoogleWallet')),
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('idCard.cancelToGoogleWallet'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.red,
           );
         }
       },
@@ -492,12 +489,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $error'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
+          showAppSnackBar(
+            context,
+            'Error: $error',
+            const Duration(seconds: 3),
+            backgroundColor: Colors.red,
           );
         }
       },
@@ -511,11 +507,11 @@ class _IdCardPageState extends State<IdCardPage> {
     });
 
     // Mostrar un indicador de progreso
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.translate('idCard.addedToAppleWallet')),
-        duration: const Duration(seconds: 2),
-      ),
+    showAppSnackBar(
+      context,
+      context.translate('idCard.addedToAppleWallet'),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getBlueColor(context),
     );
 
     // Usar el servicio de Google Wallet
@@ -529,12 +525,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('idCard.addedToAppleWallet')),
-              backgroundColor: Colors.green,
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('idCard.addedToAppleWallet'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.green,
           );
         }
       },
@@ -544,11 +539,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('idCard.cancelToAppleWallet')),
-              duration: const Duration(seconds: 2),
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('idCard.cancelToAppleWallet'),
+            const Duration(seconds: 2),
+            backgroundColor: Colors.red,
           );
         }
       },
@@ -558,12 +553,11 @@ class _IdCardPageState extends State<IdCardPage> {
             _isProcessingRequest = false;
           });
 
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error: $error'),
-              backgroundColor: Colors.red,
-              duration: const Duration(seconds: 3),
-            ),
+          showAppSnackBar(
+            context,
+            'Error: $error',
+            const Duration(seconds: 3),
+            backgroundColor: Colors.red,
           );
         }
       },

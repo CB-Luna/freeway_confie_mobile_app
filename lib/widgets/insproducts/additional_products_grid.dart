@@ -4,6 +4,7 @@ import 'package:freeway_app/data/services/web_dialog_service.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -397,14 +398,12 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
 
   // Método para mostrar mensaje cuando un seguro no está disponible
   void _showNotAvailableMessage(BuildContext context, String insuranceType) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          '$insuranceType ${context.translate('additionalProducts.notAvailableMessage')}',
-        ),
-        backgroundColor: AppTheme.getOrangeColor(context),
-        duration: const Duration(seconds: 3),
-      ),
+    if (!context.mounted) return;
+    showAppSnackBar(
+      context,
+      '$insuranceType ${context.translate('additionalProducts.notAvailableMessage')}',
+      const Duration(seconds: 3),
+      backgroundColor: AppTheme.getOrangeColor(context),
     );
 
     setState(() {
@@ -438,13 +437,12 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
         );
       } else if (context.mounted) {
         // Si el código postal no es válido, mostrar un mensaje de error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.translate('additionalProducts.location.invalidZipCode'),
-            ),
-            backgroundColor: AppTheme.getRedColor(context),
-          ),
+        if (!context.mounted) return;
+        showAppSnackBar(
+          context,
+          context.translate('additionalProducts.location.invalidZipCode'),
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         );
       }
     }

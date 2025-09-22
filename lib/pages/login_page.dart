@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:provider/provider.dart';
 
@@ -82,11 +83,11 @@ class LoginPageState extends State<LoginPage> {
       if (!success) {
         // Si la autenticación biométrica falló, mostrar un mensaje
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(context.translate('auth.biometricAuthFailed')),
-              backgroundColor: AppTheme.getRedColor(context),
-            ),
+          showAppSnackBar(
+            context,
+            context.translate('auth.biometricAuthFailed'),
+            const Duration(seconds: 2),
+            backgroundColor: AppTheme.getRedColor(context),
           );
         }
         return false;
@@ -108,14 +109,11 @@ class LoginPageState extends State<LoginPage> {
 
         if (!loginSuccess && mounted) {
           // Si el login falló, mostrar un mensaje
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                authProvider.errorMessage ??
-                    context.translate('auth.authError'),
-              ),
-              backgroundColor: AppTheme.getRedColor(context),
-            ),
+          showAppSnackBar(
+            context,
+            authProvider.errorMessage ?? context.translate('auth.authError'),
+            const Duration(seconds: 2),
+            backgroundColor: AppTheme.getRedColor(context),
           );
           return false;
         }
@@ -134,11 +132,11 @@ class LoginPageState extends State<LoginPage> {
       return false;
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('${context.translate('auth.error')}: $e'),
-            backgroundColor: AppTheme.getRedColor(context),
-          ),
+        showAppSnackBar(
+          context,
+          '${context.translate('auth.error')}: $e',
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         );
       }
       return false;
@@ -213,30 +211,26 @@ class LoginPageState extends State<LoginPage> {
 
         // Mostrar mensaje de éxito
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                context.translateWithArgs(
-                  'profile.biometricEnableSuccess',
-                  args: [biometricProvider.biometricType],
-                ),
-              ),
-              backgroundColor: Colors.green,
+          showAppSnackBar(
+            context,
+            context.translateWithArgs(
+              'profile.biometricEnableSuccess',
+              args: [biometricProvider.biometricType],
             ),
+            const Duration(seconds: 2),
+            backgroundColor: AppTheme.getBlueColor(context),
           );
         }
       } else if (context.mounted) {
         // Mostrar mensaje de error
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              context.translateWithArgs(
-                'profile.biometricEnableFailed',
-                args: [biometricProvider.biometricType],
-              ),
-            ),
-            backgroundColor: AppTheme.getRedColor(context),
+        showAppSnackBar(
+          context,
+          context.translateWithArgs(
+            'profile.biometricEnableFailed',
+            args: [biometricProvider.biometricType],
           ),
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         );
       }
     }
@@ -555,11 +549,11 @@ class LoginPageState extends State<LoginPage> {
               authProvider.errorMessage ?? context.translate('auth.authError');
         }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(errorMessage),
-            backgroundColor: AppTheme.getRedColor(context),
-          ),
+        showAppSnackBar(
+          context,
+          errorMessage,
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getRedColor(context),
         );
       }
     }

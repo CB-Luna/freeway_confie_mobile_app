@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:provider/provider.dart';
 
@@ -55,19 +56,15 @@ class LanguageSelectionPage extends StatelessWidget {
                     : null,
                 onTap: () {
                   languageProvider.changeLanguage(locale);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        context.translateWithArgs(
-                          'common.language_changed_to',
-                          args: [
-                            languageProvider.languageNames[localeKey] ??
-                                localeKey,
-                          ],
-                        ),
-                      ),
-                      duration: const Duration(seconds: 2),
+                  showAppSnackBar(
+                    context,
+                    context.translateWithArgs(
+                      'common.language_changed_to',
+                      args: [
+                        languageProvider.languageNames[localeKey] ?? localeKey,
+                      ],
                     ),
+                    const Duration(seconds: 2),
                   );
                 },
               );

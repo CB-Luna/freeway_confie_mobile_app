@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -51,17 +52,11 @@ class _OfficeListState extends State<OfficeList> {
     if (zipCode.isEmpty ||
         zipCode.length != 5 ||
         !RegExp(r'^[0-9]{5}$').hasMatch(zipCode)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            context.translate('office.zipCode.invalidZipCode'),
-            style: TextStyle(
-              fontSize: responsiveFontSizes.snackBarText(context),
-            ),
-          ),
-          duration: const Duration(seconds: 2),
-          backgroundColor: AppTheme.getRedColor(context),
-        ),
+      showAppSnackBar(
+        context,
+        context.translate('office.zipCode.invalidZipCode'),
+        const Duration(seconds: 2),
+        backgroundColor: AppTheme.getRedColor(context),
       );
       return;
     }
@@ -76,20 +71,14 @@ class _OfficeListState extends State<OfficeList> {
     );
 
     // Mostrar un mensaje al usuario
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          context.translateWithArgs(
-            'office.zipCode.searchingNear',
-            args: [zipCode],
-          ),
-          style: TextStyle(
-            fontSize: responsiveFontSizes.snackBarText(context),
-          ),
-        ),
-        duration: const Duration(seconds: 2),
-        backgroundColor: AppTheme.getBlueColor(context),
+    showAppSnackBar(
+      context,
+      context.translateWithArgs(
+        'office.zipCode.searchingNear',
+        args: [zipCode],
       ),
+      const Duration(seconds: 2),
+      backgroundColor: AppTheme.getBlueColor(context),
     );
 
     // Llamar al método de búsqueda por código postal
@@ -263,6 +252,7 @@ class _OfficeListState extends State<OfficeList> {
                                   keyboardType: TextInputType.number,
                                   maxLength: 5,
                                   style: TextStyle(
+                                    color: AppTheme.getTextGreyColor(context),
                                     fontSize:
                                         responsiveFontSizes.bodyMedium(context),
                                   ),
@@ -568,17 +558,11 @@ class OfficeListItem extends StatelessWidget {
                     } else {
                       // Mostrar un mensaje de error si no se puede abrir la URL
                       if (!context.mounted) return;
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text(
-                            context.translate('office.couldNotOpenMaps'),
-                            style: TextStyle(
-                              fontSize:
-                                  responsiveFontSizes.snackBarText(context),
-                            ),
-                          ),
-                          backgroundColor: AppTheme.getRedColor(context),
-                        ),
+                      showAppSnackBar(
+                        context,
+                        context.translate('office.couldNotOpenMaps'),
+                        const Duration(seconds: 2),
+                        backgroundColor: AppTheme.getRedColor(context),
                       );
                     }
                   },

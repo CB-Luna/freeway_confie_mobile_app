@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/utils/menu/snackbar_help.dart';
 
 import '../core/platform/device_info.dart';
 import 'di/injection_container.dart' as di;
@@ -17,7 +18,7 @@ class LocatorDeviceModule {
     try {
       // Add debugging info
       debugPrint('LocatorDeviceModule: Starting navigation to location view');
-      
+
       // Store the current context navigator before async operations
       final navigator = Navigator.of(context);
 
@@ -27,12 +28,18 @@ class LocatorDeviceModule {
         try {
           await di.init();
           _initialized = true;
-          debugPrint('LocatorDeviceModule: Dependencies initialized successfully');
+          debugPrint(
+            'LocatorDeviceModule: Dependencies initialized successfully',
+          );
         } catch (e) {
-          debugPrint('LocatorDeviceModule: Error initializing dependencies: $e');
+          debugPrint(
+            'LocatorDeviceModule: Error initializing dependencies: $e',
+          );
           if (context.mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Error initializing location services: $e')),
+            showAppSnackBar(
+              context,
+              'Error initializing location services: $e',
+              const Duration(seconds: 2),
             );
           }
           return;
@@ -51,7 +58,7 @@ class LocatorDeviceModule {
         final getOffices = di.sl.get<GetOffices>();
         final deviceInfo = di.sl.get<DeviceInfo>();
         debugPrint('LocatorDeviceModule: Dependencies retrieved successfully');
-        
+
         // Navigate to the location view with required dependencies
         debugPrint('LocatorDeviceModule: Navigating to LocationDetailsView');
         await navigator.push(
@@ -70,16 +77,20 @@ class LocatorDeviceModule {
       } catch (e) {
         debugPrint('LocatorDeviceModule: Error retrieving dependencies: $e');
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error accessing location services: $e')),
+          showAppSnackBar(
+            context,
+            'Error accessing location services: $e',
+            const Duration(seconds: 2),
           );
         }
       }
     } catch (e) {
       debugPrint('LocatorDeviceModule: Unexpected error: $e');
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Unexpected error: $e')),
+        showAppSnackBar(
+          context,
+          'Unexpected error: $e',
+          const Duration(seconds: 2),
         );
       }
     }
