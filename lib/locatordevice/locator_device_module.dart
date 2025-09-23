@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:freeway_app/locatordevice/presentation/pages/location_details_view_V2.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
 
 import '../core/platform/device_info.dart';
 import 'di/injection_container.dart' as di;
 import 'domain/usecases/get_current_location.dart';
 import 'domain/usecases/get_offices.dart';
-import 'presentation/pages/location_details_view.dart';
 
 /// Main entry point for the Locator Device module
 class LocatorDeviceModule {
@@ -36,10 +36,10 @@ class LocatorDeviceModule {
             'LocatorDeviceModule: Error initializing dependencies: $e',
           );
           if (context.mounted) {
-            showAppSnackBar(
-              context,
-              'Error initializing location services: $e',
-              const Duration(seconds: 2),
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Error initializing location services: $e'),
+              ),
             );
           }
           return;
@@ -70,7 +70,7 @@ class LocatorDeviceModule {
                 'deviceInfo': deviceInfo,
               },
             ),
-            builder: (context) => const LocationDetailsView(),
+            builder: (context) => const LocationDetailsViewV2(),
           ),
         );
         debugPrint('LocatorDeviceModule: Navigation completed');

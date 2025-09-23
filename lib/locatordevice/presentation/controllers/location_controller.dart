@@ -1,11 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../core/platform/device_info.dart';
 import '../../../data/models/office/office.dart';
@@ -79,7 +80,7 @@ class LocationController extends ChangeNotifier {
   final GetOffices getOffices;
   final DeviceInfo deviceInfo;
 
-  GoogleMapController? mapController;
+  MapController? mapController;
   StreamSubscription<Position>? _positionStreamSubscription;
 
   // Variables para el manejo dinámico de la carga de oficinas según la posición de la cámara
@@ -303,9 +304,8 @@ class LocationController extends ChangeNotifier {
 
   Future<void> _loadOffices() async {
     try {
-      final offices = null;
-      // final offices =
-      //     await getOffices.execute(currentPosition: state.currentPosition);
+      final offices =
+          await getOffices.execute(currentPosition: state.currentPosition);
       _updateState(offices: offices);
 
       if (state.currentPosition != null) {
@@ -374,60 +374,81 @@ class LocationController extends ChangeNotifier {
   }
 
   // Método para crear un ícono personalizado para el marcador de ubicación actual
-  Future<BitmapDescriptor> _createCustomMarkerIcon() async {
-    return await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(30, 30)),
+  Widget _createCustomMarkerIcon() {
+    return Image.asset(
       'assets/location/location_marker.png',
+      width: 30,
+      height: 30,
     );
   }
 
   // Método para actualizar el círculo de cobertura
   void _updateCoverageCircle() {
-    if (state.currentPosition == null) return;
+    if (state.currentPosition == null) {
+      debugPrint(
+        'ERROR: No se puede actualizar círculo - currentPosition es null',
+      );
+      return;
+    }
+
+    debugPrint('\n==== ACTUALIZANDO CÍRCULO DE COBERTURA ====');
+    debugPrint('Radio actual en estado: ${state.searchRadiusInMiles} millas');
 
     final circles = <Circle>{};
+
+    // Convertir millas a metros para el radio del círculo (1 milla = 1609.34 metros)
+    final radiusInMeters = state.searchRadiusInMiles * 1609.34;
+
+    debugPrint(
+      'Creando círculo con radio: ${state.searchRadiusInMiles} millas ($radiusInMeters metros)',
+    );
+    debugPrint(
+      'Posición del círculo: ${state.currentPosition!.latitude}, ${state.currentPosition!.longitude}',
+    );
+
     circles.add(
       Circle(
-        circleId: const CircleId('coverage_area'),
-        center: LatLng(
+        LatLng(
           state.currentPosition!.latitude,
           state.currentPosition!.longitude,
         ),
-        // Convertir millas a metros (1 milla = 1609.34 metros)
-        radius: state.searchRadiusInMiles * 1609.34,
-        fillColor:
-            Colors.blue.withValues(alpha: 0.15), // Color azul transparente
-        strokeColor: Colors.blue.withValues(alpha: 0.5),
-        strokeWidth: 1,
+        radiusInMeters, // Radio en metros para la visualización
       ),
     );
 
+    debugPrint(
+      'Actualizando estado con nuevo círculo (radio: ${state.searchRadiusInMiles} millas)',
+    );
     _updateState(circles: circles);
+    debugPrint(
+      'Estado actualizado - Número de círculos: ${state.circles.length}',
+    );
+
+    // Forzar notificación a los listeners
+    debugPrint('Notificando a los listeners para actualizar UI');
+    notifyListeners();
   }
 
   void _updateCurrentLocationMarker() async {
     if (state.currentPosition == null) return;
 
     final currentMarkers = Set<Marker>.from(state.markers);
-    currentMarkers
-        .removeWhere((marker) => marker.markerId.value == 'current_location');
+    currentMarkers.removeWhere(
+      (marker) =>
+          marker.point.latitude == state.currentPosition!.latitude &&
+          marker.point.longitude == state.currentPosition!.longitude,
+    );
 
     // Obtener el ícono personalizado
-    final customIcon = await _createCustomMarkerIcon();
+    final customIcon = _createCustomMarkerIcon();
 
     currentMarkers.add(
       Marker(
-        markerId: const MarkerId('current_location'),
-        position: LatLng(
+        point: LatLng(
           state.currentPosition!.latitude,
           state.currentPosition!.longitude,
         ),
-        infoWindow: InfoWindow(
-          title: 'Mi ubicación actual',
-          snippet: state.hasLocationPermission ? null : 'Ubicación simulada',
-        ),
-        icon: customIcon,
-        zIndex: 2,
+        child: customIcon,
       ),
     );
 
@@ -440,11 +461,26 @@ class LocationController extends ChangeNotifier {
   void _updateOfficeMarkers() {
     if (state.offices.isEmpty) return;
 
-    // Limpiar los marcadores existentes
-    final currentMarkers = Set<Marker>.from(state.markers);
-    currentMarkers.removeWhere(
-      (marker) => marker.markerId.value.startsWith('office_'),
-    );
+    // Limpiar TODOS los marcadores existentes excepto el de posición actual
+    // Esto asegura que no queden marcadores seleccionados de operaciones anteriores
+    final currentMarkers = <Marker>{};
+
+    // Mantener solo el marcador de la posición actual si existe
+    if (state.currentPosition != null) {
+      // Buscar el marcador de posición actual si existe
+      for (var marker in state.markers) {
+        if (marker.point.latitude == state.currentPosition!.latitude &&
+            marker.point.longitude == state.currentPosition!.longitude) {
+          currentMarkers.add(marker);
+          break;
+        }
+      }
+    }
+
+    // Registrar el estado para depuración
+    debugPrint('\n==== ACTUALIZANDO MARCADORES DE OFICINAS ====');
+    debugPrint('Oficina seleccionada ID: ${state.selectedOfficeId}');
+    debugPrint('Número total de oficinas: ${state.offices.length}');
 
     // Variable para almacenar la oficina seleccionada
     Office? selectedOffice;
@@ -458,27 +494,52 @@ class LocationController extends ChangeNotifier {
         selectedOffice = office;
       }
 
-      // Tamaño del marcador: más grande si está seleccionado
-      final markerSize = isSelected ? 60.0 : 40.0;
+      // Tamaño del marcador: mucho más grande si está seleccionado
+      final markerSize = isSelected ? 120.0 : 80.0;
 
       final marker = Marker(
-        markerId: MarkerId('office_$i'),
-        position: LatLng(office.latitude, office.longitude),
-        infoWindow: InfoWindow(
-          title: office.name,
-          snippet: office.streetAddress,
+        point: LatLng(office.latitude, office.longitude),
+        child: GestureDetector(
+          onTap: () {
+            // Al hacer tap en un marcador, seleccionarlo y actualizar la vista
+            debugPrint('Tap en marcador de oficina: ${office.name}');
+            goToOffice(office);
+          },
+          child: Container(
+            decoration: isSelected
+                ? const BoxDecoration(
+                    // Agregar un resplandor alrededor del marcador seleccionado
+                    shape: BoxShape.circle,
+                    color: AppTheme.primaryColor,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme
+                            .primaryColor, // Resplandor blanco más intenso
+                        spreadRadius: 15,
+                        blurRadius: 12,
+                        offset: Offset(0, 0),
+                      ),
+                    ],
+                  )
+                : null,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Imagen base del marcador
+                Image.asset(
+                  'assets/location/freeway_marker.png',
+                  width: isSelected
+                      ? markerSize.toDouble() * 2
+                      : markerSize.toDouble(),
+                  height: isSelected
+                      ? markerSize.toDouble() * 2
+                      : markerSize.toDouble(),
+                  scale: isSelected ? 2.0 : 1.0,
+                ),
+              ],
+            ),
+          ),
         ),
-        icon: AssetMapBitmap(
-          'assets/location/freeway_marker.png',
-          width: markerSize.toDouble(),
-          height: markerSize.toDouble(),
-        ),
-        zIndex:
-            isSelected ? 2 : 1, // Mayor zIndex para el marcador seleccionado
-        onTap: () {
-          // Al hacer tap en un marcador, seleccionarlo y actualizar la vista
-          goToOffice(office);
-        },
       );
 
       currentMarkers.add(marker);
@@ -504,16 +565,14 @@ class LocationController extends ChangeNotifier {
 
   void updateMapPosition() {
     if (state.currentPosition != null && mapController != null) {
-      final cameraPosition = CameraPosition(
-        target: LatLng(
+      // En flutter_map, movemos la cámara directamente a una posición y zoom
+      mapController!.move(
+        LatLng(
           state.currentPosition!.latitude,
           state.currentPosition!.longitude,
         ),
-        zoom: 14.0,
+        14.0, // nivel de zoom
       );
-
-      mapController!
-          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
 
       // Actualizar la posición inicial y última posición de la cámara
       _initialCameraPosition = LatLng(
@@ -524,7 +583,7 @@ class LocationController extends ChangeNotifier {
     }
   }
 
-  void onMapCreated(GoogleMapController controller) {
+  void onMapCreated(MapController controller) {
     mapController = controller;
 
     // Guardar la posición inicial de la cámara cuando se crea el mapa
@@ -538,11 +597,11 @@ class LocationController extends ChangeNotifier {
   }
 
   // Método para manejar el movimiento de la cámara
-  void onCameraMove(CameraPosition position) {
+  void onCameraMove(LatLng position) {
     // Si no tenemos posición inicial o última posición, establecerlas
     if (_initialCameraPosition == null) {
-      _initialCameraPosition = position.target;
-      _lastCameraPosition = position.target;
+      _initialCameraPosition = position;
+      _lastCameraPosition = position;
       return;
     }
 
@@ -553,8 +612,8 @@ class LocationController extends ChangeNotifier {
     final distanceInMeters = Geolocator.distanceBetween(
       _lastCameraPosition!.latitude,
       _lastCameraPosition!.longitude,
-      position.target.latitude,
-      position.target.longitude,
+      position.latitude,
+      position.longitude,
     );
 
     // Convertir la distancia a millas (1 milla = 1609.34 metros)
@@ -567,7 +626,7 @@ class LocationController extends ChangeNotifier {
         state.showAllOffices ? 5.0 : _maxDistanceToOffice;
     if (distanceInMiles > significantDistance * 0.7) {
       // 70% de la distancia máxima como umbral
-      _loadOfficesAtPosition(position.target);
+      _loadOfficesAtPosition(position);
     }
   }
 
@@ -661,12 +720,10 @@ class LocationController extends ChangeNotifier {
 
     // Luego ajustamos la cámara para centrar la oficina
     if (mapController != null) {
-      final cameraPosition = CameraPosition(
-        target: LatLng(office.latitude, office.longitude),
-        zoom: 16.0,
-      );
-      mapController!.animateCamera(
-        CameraUpdate.newCameraPosition(cameraPosition),
+      // En flutter_map, movemos la cámara directamente a una posición y zoom
+      mapController!.move(
+        LatLng(office.latitude, office.longitude),
+        16.0, // nivel de zoom
       );
     }
   }
@@ -716,8 +773,20 @@ class LocationController extends ChangeNotifier {
         hasSearchedByZipCode: true,
       );
 
-      // Actualizar posición del mapa y marcar oficinas
-      updateMapPosition();
+      // Mover la cámara directamente a la ubicación de la primera oficina encontrada
+      if (mapController != null) {
+        mapController!.move(
+          LatLng(firstOffice.latitude, firstOffice.longitude),
+          14.0, // nivel de zoom
+        );
+
+        // Actualizar la posición inicial y última posición de la cámara
+        _initialCameraPosition =
+            LatLng(firstOffice.latitude, firstOffice.longitude);
+        _lastCameraPosition = _initialCameraPosition;
+      }
+
+      // Actualizar marcadores de oficinas
       _updateOfficeMarkers();
     } catch (e) {
       if (!context.mounted) return;
@@ -732,12 +801,16 @@ class LocationController extends ChangeNotifier {
   }
 
   // Método para expandir el radio de búsqueda
-  Future<void> expandSearchRadius(BuildContext context) async {
+  Future<void> expandSearchRadius(
+    BuildContext context,
+    double maxDistanceAllowed,
+  ) async {
     // Incrementar el radio de búsqueda en 1 milla cada vez
     final newRadius = state.searchRadiusInMiles + 1.0;
+    final maxDistanceAllowedInMeters = maxDistanceAllowed / 1609.34;
 
     // Verificar si el nuevo radio excede el límite máximo de 10 millas
-    if (newRadius > 10.0) {
+    if (newRadius > maxDistanceAllowedInMeters) {
       // Mostrar un mensaje al usuario indicando que se ha alcanzado el límite
       showAppSnackBar(
         context,
@@ -749,12 +822,23 @@ class LocationController extends ChangeNotifier {
     }
 
     // Restablecer la oficina seleccionada
+    debugPrint('Actualizando estado con nuevo radio: $newRadius millas');
     _updateState(
       searchRadiusInMiles: newRadius,
       selectedOfficeId: null,
     );
+    debugPrint(
+      'Estado actualizado - Radio actual: ${state.searchRadiusInMiles} millas',
+    );
+
+    // Actualizar el círculo de cobertura con el nuevo radio
+    debugPrint(
+      'Llamando a _updateCoverageCircle() para actualizar círculo visual',
+    );
+    _updateCoverageCircle();
 
     // Recalcular las oficinas cercanas con el nuevo radio
+    debugPrint('Recalculando oficinas cercanas con nuevo radio');
     _calculateDistancesToOffices();
 
     // Actualizar el zoom del mapa para mostrar el nuevo radio
@@ -774,25 +858,47 @@ class LocationController extends ChangeNotifier {
 
   // Método para actualizar el zoom de la cámara según el radio
   void _updateCameraZoomForRadius(double radiusInMiles) {
-    if (state.currentPosition != null && mapController != null) {
-      // Calcular el zoom apropiado basado en el radio
-      // Fórmula aproximada: zoom = 14.0 - log2(radiusInMiles)
-      // Esto hace que el zoom disminuya a medida que aumenta el radio
-      double zoom = 14.0 - (radiusInMiles / 2.0);
-      // Asegurar que el zoom no sea demasiado pequeño
-      zoom = zoom.clamp(10.0, 15.0);
+    debugPrint('\n==== ACTUALIZANDO ZOOM DE CÁMARA PARA RADIO ====');
+    debugPrint('Radio en millas: $radiusInMiles');
 
-      final cameraPosition = CameraPosition(
-        target: LatLng(
-          state.currentPosition!.latitude,
-          state.currentPosition!.longitude,
-        ),
-        zoom: zoom,
+    if (state.currentPosition == null) {
+      debugPrint(
+        'ERROR: No se puede actualizar zoom - currentPosition es null',
       );
-
-      mapController!
-          .animateCamera(CameraUpdate.newCameraPosition(cameraPosition));
+      return;
     }
+
+    if (mapController == null) {
+      debugPrint('ERROR: No se puede actualizar zoom - mapController es null');
+      return;
+    }
+
+    // Calcular el zoom apropiado basado en el radio
+    // Fórmula aproximada: zoom = 14.0 - log2(radiusInMiles)
+    // Esto hace que el zoom disminuya a medida que aumenta el radio
+    double zoom = 14.0 - (radiusInMiles / 2.0);
+    // Asegurar que el zoom no sea demasiado pequeño
+    zoom = zoom.clamp(10.0, 15.0);
+    debugPrint('Nuevo zoom calculado: $zoom');
+
+    debugPrint(
+      'Moviendo cámara a posición: ${state.currentPosition!.latitude}, ${state.currentPosition!.longitude} con zoom: $zoom',
+    );
+    // En flutter_map, movemos la cámara directamente a una posición y zoom
+    mapController!.move(
+      LatLng(
+        state.currentPosition!.latitude,
+        state.currentPosition!.longitude,
+      ),
+      zoom,
+    );
+    debugPrint('Cámara movida correctamente');
+
+    // Forzar una actualización del círculo de cobertura
+    debugPrint(
+      'Forzando actualización del círculo de cobertura desde _updateCameraZoomForRadius',
+    );
+    _updateCoverageCircle();
   }
 
   // Método para mostrar todas las oficinas
@@ -813,9 +919,28 @@ class LocationController extends ChangeNotifier {
     // Ajustar el zoom para mostrar todas las oficinas
     if (mapController != null && allOffices.isNotEmpty) {
       final bounds = _getBoundsForOffices(allOffices);
-      mapController!.animateCamera(
-        CameraUpdate.newLatLngBounds(bounds, 50.0),
+
+      // En flutter_map, necesitamos calcular el centro y el zoom manualmente
+      // ya que MapController no tiene método fitBounds
+      final center = LatLng(
+        (bounds.northEast.latitude + bounds.southWest.latitude) / 2,
+        (bounds.northEast.longitude + bounds.southWest.longitude) / 2,
       );
+
+      // Calcular un zoom aproximado basado en los límites
+      // Esto es una aproximación simple
+      final latDiff =
+          (bounds.northEast.latitude - bounds.southWest.latitude).abs();
+      final lngDiff =
+          (bounds.northEast.longitude - bounds.southWest.longitude).abs();
+      final maxDiff = latDiff > lngDiff ? latDiff : lngDiff;
+
+      // Fórmula aproximada para calcular el zoom
+      final zoom =
+          14.0 - (maxDiff * 30); // Ajustar este factor según sea necesario
+
+      // Mover la cámara al centro calculado con el zoom apropiado
+      mapController!.move(center, zoom.clamp(10.0, 15.0));
     }
   }
 
@@ -840,8 +965,8 @@ class LocationController extends ChangeNotifier {
     maxLng += 0.1;
 
     return LatLngBounds(
-      southwest: LatLng(minLat, minLng),
-      northeast: LatLng(maxLat, maxLng),
+      LatLng(minLat, minLng),
+      LatLng(maxLat, maxLng),
     );
   }
 
