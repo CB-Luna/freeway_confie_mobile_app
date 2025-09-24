@@ -101,8 +101,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
   Widget _buildAppInfoCard(BuildContext context) {
     // Información de la aplicación
     const appVersion = '1.0.0';
-    const buildNumber = '32';
-    final buildDate = '09/11/2025';
+    const buildNumber = '33';
+    final buildDate = '24/11/2025';
 
     return Card(
       elevation: 2,
@@ -229,7 +229,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
                   MaterialPageRoute(
                     builder: (context) => WebViewPage(
                       url: '${urlBaseEmbed}terms-of-use/',
-                      title: context.translate('profile.appInfoPage.termsAndConditions'),
+                      title: context
+                          .translate('profile.appInfoPage.termsAndConditions'),
                     ),
                   ),
                 );
@@ -250,7 +251,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
                   MaterialPageRoute(
                     builder: (context) => WebViewPage(
                       url: '${urlBaseEmbed}privacy-policy/',
-                      title: context.translate('profile.appInfoPage.privacyPolicy'),
+                      title: context
+                          .translate('profile.appInfoPage.privacyPolicy'),
                     ),
                   ),
                 );
