@@ -329,6 +329,7 @@ class SignUpPageState extends State<SignUpPage> {
                   Stack(
                     children: [
                       CountryPhoneSelector(
+                        showDropDownIcon: false,
                         phoneController: _phoneController,
                         labelText: context.translate('auth.phoneNumber'),
                         helperText: context.translate('auth.phoneNumberHelper'),

@@ -17,6 +17,7 @@ class CountryPhoneSelector extends StatefulWidget {
   final ValueChanged<CountryPhoneModel> onCountryChanged;
   final bool showFlag;
   final bool enabled;
+  final bool showDropDownIcon;
 
   const CountryPhoneSelector({
     required this.phoneController,
@@ -29,6 +30,7 @@ class CountryPhoneSelector extends StatefulWidget {
     this.errorText,
     this.showFlag = true,
     this.enabled = true,
+    this.showDropDownIcon = true,
   });
 
   @override
@@ -311,7 +313,9 @@ class _CountryPhoneSelectorState extends State<CountryPhoneSelector> {
                         fontSize: responsiveFontSizes.bodyLarge(context),
                       ),
                     ),
-                    const Icon(Icons.arrow_drop_down),
+                    widget.showDropDownIcon
+                        ? const Icon(Icons.arrow_drop_down)
+                        : const SizedBox(width: 4),
                     const SizedBox(width: 4),
                     Container(
                       height: 24,
