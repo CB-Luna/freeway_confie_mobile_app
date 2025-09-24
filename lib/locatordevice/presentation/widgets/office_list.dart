@@ -572,7 +572,7 @@ class OfficeListItem extends StatelessWidget {
                     } else {
                       // URL para Google Maps (Android y otros)
                       url =
-                          '$envThirdsPartyGoogleMap/search/?api=1&query=$lat,$lng';
+                          '${envThirdsPartyGoogleMap}search/?api=1&query=$lat,$lng';
                     }
 
                     // Abrir la URL
