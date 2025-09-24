@@ -152,6 +152,33 @@ class _OfficeListState extends State<OfficeList> {
                 itemCount: widget.offices.length +
                     3, // +3: título, espacio/botón al final, y sección de búsqueda por zipcode
                 itemBuilder: (context, index) {
+                  if (widget.offices.isEmpty && index == 0) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 8.0),
+                          child: Text(
+                            context.translate('office.nearestOffice'),
+                            style: TextStyle(
+                              fontSize: responsiveFontSizes.bodyLarge(context),
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.getTextGreyColor(context),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          context.translate('office.noOfficesAvailable'),
+                          style: TextStyle(
+                            fontSize:
+                                responsiveFontSizes.bodyTextLocation(context),
+                            color: AppTheme.getTextGreyColor(context),
+                          ),
+                        ),
+                      ],
+                    );
+                  }
                   // Primer elemento es el título
                   if (index == 0) {
                     return Column(

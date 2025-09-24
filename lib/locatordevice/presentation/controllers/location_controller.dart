@@ -685,6 +685,8 @@ class LocationController extends ChangeNotifier {
 
       if (nearbyOffices.isEmpty) {
         _updateState(
+          offices: [],
+          nearbyOffices: [],
           isLoading: false,
           hasSearchedByZipCode: false,
           errorMessage:

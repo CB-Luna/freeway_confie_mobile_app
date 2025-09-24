@@ -8,7 +8,6 @@ import '../../../utils/menu/circle_nav_bar.dart';
 import '../../../widgets/homepage/header_section.dart';
 import '../controllers/location_controller.dart';
 import '../widgets/loading_view.dart';
-import '../widgets/location_error_view.dart';
 import '../widgets/map_buttons.dart';
 import '../widgets/office_list.dart';
 import '../widgets/zip_code_input_view.dart';
@@ -139,13 +138,6 @@ class _LocationDetailsViewContentState
       } else {
         return _buildNoPermissionContent(context, controller);
       }
-    }
-
-    if (controller.state.errorMessage != null) {
-      return LocationErrorView(
-        errorMessage: controller.state.errorMessage!,
-        onRetry: () => controller.retry(),
-      );
     }
 
     return _buildMainContent(context, controller);

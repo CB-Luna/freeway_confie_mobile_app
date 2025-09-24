@@ -99,7 +99,7 @@ const String envThirdsPartyGoogleMap = 'https://www.google.com/maps/';
 //   defaultValue: 'https://confie-wallet-api.azurewebsites.net',
 // );
 
-// const String apiKeyWallet = 'GfhGdjdx3rfGBBFkf';
+// const String apiKeyWallet = 'Hwsed7698FdhskG5lkkg';
 
 // /// <<<<<<<< Office Locations >>>>>>>>>
 
