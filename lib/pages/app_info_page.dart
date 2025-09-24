@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
+import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
@@ -221,7 +223,16 @@ class _AppInfoPageState extends State<AppInfoPage> {
             const SizedBox(height: 8),
             TextButton(
               onPressed: () {
-                // Implementar navegación a términos y condiciones
+                // Navegar a términos de uso usando WebViewPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewPage(
+                      url: '${urlBaseEmbed}terms-of-use/',
+                      title: context.translate('profile.appInfoPage.termsAndConditions'),
+                    ),
+                  ),
+                );
               },
               child: Text(
                 context.translate('profile.appInfoPage.termsAndConditions'),
@@ -233,7 +244,16 @@ class _AppInfoPageState extends State<AppInfoPage> {
             ),
             TextButton(
               onPressed: () {
-                // Implementar navegación a política de privacidad
+                // Navegar a política de privacidad usando WebViewPage
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WebViewPage(
+                      url: '${urlBaseEmbed}privacy-policy/',
+                      title: context.translate('profile.appInfoPage.privacyPolicy'),
+                    ),
+                  ),
+                );
               },
               child: Text(
                 context.translate('profile.appInfoPage.privacyPolicy'),

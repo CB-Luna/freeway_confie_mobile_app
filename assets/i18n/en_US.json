@@ -335,7 +335,7 @@
         "license": "License",
         "valueLicense": "Property",
         "copyright": "Copyright",
-        "termsAndConditions": "View Terms and Conditions",
+        "termsAndConditions": "View Terms of Use",
         "privacyPolicy": "View Privacy Policy",
         "close": "Close"
       },
@@ -385,7 +385,7 @@
       "license": "License",
       "valueLicense": "Property",
       "copyright": "Copyright",
-      "termsAndConditions": "View Terms and Conditions",
+      "termsAndConditions": "View Terms of Use",
       "privacyPolicy": "View Privacy Policy",
       "close": "Close"
     },
