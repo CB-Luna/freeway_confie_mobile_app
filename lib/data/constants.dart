@@ -105,10 +105,10 @@ const String envThirdsPartyGoogleMap = 'https://www.google.com/maps/';
 
 // const String envOffice = String.fromEnvironment(
 //   'env',
-//   defaultValue: 'https://stg-inquiry.confie.com',
+//   defaultValue: 'https://azinquiry-api.confie.com/StoreLocator',
 // );
 
-// const String apiKeyOffice = 'fjzzkOuCefd8-Z86i9HMGWQ=';
+// const String apiKeyOffice = '0yoZaSdIgj+i+ny4+1TBvw==';
 
 // /// <<<<<<<< Offices Map >>>>>>>>>
 // /// <<<<<<<< Thirds Party >>>>>>>>>
