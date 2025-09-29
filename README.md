@@ -68,3 +68,8 @@ Usuario 2
 
 - user: uzzielpalma99@gmail.com
 - password: Cbluna2025$
+
+Usuario 3
+
+- user: omar.neftali.rocha.gallaga@confie.com
+- password: Today2025!
