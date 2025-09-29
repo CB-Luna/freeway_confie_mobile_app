@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
+import 'package:freeway_app/utils/policy_logo_utils.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
+
 import '../../widgets/theme/app_theme.dart';
 
 class PolicyInactiveCard extends StatelessWidget {
@@ -19,10 +21,15 @@ class PolicyInactiveCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Usar policyNumber como número de póliza a mostrar
     final String displayNumber = policy?.policyNumber ?? policyNumber;
-    
+
     // Determinar el tipo de póliza basado en lineOfBusiness
-    final String policyType = policy?.lineOfBusiness != null ?
-        _getPolicyTypeFromLineOfBusiness(policy?.lineOfBusiness ?? '') : 'My Auto Policy';
+    final String policyType = policy?.lineOfBusiness != null
+        ? _getPolicyTypeFromLineOfBusiness(policy?.lineOfBusiness ?? '')
+        : 'My Auto Policy';
+
+    // Determinar si tenemos la imagen del logo de la póliza en assets
+    final bool freewayLogo =
+        policy?.programName.toLowerCase().contains('freeway') ?? false;
 
     return Card(
       margin: EdgeInsets.zero,
@@ -39,10 +46,14 @@ class PolicyInactiveCard extends StatelessWidget {
           children: [
             Row(
               children: [
-                Image.asset(
-                  'assets/home/icons/icon-car-1.png',
-                  width: 48,
-                  height: 48,
+                // Logo - Verificar si existe un logo específico para la póliza
+                PolicyLogoUtils.getPolicyLogo(
+                  context,
+                  policy?.carrierLogoUrl,
+                  width: MediaQuery.of(context).size.width * 0.2,
+                  height: freewayLogo
+                      ? MediaQuery.of(context).size.width * 0.1
+                      : MediaQuery.of(context).size.width * 0.05,
                 ),
                 const SizedBox(width: 16),
                 Column(
@@ -133,7 +144,7 @@ class PolicyInactiveCard extends StatelessWidget {
       ),
     );
   }
-  
+
   // Método para obtener el tipo de póliza basado en lineOfBusiness
   String _getPolicyTypeFromLineOfBusiness(String lineOfBusiness) {
     switch (lineOfBusiness.toLowerCase()) {

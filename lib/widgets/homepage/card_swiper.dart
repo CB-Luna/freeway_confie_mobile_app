@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_card_swiper/flutter_card_swiper.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/user_model.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
@@ -27,13 +26,28 @@ class CardSwiperSection extends StatefulWidget {
 }
 
 class _CardSwiperSectionState extends State<CardSwiperSection> {
-  final CardSwiperController controller = CardSwiperController();
   int currentIndex = 0;
   bool _isDisposed = false;
+  PageController? _pageController;
+  
+  // Número muy grande para simular un carrusel infinito
+  static const int _infinitePageCount = 10000;
+  
+  // Método para obtener la página inicial que siempre comience en la primera tarjeta
+  int _getInitialPage(int cardCount) {
+    if (cardCount == 0) return _infinitePageCount ~/ 2;
+    // Encontrar un múltiplo del número de tarjetas cerca del medio del rango
+    final middle = _infinitePageCount ~/ 2;
+    final remainder = middle % cardCount;
+    // Ajustar para que sea múltiplo exacto (índice 0)
+    return middle - remainder;
+  }
 
   @override
   void initState() {
     super.initState();
+    debugPrint('==== INICIALIZANDO CARD SWIPER ====');
+    // El PageController se inicializará en _buildCardSwiper cuando sepamos cuántas tarjetas hay
     // Usar Future.microtask para programar la carga después de que se complete el build
     Future.microtask(() => _loadPolicies());
   }
@@ -60,7 +74,7 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
   @override
   void dispose() {
     _isDisposed = true;
-    controller.dispose();
+    _pageController?.dispose();
     super.dispose();
   }
 
@@ -274,40 +288,54 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
               : cards.length == 1
                   // Si solo hay una tarjeta, mostrarla directamente sin efecto de swipe
                   ? cards[0]
-                  // Si hay múltiples tarjetas, usar el CardSwiper
+                  // Si hay múltiples tarjetas, usar PageView para navegación bidireccional intuitiva con carrusel infinito
                   : SizedBox(
-                      // Definir una altura explícita para el CardSwiper
+                      // Definir una altura explícita para el PageView
                       height: 220, // Altura aproximada de una tarjeta de póliza
-                      child: CardSwiper(
-                        controller: controller,
-                        cardsCount: cards.length,
-                        onSwipe: (previousIndex, currentIndex, direction) {
-                          setState(() {
-                            this.currentIndex =
-                                (currentIndex ?? 0) % cards.length;
-                          });
-                          return true;
+                      child: Builder(
+                        builder: (context) {
+                          // Inicializar el PageController si aún no existe
+                          if (_pageController == null) {
+                            final initialPage = _getInitialPage(cards.length);
+                            _pageController = PageController(
+                              initialPage: initialPage,
+                            );
+                            debugPrint('PageController inicializado con página: $initialPage');
+                            debugPrint('Total de tarjetas: ${cards.length}');
+                            debugPrint('Índice inicial calculado: ${initialPage % cards.length}');
+                          }
+                          
+                          return PageView.builder(
+                            controller: _pageController!,
+                            // Usar un número muy grande para simular infinito
+                            itemCount: _infinitePageCount,
+                            onPageChanged: (virtualIndex) {
+                              final int newActualIndex = virtualIndex % cards.length;
+                              debugPrint('\n==== PAGE CHANGED ====');
+                              debugPrint('Índice virtual: $virtualIndex');
+                              debugPrint('Total de tarjetas: ${cards.length}');
+                              debugPrint('Índice real calculado: $newActualIndex');
+                              debugPrint('Índice anterior: $currentIndex');
+                              setState(() {
+                                // Calcular el índice real usando módulo
+                                currentIndex = newActualIndex;
+                              });
+                              debugPrint('Nuevo índice actual: $currentIndex');
+                            },
+                            itemBuilder: (context, virtualIndex) {
+                              // Calcular el índice real de la tarjeta usando módulo
+                              final int actualIndex = virtualIndex % cards.length;
+                              debugPrint('Building card - Virtual index: $virtualIndex, Actual index: $actualIndex');
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 5.0,
+                                ),
+                                child: cards[actualIndex],
+                              );
+                            },
+                          );
                         },
-                        cardBuilder: (
-                          context,
-                          index,
-                          percentThresholdX,
-                          percentThresholdY,
-                        ) =>
-                            SizedBox(
-                          width: double.infinity,
-                          child: cards[index % cards.length],
-                        ),
-                        allowedSwipeDirection:
-                            const AllowedSwipeDirection.symmetric(
-                          horizontal: true,
-                        ),
-                        isLoop: true,
-                        padding: const EdgeInsets.all(0),
-                        scale: 0.0,
-                        backCardOffset: const Offset(0, 0),
-                        numberOfCardsDisplayed: 1,
-                        duration: const Duration(milliseconds: 300),
                       ),
                     ),
         ),
