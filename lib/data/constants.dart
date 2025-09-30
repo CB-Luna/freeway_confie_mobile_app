@@ -105,7 +105,7 @@ const String envThirdsPartyGoogleMap = 'https://www.google.com/maps/';
 
 // const String envOffice = String.fromEnvironment(
 //   'env',
-//   defaultValue: 'https://azinquiry-api.confie.com/StoreLocator',
+//   defaultValue: 'https://inquiry.confie.com',
 // );
 
 // const String apiKeyOffice = '0yoZaSdIgj+i+ny4+1TBvw==';
