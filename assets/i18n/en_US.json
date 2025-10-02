@@ -39,7 +39,7 @@
     "pleaseEnterValidEmail": "Please enter a valid email",
     "pleaseEnterPasswordSignup": "Please enter your password",
     "forgotPasswordTitle": "Password Recovery",
-    "forgotPasswordInstructions": "Enter your email address and we'll send you a verification code to reset your password.",
+    "forgotPasswordInstructions": "Enter your phone number or email address and we'll send you a verification code to reset your password",
     "resetPasswordButton": "Reset Password",
     "resetPasswordSent": "Code Sent",
     "resetPasswordEmailSent": "A verification code has been sent to your email.",
@@ -125,7 +125,8 @@
       "nextPayment": "Next Payment",
       "idCard": "ID Card",
       "submitClaim": "Submit Claim",
-      "payNow": "Pay Now"
+      "payNow": "Pay Now",
+      "renewPolicy": "Call us to Renew Your Policy"
     },
     "notifications": {
       "title": "Notifications",

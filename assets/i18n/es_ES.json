@@ -20,7 +20,7 @@
     "pleaseEnterUsername": "Por favor, ingresa tu correo electrónico",
     "pleaseEnterPassword": "Por favor, ingresa tu contraseña",
     "forgotPasswordTitle": "Recuperación de Contraseña",
-    "forgotPasswordInstructions": "Ingresa tu correo electrónico y te enviaremos un código de verificación para restablecer tu contraseña.",
+    "forgotPasswordInstructions": "Ingresa tu número de teléfono o correo electrónico y te enviaremos un código de verificación para restablecer tu contraseña.",
     "resetPasswordButton": "Restablecer Contraseña",
     "resetPasswordSent": "Código Enviado",
     "resetPasswordEmailSent": "Un código de verificación ha sido enviado a tu correo.",
@@ -124,7 +124,8 @@
       "nextPayment": "Próximo Pago",
       "idCard": "Tarjeta ID",
       "submitClaim": "Enviar Reclamo",
-      "payNow": "Pagar"
+      "payNow": "Pagar",
+      "renewPolicy": "Llamar Para Renovar Tu Póliza"
     },
     "notifications": {
       "title": "Notificaciones",

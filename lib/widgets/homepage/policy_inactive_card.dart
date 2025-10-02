@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:freeway_app/data/models/auth/policy_model.dart';
+import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/policy_logo_utils.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
+import 'package:freeway_app/widgets/contactcenter/request_call.dart';
 
 import '../../widgets/theme/app_theme.dart';
 
@@ -21,11 +23,6 @@ class PolicyInactiveCard extends StatelessWidget {
   Widget build(BuildContext context) {
     // Usar policyNumber como número de póliza a mostrar
     final String displayNumber = policy?.policyNumber ?? policyNumber;
-
-    // Determinar el tipo de póliza basado en lineOfBusiness
-    final String policyType = policy?.lineOfBusiness != null
-        ? _getPolicyTypeFromLineOfBusiness(policy?.lineOfBusiness ?? '')
-        : 'My Auto Policy';
 
     // Determinar si tenemos la imagen del logo de la póliza en assets
     final bool freewayLogo =
@@ -60,7 +57,7 @@ class PolicyInactiveCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      policyType,
+                      '${policy?.lineOfBusiness}',
                       style: TextStyle(
                         fontSize: responsiveFontSizes.policyCardTitle(context),
                         fontWeight: FontWeight.bold,
@@ -89,22 +86,22 @@ class PolicyInactiveCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
-                    color: Colors.red.withAlpha(50),
+                    color: AppTheme.getRedColor(context).withAlpha(50),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.cancel,
-                        color: Colors.red,
+                        color: AppTheme.getRedColor(context),
                         size: 16,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         'Inactive',
                         style: TextStyle(
-                          color: Colors.red,
+                          color: AppTheme.getRedColor(context),
                           fontWeight: FontWeight.w500,
                           fontSize: responsiveFontSizes.button(context),
                         ),
@@ -121,7 +118,12 @@ class PolicyInactiveCard extends StatelessWidget {
               height: 50,
               child: ElevatedButton(
                 onPressed: () {
-                  // Acción para renovar la póliza
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const RequestCallPage(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.getGreenColor(context),
@@ -130,9 +132,9 @@ class PolicyInactiveCard extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Renew Policy',
+                  context.translate('home.policyCard.renewPolicy'),
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppTheme.white,
                     fontSize: responsiveFontSizes.bodyMedium(context),
                     fontWeight: FontWeight.bold,
                   ),
@@ -143,19 +145,5 @@ class PolicyInactiveCard extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  // Método para obtener el tipo de póliza basado en lineOfBusiness
-  String _getPolicyTypeFromLineOfBusiness(String lineOfBusiness) {
-    switch (lineOfBusiness.toLowerCase()) {
-      case 'auto':
-        return 'My Auto Policy';
-      case 'home':
-        return 'My Home Policy';
-      case 'roadside':
-        return 'Roadside Assistance';
-      default:
-        return 'My Policy';
-    }
   }
 }
