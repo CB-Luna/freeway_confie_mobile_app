@@ -17,7 +17,7 @@ class AuthService {
 
   AuthService() : _dio = ApiClient.createDio();
 
-  // Método principal de login (ahora sin 2FA activo)
+  // Método principal de login - Paso 1: enviar credenciales
   Future<LoginResponse> loginStep1(String username, String password) async {
     try {
       final response = await _dio.post(
@@ -34,9 +34,11 @@ class AuthService {
       );
 
       // Imprimir la respuesta para depuración
-      debugPrint('API Response: ${response.data}');
+      debugPrint('API Response loginStep1: ${response.data}');
 
-      // Ahora la API devuelve directamente un token en lugar de requerir 2FA
+      // La API puede devolver:
+      // 1. requiresTwoFactor: true (requiere código 2FA)
+      // 2. token directamente (login exitoso sin 2FA)
       try {
         return LoginResponse.fromJson(response.data);
       } catch (parseError) {
@@ -55,15 +57,20 @@ class AuthService {
     }
   }
 
-  // Mantenemos este método para uso futuro cuando se reactive el 2FA
-  // Actualmente no se utiliza, pero se mantiene la estructura
-  Future<LoginResponse> loginStep2(String twoFactorCode) async {
+  // Paso 2: enviar código 2FA junto con las credenciales
+  Future<LoginResponse> loginStep2(
+    String username,
+    String password,
+    String twoFactorCode,
+  ) async {
     try {
-      // NOTA: Este método no se usa actualmente ya que el 2FA está desactivado
-      // Se mantiene para implementación futura
+      debugPrint('Enviando código 2FA: $twoFactorCode');
+      
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
+          username: username,
+          password: password,
           twoFactorCode: twoFactorCode,
         ).toJson(),
         options: Options(
@@ -73,11 +80,16 @@ class AuthService {
         ),
       );
 
+      debugPrint('API Response loginStep2: ${response.data}');
       return LoginResponse.fromJson(response.data);
     } on DioException catch (e) {
+      // Manejar específicamente el error 401 para código inválido
+      if (e.response?.statusCode == 401) {
+        debugPrint('Código 2FA inválido o credenciales incorrectas');
+      }
       throw ApiError.fromDioError(e);
     } catch (e) {
-      throw ApiError(message: e.toString());
+      throw ApiError(message: 'Error en loginStep2: ${e.toString()}');
     }
   }
 

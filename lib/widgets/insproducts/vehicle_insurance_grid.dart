@@ -527,25 +527,25 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           break;
         case 'motorcycle':
           urlString =
-              '$urlBaseEmbedSeguros/cotizacion-seguro-de-moto/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/motorcycle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.motorcycle')} - $placeName, $stateAbbreviation';
           break;
         case 'motorhome':
           urlString =
-              '$urlBaseEmbedSeguros/cotizacion-seguro-de-casa-rodante/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/motorhome-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.motorhome')} - $placeName, $stateAbbreviation';
           break;
         case 'rv_motorhome':
           urlString =
-              '$urlBaseEmbedSeguros/cotizacion-seguro-de-casa-movil-y-casa-prefabricada/?zipCodeForm=$zipCode&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/mobile-home-insurance-quote/?zipCodeForm=$zipCode&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.rvMotorhome')} - $placeName, $stateAbbreviation';
           break;
         case 'snowmobile':
           urlString =
-              '$urlBaseEmbedSeguros/cotizacion-seguro-para-moto-de-nieve/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedSeguros/snowmobile-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.snowmobile')} - $placeName, $stateAbbreviation';
           break;

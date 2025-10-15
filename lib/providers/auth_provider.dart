@@ -34,15 +34,18 @@ class AuthProvider with ChangeNotifier {
       _requiresTwoFactor; // Se mantiene para uso futuro
   String? get authToken => _authToken;
 
-  // Método principal de login (ahora sin 2FA activo)
-  Future<bool> loginStep1(String username, String password) async {
+  // Método principal de login - Paso 1: enviar credenciales
+  Future<bool> loginStep1(
+    String username,
+    String password,
+    BuildContext context,
+  ) async {
     try {
       _errorMessage = null;
-      _requiresTwoFactor =
-          false; // Siempre será falso mientras el 2FA esté desactivado
+      _requiresTwoFactor = false;
       debugPrint('AuthProvider - Iniciando login para usuario: $username');
 
-      // Guardar credenciales temporalmente para uso futuro
+      // Guardar credenciales temporalmente para uso en el paso 2 si es necesario
       _lastUsername = username;
       _lastPassword = password;
 
@@ -54,59 +57,106 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      // Ya no verificamos requiresTwoFactor porque la API ahora devuelve directamente el token
-      return await _completeLogin(response);
+      // Verificar si la API requiere autenticación de dos factores
+      if (response.requiresTwoFactor == true) {
+        debugPrint('AuthProvider - Se requiere autenticación de dos factores');
+        _requiresTwoFactor = true;
+        notifyListeners();
+        return true; // Retornar true para indicar que el paso 1 fue exitoso
+      }
+
+      // Si no requiere 2FA, completar el login directamente
+      return await _completeLogin(response, context);
     } on ApiError catch (e) {
       // Mejorar el mensaje de error para credenciales incorrectas
       if (e.statusCode == 401 ||
           e.message.toLowerCase().contains('no autorizado') ||
           e.message.toLowerCase().contains('unauthorized')) {
-        // Usar la traducción para el mensaje de credenciales incorrectas
-        // El contexto no está disponible aquí, así que usamos un mensaje estático
-        // que será mostrado en la interfaz de usuario
-        _errorMessage = 'auth.incorrectCredentials';
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.incorrectCredentials');
+        }
       } else {
-        _errorMessage = e.message;
+        if (context.mounted) {
+          _errorMessage =
+              context.translateWithArgs('auth.loginError', args: [e.message]);
+        }
       }
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
+      if (context.mounted) {
+        _errorMessage =
+            context.translateWithArgs('auth.loginError', args: [e.toString()]);
+      }
       notifyListeners();
       return false;
     }
   }
 
-  // Mantenemos este método para uso futuro cuando se reactive el 2FA
-  // Actualmente no se utiliza, pero se mantiene la estructura
-  Future<bool> loginStep2(String twoFactorCode) async {
+  // Paso 2: enviar código 2FA junto con las credenciales guardadas
+  Future<bool> loginStep2(String twoFactorCode, BuildContext context) async {
     try {
       _errorMessage = null;
 
-      // NOTA: Este método no se usa actualmente ya que el 2FA está desactivado
-      // Se mantiene para implementación futura
-      final response = await _authService.loginStep2(twoFactorCode);
-
-      if (response.hasErrors) {
-        _errorMessage = response.errorMessage;
+      // Verificar que tengamos las credenciales guardadas del paso 1
+      if (_lastUsername == null || _lastPassword == null) {
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.sessionExpired');
+        }
         notifyListeners();
         return false;
       }
 
-      return await _completeLogin(response);
+      debugPrint('AuthProvider - Enviando código 2FA');
+      final response = await _authService.loginStep2(
+        _lastUsername!,
+        _lastPassword!,
+        twoFactorCode,
+      );
+
+      if (response.hasErrors) {
+        if (context.mounted) {
+          _errorMessage = context.translateWithArgs(
+            'auth.loginError',
+            args: [response.errors.map((e) => e.message).join(', ')],
+          );
+        }
+        notifyListeners();
+        return false;
+      }
+
+      // Completar el login con la respuesta del paso 2
+
+      return await _completeLogin(response, context);
     } on ApiError catch (e) {
-      _errorMessage = e.message;
+      // Manejar específicamente el error 401 para código inválido
+      if (e.statusCode == 401) {
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.invalidTwoFactorCode');
+        }
+      } else {
+        if (context.mounted) {
+          _errorMessage =
+              context.translateWithArgs('auth.loginError', args: [e.message]);
+        }
+      }
       notifyListeners();
       return false;
     } catch (e) {
-      _errorMessage = 'Error inesperado: $e';
+      if (context.mounted) {
+        _errorMessage =
+            context.translateWithArgs('auth.loginError', args: [e.toString()]);
+      }
       notifyListeners();
       return false;
     }
   }
 
   // Método privado para completar el proceso de login
-  Future<bool> _completeLogin(LoginResponse response) async {
+  Future<bool> _completeLogin(
+    LoginResponse response,
+    BuildContext context,
+  ) async {
     try {
       // Guardar el token de autenticación
       _authToken = response.token;
@@ -162,7 +212,9 @@ class AuthProvider with ChangeNotifier {
         );
       } else {
         // Devolver false en caso de que no se pueda obtener la información del usuario y un mensaje de error
-        _errorMessage = 'No se pudo obtener la información del usuario';
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.failedToRetrieveUser');
+        }
         notifyListeners();
         return false;
       }
@@ -212,15 +264,22 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _errorMessage = 'Error al completar el login: $e';
+      if (context.mounted) {
+        _errorMessage =
+            context.translateWithArgs('auth.loginError', args: [e.toString()]);
+      }
       notifyListeners();
       return false;
     }
   }
 
   // Método de compatibilidad para el login antiguo
-  Future<bool> login(String username, String password) async {
-    return await loginStep1(username, password);
+  Future<bool> login(
+    String username,
+    String password,
+    BuildContext context,
+  ) async {
+    return await loginStep1(username, password, context);
   }
 
   /// Método para formatear números telefónicos
@@ -335,7 +394,10 @@ class AuthProvider with ChangeNotifier {
         );
         if (context.mounted) {
           // Usar el mensaje de error tal como viene del servidor
-          _errorMessage = response.errorMessage;
+          _errorMessage = context.translateWithArgs(
+            'auth.signUpError',
+            args: [response.errorMessage],
+          );
           notifyListeners();
         }
         return false;
@@ -343,7 +405,7 @@ class AuthProvider with ChangeNotifier {
 
       debugPrint('Registro exitoso, intentando login automático');
       // Si el registro fue exitoso, iniciar sesión automáticamente
-      final loginSuccess = await login(email, password);
+      final loginSuccess = await login(email, password, context);
 
       if (!loginSuccess) {
         debugPrint('Login automático después del registro falló');
@@ -490,19 +552,24 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Inicia sesión usando las credenciales guardadas
-  Future<bool> loginWithSavedCredentials() async {
+  Future<bool> loginWithSavedCredentials(BuildContext context) async {
     try {
       final username = await _secureStorage.read(key: _usernameKey);
       final password = await _secureStorage.read(key: _passwordKey);
 
       if (username == null || password == null) {
-        _errorMessage = 'No hay credenciales guardadas';
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.noCredentialsSaved');
+        }
         return false;
       }
 
-      return await login(username, password);
+      return await login(username, password, context);
     } catch (e) {
-      _errorMessage = 'Error while retrieving credentials: $e';
+      if (context.mounted) {
+        _errorMessage =
+            context.translateWithArgs('auth.loginError', args: [e.toString()]);
+      }
       return false;
     }
   }

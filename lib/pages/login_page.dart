@@ -1,7 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
@@ -9,6 +11,7 @@ import 'package:provider/provider.dart';
 
 import '../providers/auth_provider.dart';
 import '../providers/biometric_provider.dart';
+import '../widgets/auth/two_factor_dialog.dart';
 import '../widgets/theme/app_theme.dart';
 import 'forgot_password_page.dart';
 import 'signup_page.dart';
@@ -101,7 +104,8 @@ class LoginPageState extends State<LoginPage> {
         });
 
         // Obtener las credenciales guardadas y hacer login
-        final loginSuccess = await authProvider.loginWithSavedCredentials();
+        final loginSuccess =
+            await authProvider.loginWithSavedCredentials(context);
 
         setState(() {
           _isLoading = false;
@@ -466,6 +470,50 @@ class LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
+                            TextButton(
+                              onPressed: () async {
+                                // Preparar datos del usuario para pasar a los formularios
+                                final Map<String, String> userData = {
+                                  'firstName': 'Uzziel',
+                                  'lastName': 'Palma',
+                                  'email': 'uzzielpalma99@gmail.com',
+                                  'phone': '5523216431',
+                                  'zipCode': '91911',
+                                  'city': 'California',
+                                  'state': 'CA',
+                                  'street':
+                                      'Lomas Altas, California no 34 Main',
+                                };
+
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => WebViewPage(
+                                      url:
+                                          '${urlBaseEmbedBuyProduct}auto-club/step-1',
+                                      title: 'Freeway Auto Club',
+                                      userData: userData,
+                                      formType: 'auto_club',
+                                    ),
+                                  ),
+                                );
+                              },
+                              style: TextButton.styleFrom(
+                                foregroundColor:
+                                    AppTheme.getPrimaryColor(context),
+                                padding: EdgeInsets.zero,
+                                minimumSize: Size.zero,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              ),
+                              child: Text(
+                                'Testing',
+                                style: TextStyle(
+                                  fontSize:
+                                      responsiveFontSizes.bodyMedium(context),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 16),
@@ -485,27 +533,33 @@ class LoginPageState extends State<LoginPage> {
       final authProvider = context.read<AuthProvider>();
       bool success;
 
-      // Actualmente solo usamos loginStep1 ya que el 2FA está desactivado
-      // pero mantenemos la estructura para uso futuro
+      // Paso 1: Enviar credenciales
       // Aseguramos que el email siempre se envíe en minúsculas
       final email = _usernameController.text.toLowerCase();
       success = await authProvider.loginStep1(
         email,
         _passwordController.text,
+        context,
       );
 
-      // Esta condición nunca se cumplirá mientras el 2FA esté desactivado
-      // Se mantiene para uso futuro
+      // Verificar si se requiere autenticación de dos factores
       if (success && authProvider.requiresTwoFactor) {
-        // Código comentado para uso futuro cuando se reactive el 2FA
-        /*
-        setState(() {
-          _showTwoFactorInput = true;
-          _isLoading = false;
-        });
-        return; // Detener el proceso para esperar el código 2FA
-        */
+        setState(() => _isLoading = false);
+
+        // Mostrar diálogo para ingresar código 2FA
+        final twoFactorCode = await TwoFactorDialog.show(context: context);
+
+        // Si el usuario canceló el diálogo, salir
+        if (twoFactorCode == null || !mounted) {
+          return;
+        }
+
+        // Paso 2: Enviar código 2FA
+        setState(() => _isLoading = true);
+        success = await authProvider.loginStep2(twoFactorCode, context);
       }
+
+      setState(() => _isLoading = false);
 
       // Si el login fue exitoso y la biometría está disponible y habilitada, guardar las credenciales
       if (success && _isBiometricAvailable && _isBiometricEnabled) {
@@ -515,8 +569,6 @@ class LoginPageState extends State<LoginPage> {
           _passwordController.text,
         );
       }
-
-      setState(() => _isLoading = false);
 
       if (success && mounted) {
         // Verificar si la biometría está disponible pero no habilitada

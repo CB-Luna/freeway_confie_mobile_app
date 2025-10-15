@@ -11,9 +11,6 @@ class LoginResponse {
   final String? token;
   final CustomerModel? customer;
   final List<PolicyModel> policies;
-  // Campo mantenido para compatibilidad con el código existente
-  // pero ya no se usa activamente ya que el 2FA está temporalmente desactivado
-  @Deprecated('Campo obsoleto, no se utiliza activamente')
   final bool requiresTwoFactor;
   final List<ErrorModel> errors;
 
@@ -50,9 +47,7 @@ class LoginResponse {
           ? CustomerModel.fromJson(json['customer'] as Map<String, dynamic>)
           : null,
       policies: policiesList,
-      // El campo requiresTwoFactor ya no viene en la respuesta de la API
-      // siempre será false mientras el 2FA esté desactivado
-      requiresTwoFactor: false,
+      requiresTwoFactor: json['requiresTwoFactor'] ?? false,
       errors: errorsList,
     );
   }

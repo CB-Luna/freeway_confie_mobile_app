@@ -31,13 +31,13 @@ void main() {
   };
 
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Configurar modo inmersivo para Android (ocultar controles de navegación del sistema)
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
     overlays: [SystemUiOverlay.top],
   );
-  
+
   // Configurar color transparente para la barra de estado
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
