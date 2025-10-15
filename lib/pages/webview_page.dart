@@ -25,6 +25,7 @@ class WebViewPage extends StatefulWidget {
 class _WebViewPageState extends State<WebViewPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
+  bool _isFormFillingComplete = false; // Nueva variable de estado
 
   @override
   void initState() {
@@ -36,6 +37,8 @@ class _WebViewPageState extends State<WebViewPage> {
           onPageStarted: (String url) {
             setState(() {
               _isLoading = true;
+              _isFormFillingComplete =
+                  false; // Reiniciar al iniciar nueva página
             });
           },
           onPageFinished: (String url) async {
@@ -45,14 +48,23 @@ class _WebViewPageState extends State<WebViewPage> {
             // Si tenemos datos de usuario, intentamos prellenar el formulario
             if (widget.userData != null) {
               await _injectFormFillingScript();
+              setState(() {
+                _isFormFillingComplete =
+                    true; // El script de llenado ha terminado
+              });
+            } else {
+              // Si no hay datos de usuario, consideramos que el llenado "ha terminado"
+              setState(() {
+                _isFormFillingComplete = true;
+              });
             }
 
-            setState(() {
-              _isLoading = false;
-            });
-
-            // Comentado: Este método estaba bloqueando la navegación normal de botones "Back to Form"
-            // await _injectBackButtonHandler();
+            // Solo ocultar el loading cuando la página esté cargada Y el llenado del formulario haya terminado
+            if (_isFormFillingComplete) {
+              setState(() {
+                _isLoading = false;
+              });
+            }
           },
           onNavigationRequest: (NavigationRequest request) async {
             // Actualizar el estado de navegación después de cada cambio de URL
@@ -180,7 +192,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 // Selectores específicos para el formulario de motocicleta
                 fillField(['#form_insurance_your_first_name', '.firstName', 'input[name="lead[first_name]"]'], userData.firstName);
                 fillField(['#form_insurance_your_last_name', '.lastName', 'input[name="lead[last_name]"]'], userData.lastName);
-                fillField(['#form_insurance_street_address', '.address', 'input[name="lead[street]"]'], userData.stree);
+                fillField(['#form_insurance_street_address', '.address', 'input[name="lead[street]"]'], userData.street); // Corregido: userData.stree a userData.street
                 
                 // Activar cualquier evento necesario después de rellenar
                 const inputs = document.querySelectorAll('#form_insurance_your_first_name, #form_insurance_your_last_name, #form_insurance_street_address');
@@ -476,70 +488,6 @@ class _WebViewPageState extends State<WebViewPage> {
     }
   }
 
-  // COMENTADO: Este método estaba bloqueando la navegación normal de botones "Back to Form"
-  // El problema era que interceptaba TODOS los botones con texto "back" y prevenía su comportamiento por defecto
-  // Esto causaba que botones legítimos de la página web no funcionaran correctamente
-  /*
-  Future<void> _injectBackButtonHandler() async {
-    // Script para interceptar el botón Back de la página
-    const script = '''
-      (function() {
-        // Interceptar el evento de clic en el botón Back de la página
-        document.addEventListener('click', function(event) {
-          // Buscar botones de "back", "return", "volver", etc.
-          if (event.target && 
-              (event.target.tagName === 'BUTTON' || 
-               event.target.tagName === 'A' || 
-               event.target.parentElement && event.target.parentElement.tagName === 'BUTTON' || 
-               event.target.parentElement && event.target.parentElement.tagName === 'A')) {
-            
-            var element = event.target;
-            var text = element.innerText || element.textContent || '';
-            var href = element.href || (element.parentElement ? element.parentElement.href : '');
-            text = text.toLowerCase();
-            
-            // Si es un botón de retorno o tiene una clase que lo identifique como tal
-            if (text.includes('back') || 
-                text.includes('return') || 
-                text.includes('volver') || 
-                text.includes('regresar') || 
-                text.includes('atrás') ||
-                (element.className && 
-                 (element.className.includes('back') || 
-                  element.className.includes('return')))) {
-              
-              // En lugar de usar un handler, simplemente usamos history.back()
-              // que es compatible con WebViewController
-              window.history.back();
-              
-              // Prevenir la navegación por defecto
-              event.preventDefault();
-              event.stopPropagation();
-              return false;
-            }
-          }
-        }, true);
-        
-        // También interceptar el evento popstate (cuando se presiona el botón back del navegador)
-        window.addEventListener('popstate', function(event) {
-          // No necesitamos hacer nada especial aquí, ya que el navegador manejará esto
-          // y el WebViewController detectará el cambio
-          console.log('Popstate event detected');
-        });
-        
-        console.log('Back button handler injected successfully');
-      })();
-    ''';
-
-    try {
-      await _controller.runJavaScript(script);
-      debugPrint('Script de manejo de botón Back inyectado correctamente');
-    } catch (e) {
-      debugPrint('Error al inyectar el manejador de botón Back: $e');
-    }
-  }
-  */
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -578,7 +526,7 @@ class _WebViewPageState extends State<WebViewPage> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading)
+          if (_isLoading) // Ahora _isLoading se basa en _isFormFillingComplete también
             Center(
               child: LoadingView(
                 message: context.translate('common.loading'),
