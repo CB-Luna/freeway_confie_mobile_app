@@ -1,9 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
-import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
@@ -463,50 +461,6 @@ class LoginPageState extends State<LoginPage> {
                               ),
                               child: Text(
                                 context.translate('auth.createAccount'),
-                                style: TextStyle(
-                                  fontSize:
-                                      responsiveFontSizes.bodyMedium(context),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                // Preparar datos del usuario para pasar a los formularios
-                                final Map<String, String> userData = {
-                                  'firstName': 'Uzziel',
-                                  'lastName': 'Palma',
-                                  'email': 'uzzielpalma99@gmail.com',
-                                  'phone': '5523216431',
-                                  'zipCode': '91911',
-                                  'city': 'California',
-                                  'state': 'CA',
-                                  'street':
-                                      'Lomas Altas, California no 34 Main',
-                                };
-
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => WebViewPage(
-                                      url:
-                                          '${urlBaseEmbedBuyProduct}auto-club/step-1',
-                                      title: 'Freeway Auto Club',
-                                      userData: userData,
-                                      formType: 'auto_club',
-                                    ),
-                                  ),
-                                );
-                              },
-                              style: TextButton.styleFrom(
-                                foregroundColor:
-                                    AppTheme.getPrimaryColor(context),
-                                padding: EdgeInsets.zero,
-                                minimumSize: Size.zero,
-                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                              ),
-                              child: Text(
-                                'Testing',
                                 style: TextStyle(
                                   fontSize:
                                       responsiveFontSizes.bodyMedium(context),
