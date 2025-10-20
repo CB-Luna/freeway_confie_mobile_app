@@ -20,6 +20,9 @@ class AuthProvider with ChangeNotifier {
   bool _requiresTwoFactor = false; // Se mantiene para uso futuro
   String? _authToken;
 
+  // Agregar este campo para guardar la respuesta del paso 1
+  LoginResponse? _lastLoginResponse;
+
   // Claves para almacenamiento seguro
   static const String _usernameKey = 'auth_username';
   static const String _passwordKey = 'auth_password';
@@ -50,6 +53,9 @@ class AuthProvider with ChangeNotifier {
       _lastPassword = password;
 
       final response = await _authService.loginStep1(username, password);
+
+      // Guardar la respuesta para usarla en el paso 2
+      _lastLoginResponse = response;
 
       if (response.hasErrors) {
         _errorMessage = response.errorMessage;
@@ -107,11 +113,23 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
+      // Verificar que tengamos el twoFactorUserId del paso 1
+      final LoginResponse? step1Response =
+          _lastLoginResponse; // Necesitas guardar la respuesta del paso 1
+      if (step1Response?.twoFactorUserId == null) {
+        if (context.mounted) {
+          _errorMessage = context.translate('auth.sessionExpired');
+        }
+        notifyListeners();
+        return false;
+      }
+
       debugPrint('AuthProvider - Enviando código 2FA');
       final response = await _authService.loginStep2(
         _lastUsername!,
         _lastPassword!,
         twoFactorCode,
+        step1Response!.twoFactorUserId!, // Pasar el ID para la cookie
       );
 
       if (response.hasErrors) {
@@ -126,7 +144,6 @@ class AuthProvider with ChangeNotifier {
       }
 
       // Completar el login con la respuesta del paso 2
-
       return await _completeLogin(response, context);
     } on ApiError catch (e) {
       // Manejar específicamente el error 401 para código inválido

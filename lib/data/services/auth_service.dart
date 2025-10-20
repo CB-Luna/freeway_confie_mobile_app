@@ -36,11 +36,34 @@ class AuthService {
       // Imprimir la respuesta para depuración
       debugPrint('API Response loginStep1: ${response.data}');
 
+      // Capturar el header Set-Cookie
+      final String? setCookieHeader = response.headers.value('set-cookie');
+      debugPrint('Set-Cookie header: $setCookieHeader');
+
+      // Extraer el Identity.TwoFactorUserId del Set-Cookie
+      String? twoFactorUserId;
+      if (setCookieHeader != null) {
+        final regex = RegExp(r'Identity\.TwoFactorUserId=([^;]+)');
+        final match = regex.firstMatch(setCookieHeader);
+        if (match != null && match.groupCount >= 1) {
+          twoFactorUserId = match.group(1);
+          debugPrint('Extracted TwoFactorUserId: $twoFactorUserId');
+        }
+      }
+
       // La API puede devolver:
       // 1. requiresTwoFactor: true (requiere código 2FA)
       // 2. token directamente (login exitoso sin 2FA)
       try {
-        return LoginResponse.fromJson(response.data);
+        final loginResponse = LoginResponse.fromJson(response.data);
+
+        // Si has agregado el campo twoFactorUserId a LoginResponse, asígnalo aquí
+        if (loginResponse.requiresTwoFactor && twoFactorUserId != null) {
+          // Asumiendo que hay un setter o que el campo es mutable
+          loginResponse.twoFactorUserId = twoFactorUserId;
+        }
+
+        return loginResponse;
       } catch (parseError) {
         debugPrint('Error al parsear la respuesta: $parseError');
         // Intentar identificar qué campo está causando el problema
@@ -62,31 +85,38 @@ class AuthService {
     String username,
     String password,
     String twoFactorCode,
+    String twoFactorUserId,
   ) async {
     try {
-      debugPrint('Enviando código 2FA: $twoFactorCode');
-      
+      // Crear la cookie para incluir en el header
+      final String cookieHeader = 'Identity.TwoFactorUserId=$twoFactorUserId';
+
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
           username: username,
           password: password,
-          twoFactorCode: twoFactorCode,
+          twoFactorCode: twoFactorCode, // Incluye el código 2FA
         ).toJson(),
         options: Options(
           headers: {
             'X-API-KEY': apiKeyLogin,
+            'Cookie': cookieHeader, // Añadir la cookie al header
           },
         ),
       );
 
       debugPrint('API Response loginStep2: ${response.data}');
-      return LoginResponse.fromJson(response.data);
-    } on DioException catch (e) {
-      // Manejar específicamente el error 401 para código inválido
-      if (e.response?.statusCode == 401) {
-        debugPrint('Código 2FA inválido o credenciales incorrectas');
+
+      try {
+        return LoginResponse.fromJson(response.data);
+      } catch (parseError) {
+        debugPrint('Error al parsear la respuesta: $parseError');
+        final Map<String, dynamic> data = response.data;
+        debugPrint('Campos en la respuesta: ${data.keys.join(', ')}');
+        throw ApiError(message: 'Error al procesar la respuesta: $parseError');
       }
+    } on DioException catch (e) {
       throw ApiError.fromDioError(e);
     } catch (e) {
       throw ApiError(message: 'Error en loginStep2: ${e.toString()}');

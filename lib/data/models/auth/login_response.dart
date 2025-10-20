@@ -14,6 +14,11 @@ class LoginResponse {
   final bool requiresTwoFactor;
   final List<ErrorModel> errors;
 
+  // Añade este nuevo campo
+  // Usamos @JsonKey(includeFromJson: false) porque este campo no viene en el JSON de la respuesta
+  @JsonKey(includeFromJson: false)
+  String? twoFactorUserId;
+
   LoginResponse({
     this.token,
     this.customer,
