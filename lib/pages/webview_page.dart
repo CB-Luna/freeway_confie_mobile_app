@@ -61,8 +61,14 @@ class _WebViewPageState extends State<WebViewPage> {
 
             // Solo ocultar el loading cuando la página esté cargada Y el llenado del formulario haya terminado
             if (_isFormFillingComplete) {
-              setState(() {
-                _isLoading = false;
+              // Agregamos un retraso adicional de 2 segundos para asegurar que todo esté completamente cargado
+              Future.delayed(const Duration(seconds: 2), () {
+                if (mounted) {
+                  // Verificamos que el widget aún esté montado
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
               });
             }
           },

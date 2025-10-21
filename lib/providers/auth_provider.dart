@@ -146,10 +146,12 @@ class AuthProvider with ChangeNotifier {
       // Completar el login con la respuesta del paso 2
       return await _completeLogin(response, context);
     } on ApiError catch (e) {
-      // Manejar específicamente el error 401 para código inválido
-      if (e.statusCode == 401) {
+      // Mejorar el mensaje de error para credenciales incorrectas
+      if (e.statusCode == 401 ||
+          e.message.toLowerCase().contains('no autorizado') ||
+          e.message.toLowerCase().contains('unauthorized')) {
         if (context.mounted) {
-          _errorMessage = context.translate('auth.invalidTwoFactorCode');
+          _errorMessage = context.translate('auth.incorrectCredentials');
         }
       } else {
         if (context.mounted) {
