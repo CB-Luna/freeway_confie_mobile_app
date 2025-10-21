@@ -55,18 +55,8 @@ class ApiClient {
 
         if (error.type == DioExceptionType.badResponse) {
           final statusCode = error.response?.statusCode;
-          String message;
-
-          switch (statusCode) {
-            case 401:
-              message = 'No autorizado';
-              break;
-            case 404:
-              message = 'Recurso no encontrado';
-              break;
-            default:
-              message = 'Error del servidor';
-          }
+          final String message =
+              error.response?.data['errors']?[0]?['message'] ?? 'Unknown error';
 
           handler.reject(
             DioException(

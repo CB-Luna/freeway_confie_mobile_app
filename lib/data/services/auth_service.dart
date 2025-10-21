@@ -235,7 +235,7 @@ class AuthService {
         return response.data as Map<String, dynamic>;
       } else {
         throw ApiError(
-          message: 'Error updating user data: ${response.statusCode}',
+          message: '${response.statusCode}',
         );
       }
     } on DioException catch (e) {
