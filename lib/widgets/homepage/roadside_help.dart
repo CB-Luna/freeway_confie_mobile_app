@@ -80,7 +80,7 @@ class _RoadsideHelpState extends State<RoadsideHelp>
               context,
               MaterialPageRoute(
                 builder: (context) => WebViewPage(
-                  url: '${urlBaseEmbedBuyProduct}auto-club/step-1',
+                  url: '${urlBaseEmbedBuyProduct}auto-club',
                   title: 'Freeway Auto Club',
                   userData: userData,
                   formType: 'auto_club',
