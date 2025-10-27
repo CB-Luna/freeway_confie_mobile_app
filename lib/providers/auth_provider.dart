@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:freeway_app/data/models/auth/login_response.dart';
@@ -5,12 +6,23 @@ import 'package:freeway_app/data/models/auth/register_request.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 
 import '../core/errors/api_error.dart';
+import '../data/constants.dart';
 import '../data/services/auth_service.dart';
 import '../models/user_model.dart';
 
 /// Provider para manejar la autenticación del usuario
 class AuthProvider with ChangeNotifier {
-  final AuthService _authService = AuthService();
+  final AuthService _authService = AuthService(
+    Dio(
+      BaseOptions(
+        baseUrl: envLogin,
+        headers: {
+          'X-API-KEY': apiKeyLogin,
+          'Content-Type': 'application/json',
+        },
+      ),
+    ),
+  );
   final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
   User? _currentUser;
   String? _errorMessage;

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:freeway_app/data/services/auth_service.dart';
+import 'package:freeway_app/data/constants.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/providers/auth_provider.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
@@ -86,7 +88,13 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       }
 
       // Crear una instancia del servicio de autenticación
-      final authService = AuthService();
+      final authService = AuthService(Dio(BaseOptions(
+        baseUrl: envLogin,
+        headers: {
+          'X-API-KEY': apiKeyLogin,
+          'Content-Type': 'application/json',
+        },
+      )));
 
       // Añadir logs para depuración
       debugPrint(

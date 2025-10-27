@@ -6,32 +6,65 @@ import 'package:freeway_app/data/constants.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/errors/api_error.dart';
-import '../../core/network/api_client.dart';
 import '../models/auth/login_request.dart';
 import '../models/auth/login_response.dart';
 import '../models/auth/register_request.dart';
 import '../models/auth/register_response.dart';
+import 'storage_service.dart';
 
 class AuthService {
   final Dio _dio;
+  final StorageService _storageService;
 
-  AuthService() : _dio = ApiClient.createDio();
+  AuthService(this._dio) : _storageService = StorageService();
 
   // Método principal de login - Paso 1: enviar credenciales
   Future<LoginResponse> loginStep1(String username, String password) async {
     try {
+      // Obtener cookies almacenadas
+      final storedCookies = await _storageService.getAuthCookies();
+      final options = Options(headers: {});
+
+      // Si hay cookies almacenadas, incluirlas en el header
+      if (storedCookies.isNotEmpty) {
+        final cookieHeader =
+            storedCookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+        options.headers?['Cookie'] = cookieHeader;
+      }
+
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
           username: username,
           password: password,
         ).toJson(),
-        options: Options(
-          headers: {
-            'X-API-KEY': apiKeyLogin,
-          },
-        ),
+        options: options,
       );
+
+      // Procesar las cookies de la respuesta
+      final setCookieHeaders = response.headers['set-cookie'];
+      if (setCookieHeaders != null) {
+        final cookies = <String, String>{};
+
+        for (var header in setCookieHeaders) {
+          if (header.contains('.AspNetCore.Identity.Application=')) {
+            final value = header.split(';')[0];
+            cookies['.AspNetCore.Identity.Application'] = value.split('=')[1];
+          } else if (header.contains('Identity.TwoFactorRememberMe=')) {
+            final value = header.split(';')[0];
+            cookies['Identity.TwoFactorRememberMe'] = value.split('=')[1];
+          }
+        }
+
+        // Guardar las cookies
+        if (cookies.isNotEmpty) {
+          await _storageService.saveAuthCookies(
+            aspNetCoreIdentity: cookies['.AspNetCore.Identity.Application'],
+            identityTwoFactorRememberMe:
+                cookies['Identity.TwoFactorRememberMe'],
+          );
+        }
+      }
 
       // Imprimir la respuesta para depuración
       debugPrint('API Response loginStep1: ${response.data}');
@@ -74,8 +107,10 @@ class AuthService {
         throw ApiError(message: 'Error al procesar la respuesta: $parseError');
       }
     } on DioException catch (e) {
+      debugPrint('Error en loginStep1: ${e.toString()}');
       throw ApiError.fromDioError(e);
     } catch (e) {
+      debugPrint('Error en loginStep1: ${e.toString()}');
       throw ApiError(message: 'Error en loginStep1: ${e.toString()}');
     }
   }
@@ -88,23 +123,45 @@ class AuthService {
     String twoFactorUserId,
   ) async {
     try {
-      // Crear la cookie para incluir en el header
-      final String cookieHeader = 'Identity.TwoFactorUserId=$twoFactorUserId';
-
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
           username: username,
           password: password,
-          twoFactorCode: twoFactorCode, // Incluye el código 2FA
+          twoFactorCode: twoFactorCode,
+          trustedDevice: true, // Para recordar el dispositivo
         ).toJson(),
         options: Options(
           headers: {
-            'X-API-KEY': apiKeyLogin,
-            'Cookie': cookieHeader, // Añadir la cookie al header
+            'Cookie': 'Identity.TwoFactorUserId=$twoFactorUserId',
           },
         ),
       );
+
+      // Procesar las cookies de la respuesta
+      final setCookieHeaders = response.headers['set-cookie'];
+      if (setCookieHeaders != null) {
+        final cookies = <String, String>{};
+
+        for (var header in setCookieHeaders) {
+          if (header.contains('.AspNetCore.Identity.Application=')) {
+            final value = header.split(';')[0];
+            cookies['.AspNetCore.Identity.Application'] = value.split('=')[1];
+          } else if (header.contains('Identity.TwoFactorRememberMe=')) {
+            final value = header.split(';')[0];
+            cookies['Identity.TwoFactorRememberMe'] = value.split('=')[1];
+          }
+        }
+
+        // Guardar las cookies
+        if (cookies.isNotEmpty) {
+          await _storageService.saveAuthCookies(
+            aspNetCoreIdentity: cookies['.AspNetCore.Identity.Application'],
+            identityTwoFactorRememberMe:
+                cookies['Identity.TwoFactorRememberMe'],
+          );
+        }
+      }
 
       debugPrint('API Response loginStep2: ${response.data}');
 
