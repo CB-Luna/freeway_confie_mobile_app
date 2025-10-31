@@ -34,8 +34,8 @@ android {
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
-        versionCode = 2  // Incrementamos de 1 a 2
-        versionName = "1.0.1"  // Incrementamos la versión
+        versionCode = 3  // Incrementamos de 2 a 3
+        versionName = "1.0.2"  // Incrementamos la versión
 
         minSdkVersion 21
         targetSdkVersion 35
@@ -53,8 +53,8 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled true
-            shrinkResources true
+            minifyEnabled false  // Deshabilitamos temporalmente
+            shrinkResources false  // Deshabilitamos temporalmente
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel 'FULL'
