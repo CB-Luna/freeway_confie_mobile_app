@@ -112,6 +112,11 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
                     context.translate('businessInsurance.businessInsurance'),
                     'business_insurance',
                   ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('businessInsurance.commercialAuto'),
+                    'commercial_auto',
+                  ),
                 ],
               ),
             ],
@@ -171,14 +176,9 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
           if (title ==
               context.translate('businessInsurance.businessInsurance')) {
             _handleBusinessInsurance(context);
-          } else if (title == context.translate('businessInsurance.landlord')) {
-            _handleLandlord(context);
           } else if (title ==
               context.translate('businessInsurance.commercialAuto')) {
             _handleCommercialAuto(context);
-          } else if (title ==
-              context.translate('businessInsurance.rideShareInsurance')) {
-            _handleRideShareInsurance(context);
           } else {
             // Para cualquier otro tipo no reconocido
             _showNotAvailableMessage(context, title);
@@ -308,16 +308,8 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
     await _handleInsurance(context, 'business_insurance');
   }
 
-  Future<void> _handleLandlord(BuildContext context) async {
-    await _handleInsurance(context, 'landlord');
-  }
-
   Future<void> _handleCommercialAuto(BuildContext context) async {
     await _handleInsurance(context, 'commercial_auto');
-  }
-
-  Future<void> _handleRideShareInsurance(BuildContext context) async {
-    await _handleInsurance(context, 'ride_share_insurance');
   }
 
   // Método para mostrar mensaje cuando un seguro no está disponible
@@ -460,21 +452,11 @@ class _BusinessInsuranceGridState extends State<BusinessInsuranceGrid> {
           title =
               '${context.translate('businessInsurance.businessInsurance')} - $placeName, $stateAbbreviation';
           break;
-        case 'landlord':
-          urlString =
-              'https://www.freeway.com/landlord-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title =
-              '${context.translate('businessInsurance.landlord')} - $placeName, $stateAbbreviation';
-          break;
         case 'commercial_auto':
           urlString =
-              'https://www.freeway.com/commercial-vehicle-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
+              '${urlBaseEmbed}commercial-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
           title =
               '${context.translate('businessInsurance.commercialAuto')} - $placeName, $stateAbbreviation';
-          break;
-        case 'rideshare_insurance':
-          urlString = 'https://rate.freeway.com/';
-          title = context.translate('businessInsurance.rideShareInsurance');
           break;
         default:
           urlString = 'https://www.freeway.com/';

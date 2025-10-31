@@ -116,6 +116,11 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
                     context.translate('propertyInsurance.homeowners'),
                     'homeowners',
                   ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('propertyInsurance.mobileManufactures'),
+                    'mobileManufactures',
+                  ),
                 ],
               ),
             ],
@@ -177,7 +182,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
           } else if (title == context.translate('propertyInsurance.renters')) {
             _handleRentersInsurance(context);
           } else if (title ==
-              context.translate('propertyInsurance.mobileHome')) {
+              context.translate('propertyInsurance.mobileManufactures')) {
             _handleMobileHomeInsurance(context);
           } else {
             // Para cualquier otro tipo no reconocido
@@ -313,7 +318,7 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
   }
 
   Future<void> _handleMobileHomeInsurance(BuildContext context) async {
-    await _handleInsurance(context, 'mobile_home');
+    await _handleInsurance(context, 'mobileManufactures');
   }
 
   // Método para mostrar mensaje cuando un seguro no está disponible
@@ -465,15 +470,15 @@ class _PropertyInsuranceGridState extends State<PropertyInsuranceGrid> {
           title =
               '${context.translate('propertyInsurance.renters')} - $placeName, $stateAbbreviation';
           break;
-        case 'mobile_home':
+        case 'mobileManufactures':
           urlString =
-              'https://www.freeway.com/mobile-home-insurance-quote/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}mobile-home-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
-              '${context.translate('propertyInsurance.mobileHome')} - $placeName, $stateAbbreviation';
+              '${context.translate('propertyInsurance.mobileManufactures')} - $placeName, $stateAbbreviation';
           break;
         default:
           urlString =
-              'https://www.freeway.com/homeowner-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
+              '${urlBaseEmbed}homeowners-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName';
           title =
               '${context.translate('propertyInsurance.homeowners')} - $placeName, $stateAbbreviation';
       }
