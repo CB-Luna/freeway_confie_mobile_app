@@ -68,3 +68,16 @@ Usuario 2
 
 - user: uzzielpalma99@gmail.com
 - password: Cbluna2025$
+
+Usuario 3
+
+user: omar.neftali.rocha.gallaga@confie.com
+password: Today2025!
+Usuario 4
+
+user: jorge.cacho-sousa@confie.com
+password: Freeway1!
+Usuario 5
+
+user: mobapp@yopmail.com
+password: Today_2025!

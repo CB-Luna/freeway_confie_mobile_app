@@ -1,3 +1,5 @@
+import 'package:acceptance_app/locatordevice/presentation/widgets/loading_view.dart';
+import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/menu/snackbar_help.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
@@ -249,12 +251,8 @@ class _HeaderSectionState extends State<HeaderSection> {
                 child: ClipOval(
                   // Mostrar indicador de carga mientras se obtiene el nombre
                   child: _isLoading
-                      ? const SizedBox(
-                          width: 33,
-                          height: 33,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                          ),
+                      ? LoadingView(
+                          message: context.translate('common.loading'),
                         )
                       : authProvider.currentUser?.avatar != null
                           ? Image.network(

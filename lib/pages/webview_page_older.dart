@@ -25,7 +25,6 @@ class WebViewPage extends StatefulWidget {
 class _WebViewPageState extends State<WebViewPage> {
   late final WebViewController _controller;
   bool _isLoading = true;
-  bool _isFormFillingComplete = false; // Nueva variable de estado
 
   @override
   void initState() {
@@ -37,47 +36,17 @@ class _WebViewPageState extends State<WebViewPage> {
           onPageStarted: (String url) {
             setState(() {
               _isLoading = true;
-              _isFormFillingComplete =
-                  false; // Reiniciar al iniciar nueva página
             });
           },
-          onPageFinished: (String url) async {
-            // Actualizar el estado de navegación
-            await _updateBackNavigationState();
-
+          onPageFinished: (String url) {
             // Si tenemos datos de usuario, intentamos prellenar el formulario
             if (widget.userData != null) {
-              await _injectFormFillingScript();
-              setState(() {
-                _isFormFillingComplete =
-                    true; // El script de llenado ha terminado
-              });
-            } else {
-              // Si no hay datos de usuario, consideramos que el llenado "ha terminado"
-              setState(() {
-                _isFormFillingComplete = true;
-              });
+              _injectFormFillingScript();
             }
 
-            // Solo ocultar el loading cuando la página esté cargada Y el llenado del formulario haya terminado
-            if (_isFormFillingComplete) {
-              // Agregamos un retraso adicional de 2 segundos para asegurar que todo esté completamente cargado
-              Future.delayed(const Duration(seconds: 2), () {
-                if (mounted) {
-                  // Verificamos que el widget aún esté montado
-                  setState(() {
-                    _isLoading = false;
-                  });
-                }
-              });
-            }
-          },
-          onNavigationRequest: (NavigationRequest request) async {
-            // Actualizar el estado de navegación después de cada cambio de URL
-            Future.delayed(const Duration(milliseconds: 300), () {
-              _updateBackNavigationState();
+            setState(() {
+              _isLoading = false;
             });
-            return NavigationDecision.navigate;
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('WebView error: ${error.description}');
@@ -198,7 +167,7 @@ class _WebViewPageState extends State<WebViewPage> {
                 // Selectores específicos para el formulario de motocicleta
                 fillField(['#form_insurance_your_first_name', '.firstName', 'input[name="lead[first_name]"]'], userData.firstName);
                 fillField(['#form_insurance_your_last_name', '.lastName', 'input[name="lead[last_name]"]'], userData.lastName);
-                fillField(['#form_insurance_street_address', '.address', 'input[name="lead[street]"]'], userData.street); // Corregido: userData.stree a userData.street
+                fillField(['#form_insurance_street_address', '.address', 'input[name="lead[street]"]'], userData.stree);
                 
                 // Activar cualquier evento necesario después de rellenar
                 const inputs = document.querySelectorAll('#form_insurance_your_first_name, #form_insurance_your_last_name, #form_insurance_street_address');
@@ -481,19 +450,6 @@ class _WebViewPageState extends State<WebViewPage> {
     return '{$entries}';
   }
 
-  // Variable para rastrear si podemos navegar hacia atrás en el WebView
-  bool _canGoBack = false;
-
-  // Método para actualizar el estado de navegación hacia atrás
-  Future<void> _updateBackNavigationState() async {
-    final canGoBack = await _controller.canGoBack();
-    if (canGoBack != _canGoBack) {
-      setState(() {
-        _canGoBack = canGoBack;
-      });
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -510,15 +466,7 @@ class _WebViewPageState extends State<WebViewPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: AppTheme.white),
-          onPressed: () async {
-            // Si podemos navegar hacia atrás dentro del WebView, hacerlo
-            if (await _controller.canGoBack()) {
-              await _controller.goBack();
-            } else {
-              // Si no hay historial en el WebView, salir de la página
-              if (context.mounted) Navigator.of(context).pop();
-            }
-          },
+          onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
           IconButton(
@@ -532,7 +480,7 @@ class _WebViewPageState extends State<WebViewPage> {
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),
-          if (_isLoading) // Ahora _isLoading se basa en _isFormFillingComplete también
+          if (_isLoading)
             Center(
               child: LoadingView(
                 message: context.translate('common.loading'),

@@ -193,12 +193,8 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 5),
                     Center(
                       child: _isLoading
-                          ? const SizedBox(
-                              height: 24,
-                              width: 24,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                              ),
+                          ? LoadingView(
+                              message: context.translate('common.loading'),
                             )
                           : Text(
                               context.translateWithArgs(

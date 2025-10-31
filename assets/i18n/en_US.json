@@ -39,7 +39,7 @@
     "pleaseEnterValidEmail": "Please enter a valid email",
     "pleaseEnterPasswordSignup": "Please enter your password",
     "forgotPasswordTitle": "Password Recovery",
-    "forgotPasswordInstructions": "Enter your phone number or email address and we'll send you a verification code to reset your password",
+    "forgotPasswordInstructions": "Enter your email address and we will send you a verification code to reset your password. Please indicate whether you would like to receive the code by SMS (text message) or email.",
     "resetPasswordButton": "Reset Password",
     "resetPasswordSent": "Code Sent",
     "resetPasswordEmailSent": "A verification code has been sent to your email.",
@@ -76,7 +76,14 @@
     "incorrectCredentials": "Your login credentials are incorrect. Please try again.",
     "selectCountry": "Select Country",
     "searchCountry": "Search country",
-    "invalidPhoneNumber": "Please enter a valid phone number"
+    "invalidPhoneNumber": "Please enter a valid phone number",
+    "loginError": "Error while logging in: {0}",
+    "failedToRetrieveUser": "Failed to retrieve user data",
+    "noCredentialsSaved": "No credentials saved, try logging in manually.",
+    "twoFactorHint": "Enter the 6-digit code sent to your phone via SMS",
+    "verify": "Verify",
+    "invalidTwoFactorCode": "Invalid verification code. Please try again.",
+    "sessionExpired": "Session expired. Please login again."
   },
   "home": {
     "welcome": "Welcome",

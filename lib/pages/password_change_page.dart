@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/auth_service.dart';
 import 'package:acceptance_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -5,6 +6,7 @@ import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/menu/snackbar_help.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -86,7 +88,17 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       }
 
       // Crear una instancia del servicio de autenticación
-      final authService = AuthService();
+      final authService = AuthService(
+        Dio(
+          BaseOptions(
+            baseUrl: envLogin,
+            headers: {
+              'X-API-KEY': apiKeyLogin,
+              'Content-Type': 'application/json',
+            },
+          ),
+        ),
+      );
 
       // Añadir logs para depuración
       debugPrint(

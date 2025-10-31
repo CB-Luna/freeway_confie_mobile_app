@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:acceptance_app/data/constants.dart';
+import 'package:acceptance_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:acceptance_app/pages/webview_page.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
@@ -81,7 +82,11 @@ class _AppInfoPageState extends State<AppInfoPage> {
         centerTitle: true,
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? Center(
+              child: LoadingView(
+                message: context.translate('common.loading'),
+              ),
+            )
           : Container(
               color: AppTheme.getBackgroundColor(context),
               child: ListView(
@@ -101,8 +106,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
   Widget _buildAppInfoCard(BuildContext context) {
     // Información de la aplicación
     const appVersion = '1.0.0';
-    const buildNumber = '35';
-    final buildDate = '10/01/2025';
+    const buildNumber = '1';
+    final buildDate = '10/28/2025';
 
     return Card(
       elevation: 2,

@@ -9,6 +9,7 @@ import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/contactcenter/request_call.dart';
 import 'package:acceptance_app/widgets/custom/country_phone_selector.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -159,7 +160,7 @@ class _UserDataPageState extends State<UserDataPage> {
 
       if (currentUser != null) {
         // Obtener el servicio de autenticación
-        final authService = AuthService();
+        final authService = AuthService(Dio());
 
         // Llamar al método updateUserData del AuthService con solo el número de teléfono
         final Map<String, dynamic> response = await authService.updateUserData(
@@ -342,7 +343,7 @@ class _UserDataPageState extends State<UserDataPage> {
               DateFormat('yyyy-MM-dd').format(_birthDate);
 
           // Obtener el servicio de autenticación
-          final authService = AuthService();
+          final authService = AuthService(Dio());
 
           // Llamar al método updateUserData del AuthService
           await authService.updateUserData(

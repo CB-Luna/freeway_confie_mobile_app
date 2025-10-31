@@ -1,15 +1,14 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+
 import '../errors/api_error.dart';
 
 class ApiClient {
-  // URL para el entorno de producción
-  static const String baseUrl = 'https://confie-customer-np.azurewebsites.net';
-
   static Dio createDio() {
     final dio = Dio(
       BaseOptions(
-        baseUrl: baseUrl,
+        baseUrl: envLogin,
         connectTimeout: const Duration(seconds: 30),
         receiveTimeout: const Duration(seconds: 30),
         headers: {
@@ -56,18 +55,8 @@ class ApiClient {
 
         if (error.type == DioExceptionType.badResponse) {
           final statusCode = error.response?.statusCode;
-          String message;
-
-          switch (statusCode) {
-            case 401:
-              message = 'No autorizado';
-              break;
-            case 404:
-              message = 'Recurso no encontrado';
-              break;
-            default:
-              message = 'Error del servidor';
-          }
+          final String message =
+              error.response?.data['errors']?[0]?['message'] ?? 'Unknown error';
 
           handler.reject(
             DioException(

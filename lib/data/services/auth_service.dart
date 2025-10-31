@@ -1,46 +1,102 @@
 import 'dart:convert';
 
+import 'package:acceptance_app/data/constants.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/errors/api_error.dart';
-import '../../core/network/api_client.dart';
 import '../models/auth/login_request.dart';
 import '../models/auth/login_response.dart';
 import '../models/auth/register_request.dart';
 import '../models/auth/register_response.dart';
+import 'storage_service.dart';
 
 class AuthService {
   final Dio _dio;
-  static const String _apiKey =
-      'jEk40pLbflj4vQ6RyhQmI3JxDAXjUhdWrEjYBgQRAuSs8X6ged161peEtM4mM8sT';
-  static const String _baseUrl = 'https://confie-customer-np.azurewebsites.net';
+  final StorageService _storageService;
 
-  AuthService() : _dio = ApiClient.createDio();
+  AuthService(this._dio) : _storageService = StorageService();
 
-  // Método principal de login (ahora sin 2FA activo)
+  // Método principal de login - Paso 1: enviar credenciales
   Future<LoginResponse> loginStep1(String username, String password) async {
     try {
+      // Obtener cookies almacenadas
+      final storedCookies = await _storageService.getAuthCookies();
+      final options = Options(headers: {});
+
+      // Si hay cookies almacenadas, incluirlas en el header
+      if (storedCookies.isNotEmpty) {
+        final cookieHeader =
+            storedCookies.entries.map((e) => '${e.key}=${e.value}').join('; ');
+        options.headers?['Cookie'] = cookieHeader;
+      }
+
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
           username: username,
           password: password,
         ).toJson(),
-        options: Options(
-          headers: {
-            'X-API-KEY': _apiKey,
-          },
-        ),
+        options: options,
       );
 
-      // Imprimir la respuesta para depuración
-      debugPrint('API Response: ${response.data}');
+      // Procesar las cookies de la respuesta
+      final setCookieHeaders = response.headers['set-cookie'];
+      if (setCookieHeaders != null) {
+        final cookies = <String, String>{};
 
-      // Ahora la API devuelve directamente un token en lugar de requerir 2FA
+        for (var header in setCookieHeaders) {
+          if (header.contains('.AspNetCore.Identity.Application=')) {
+            final value = header.split(';')[0];
+            cookies['.AspNetCore.Identity.Application'] = value.split('=')[1];
+          } else if (header.contains('Identity.TwoFactorRememberMe=')) {
+            final value = header.split(';')[0];
+            cookies['Identity.TwoFactorRememberMe'] = value.split('=')[1];
+          }
+        }
+
+        // Guardar las cookies
+        if (cookies.isNotEmpty) {
+          await _storageService.saveAuthCookies(
+            aspNetCoreIdentity: cookies['.AspNetCore.Identity.Application'],
+            identityTwoFactorRememberMe:
+                cookies['Identity.TwoFactorRememberMe'],
+          );
+        }
+      }
+
+      // Imprimir la respuesta para depuración
+      debugPrint('API Response loginStep1: ${response.data}');
+
+      // Capturar el header Set-Cookie
+      final String? setCookieHeader = response.headers.value('set-cookie');
+      debugPrint('Set-Cookie header: $setCookieHeader');
+
+      // Extraer el Identity.TwoFactorUserId del Set-Cookie
+      String? twoFactorUserId;
+      if (setCookieHeader != null) {
+        final regex = RegExp(r'Identity\.TwoFactorUserId=([^;]+)');
+        final match = regex.firstMatch(setCookieHeader);
+        if (match != null && match.groupCount >= 1) {
+          twoFactorUserId = match.group(1);
+          debugPrint('Extracted TwoFactorUserId: $twoFactorUserId');
+        }
+      }
+
+      // La API puede devolver:
+      // 1. requiresTwoFactor: true (requiere código 2FA)
+      // 2. token directamente (login exitoso sin 2FA)
       try {
-        return LoginResponse.fromJson(response.data);
+        final loginResponse = LoginResponse.fromJson(response.data);
+
+        // Si has agregado el campo twoFactorUserId a LoginResponse, asígnalo aquí
+        if (loginResponse.requiresTwoFactor && twoFactorUserId != null) {
+          // Asumiendo que hay un setter o que el campo es mutable
+          loginResponse.twoFactorUserId = twoFactorUserId;
+        }
+
+        return loginResponse;
       } catch (parseError) {
         debugPrint('Error al parsear la respuesta: $parseError');
         // Intentar identificar qué campo está causando el problema
@@ -51,46 +107,87 @@ class AuthService {
         throw ApiError(message: 'Error al procesar la respuesta: $parseError');
       }
     } on DioException catch (e) {
+      debugPrint('Error en loginStep1: ${e.toString()}');
       throw ApiError.fromDioError(e);
     } catch (e) {
+      debugPrint('Error en loginStep1: ${e.toString()}');
       throw ApiError(message: 'Error en loginStep1: ${e.toString()}');
     }
   }
 
-  // Mantenemos este método para uso futuro cuando se reactive el 2FA
-  // Actualmente no se utiliza, pero se mantiene la estructura
-  Future<LoginResponse> loginStep2(String twoFactorCode) async {
+  // Paso 2: enviar código 2FA junto con las credenciales
+  Future<LoginResponse> loginStep2(
+    String username,
+    String password,
+    String twoFactorCode,
+    String twoFactorUserId,
+  ) async {
     try {
-      // NOTA: Este método no se usa actualmente ya que el 2FA está desactivado
-      // Se mantiene para implementación futura
       final response = await _dio.post(
         '/api/Mobile/Login',
         data: LoginRequest(
+          username: username,
+          password: password,
           twoFactorCode: twoFactorCode,
+          trustedDevice: true, // Para recordar el dispositivo
         ).toJson(),
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'Cookie': 'Identity.TwoFactorUserId=$twoFactorUserId',
           },
         ),
       );
 
-      return LoginResponse.fromJson(response.data);
+      // Procesar las cookies de la respuesta
+      final setCookieHeaders = response.headers['set-cookie'];
+      if (setCookieHeaders != null) {
+        final cookies = <String, String>{};
+
+        for (var header in setCookieHeaders) {
+          if (header.contains('.AspNetCore.Identity.Application=')) {
+            final value = header.split(';')[0];
+            cookies['.AspNetCore.Identity.Application'] = value.split('=')[1];
+          } else if (header.contains('Identity.TwoFactorRememberMe=')) {
+            final value = header.split(';')[0];
+            cookies['Identity.TwoFactorRememberMe'] = value.split('=')[1];
+          }
+        }
+
+        // Guardar las cookies
+        if (cookies.isNotEmpty) {
+          await _storageService.saveAuthCookies(
+            aspNetCoreIdentity: cookies['.AspNetCore.Identity.Application'],
+            identityTwoFactorRememberMe:
+                cookies['Identity.TwoFactorRememberMe'],
+          );
+        }
+      }
+
+      debugPrint('API Response loginStep2: ${response.data}');
+
+      try {
+        return LoginResponse.fromJson(response.data);
+      } catch (parseError) {
+        debugPrint('Error al parsear la respuesta: $parseError');
+        final Map<String, dynamic> data = response.data;
+        debugPrint('Campos en la respuesta: ${data.keys.join(', ')}');
+        throw ApiError(message: 'Error al procesar la respuesta: $parseError');
+      }
     } on DioException catch (e) {
       throw ApiError.fromDioError(e);
     } catch (e) {
-      throw ApiError(message: e.toString());
+      throw ApiError(message: 'Error en loginStep2: ${e.toString()}');
     }
   }
 
   Future<RegisterResponse> register(RegisterRequest request) async {
     try {
-      final url = Uri.parse('$_baseUrl/api/Mobile/Register');
+      final url = Uri.parse('$envLogin/api/Mobile/Register');
       final response = await http.post(
         url,
         headers: {
           'Content-Type': 'application/json',
-          'X-API-KEY': _apiKey,
+          'X-API-KEY': apiKeyLogin,
         },
         body: jsonEncode(request.toJson()),
       );
@@ -147,7 +244,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -185,7 +282,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -195,7 +292,7 @@ class AuthService {
         return response.data as Map<String, dynamic>;
       } else {
         throw ApiError(
-          message: 'Error updating user data: ${response.statusCode}',
+          message: '${response.statusCode}',
         );
       }
     } on DioException catch (e) {
@@ -219,7 +316,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );
@@ -258,7 +355,7 @@ class AuthService {
         },
         options: Options(
           headers: {
-            'X-API-KEY': _apiKey,
+            'X-API-KEY': apiKeyLogin,
           },
         ),
       );

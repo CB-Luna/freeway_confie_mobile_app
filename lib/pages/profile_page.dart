@@ -1,3 +1,4 @@
+import 'package:acceptance_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:acceptance_app/utils/app_localizations_extension.dart';
 import 'package:acceptance_app/utils/responsive_font_sizes.dart';
 import 'package:acceptance_app/widgets/theme/app_theme.dart';
@@ -70,12 +71,9 @@ class _ProfilePageState extends State<ProfilePage> {
                           children: [
                             const SizedBox(height: 80),
                             _isLoading
-                                ? const SizedBox(
-                                    height: 24,
-                                    width: 24,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
+                                ? LoadingView(
+                                    message:
+                                        context.translate('common.loading'),
                                   )
                                 : Text(
                                     _userName,

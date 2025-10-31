@@ -12,7 +12,7 @@ class ApiError implements Exception {
   });
 
   factory ApiError.fromDioError(dynamic error) {
-    String message = 'Error desconocido';
+    String message = 'Uknown error';
     int? statusCode;
     dynamic responseData;
 
@@ -35,5 +35,5 @@ class ApiError implements Exception {
   }
 
   @override
-  String toString() => 'ApiError: $message';
+  String toString() => message;
 }

@@ -30,8 +30,8 @@ class ZipCodeDialog extends StatefulWidget {
 
         // Calcular el tamaño inicial basado en si el teclado está visible
         final initialSize = keyboardHeight > 0
-            ? 0.6 // Tamaño mayor cuando el teclado está visible
-            : 0.45; // Tamaño normal cuando el teclado no está visible
+            ? 0.8 // Tamaño mayor cuando el teclado está visible
+            : 0.6; // Tamaño normal cuando el teclado no está visible
 
         return DraggableScrollableSheet(
           initialChildSize: initialSize,
@@ -102,12 +102,12 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
           ),
         ),
         child: Padding(
-          // Ajustar el padding inferior cuando el teclado está visible
-          padding: EdgeInsets.fromLTRB(
+          // Ajustar el padding para dar más espacio cuando el teclado está visible
+          padding: const EdgeInsets.fromLTRB(
             20.0,
             20.0,
             20.0,
-            isKeyboardVisible ? keyboardHeight + 20.0 : 20.0,
+            20.0,
           ),
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
@@ -133,7 +133,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                     'vehicleInsurance.location.zipCodeDialogTitle',
                   ),
                   style: TextStyle(
-                    fontFamily: 'Lato',
+                    fontFamily: 'Open Sans',
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                     color: AppTheme.getTitleTextColor(context),
@@ -147,7 +147,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                     'vehicleInsurance.location.zipCodeDialogMessage',
                   ),
                   style: TextStyle(
-                    fontFamily: 'Lato',
+                    fontFamily: 'Open Sans',
                     fontSize: 14,
                     color: AppTheme.getSubtitleTextColor(context),
                   ),
@@ -185,7 +185,7 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                       ),
                     ),
                     style: const TextStyle(
-                      fontFamily: 'Lato',
+                      fontFamily: 'Open Sans',
                       fontSize: 16,
                     ),
                   ),
@@ -198,27 +198,29 @@ class _ZipCodeDialogState extends State<ZipCodeDialog> {
                       ? () => widget.onContinue(_zipCodeController.text)
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.getPrimaryColor(context),
+                    backgroundColor: _isZipCodeValid
+                        ? AppTheme.getPrimaryColor(context)
+                        : Colors.grey,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    disabledBackgroundColor: AppTheme.getPrimaryColor(context)
-                        .withValues(alpha: 0.5),
+                    disabledBackgroundColor: Colors.grey,
                   ),
                   child: Text(
                     context
                         .translate('vehicleInsurance.location.continueButton'),
-                    style: const TextStyle(
-                      fontFamily: 'Lato',
+                    style: TextStyle(
+                      fontFamily: 'Open Sans',
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: AppTheme.white,
+                      color: _isZipCodeValid ? AppTheme.white : Colors.white70,
                     ),
                   ),
                 ),
-                // Espacio adicional al final para dispositivos con notch
-                SizedBox(height: isKeyboardVisible ? 20 : 10),
+                // Espacio adicional al final para asegurar que el botón sea visible
+                // incluso cuando el teclado está visible
+                SizedBox(height: isKeyboardVisible ? keyboardHeight + 20 : 20),
               ],
             ),
           ),

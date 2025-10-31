@@ -20,7 +20,7 @@
     "pleaseEnterUsername": "Por favor, ingresa tu correo electrónico",
     "pleaseEnterPassword": "Por favor, ingresa tu contraseña",
     "forgotPasswordTitle": "Recuperación de Contraseña",
-    "forgotPasswordInstructions": "Ingresa tu número de teléfono o correo electrónico y te enviaremos un código de verificación para restablecer tu contraseña.",
+    "forgotPasswordInstructions": "Ingresa tu número de teléfono o correo electrónico y te enviaremos un código de verificación para restablecer tu contraseña. Por favor, indica si prefieres recibir el código por SMS (mensaje de texto) o correo electrónico.",
     "resetPasswordButton": "Restablecer Contraseña",
     "resetPasswordSent": "Código Enviado",
     "resetPasswordEmailSent": "Un código de verificación ha sido enviado a tu correo.",
@@ -75,7 +75,14 @@
     "incorrectCredentials": "Tus credenciales de inicio de sesión son incorrectas. Por favor, intenta de nuevo.",
     "selectCountry": "Seleccionar País",
     "searchCountry": "Buscar país",
-    "invalidPhoneNumber": "Por favor, ingresa un número de teléfono válido"
+    "invalidPhoneNumber": "Por favor, ingresa un número de teléfono válido",
+    "loginError": "Error al iniciar sesión {0}",
+    "failedToRetrieveUser": "Error al obtener datos del usuario",
+    "noCredentialsSaved": "No se encontraron credenciales guardadas, intente un iniciar sesión manualmente.",
+    "twoFactorHint": "Ingresa el código de 6 dígitos enviado a tu teléfono vía SMS",
+    "verify": "Verificar",
+    "invalidTwoFactorCode": "Código de verificación inválido. Por favor, intenta de nuevo.",
+    "sessionExpired": "Sesión expirada. Por favor, inicia sesión nuevamente."
   },
   "home": {
     "welcome": "Bienvenido",
