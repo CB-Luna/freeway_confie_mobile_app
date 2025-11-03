@@ -375,10 +375,20 @@ class LocationController extends ChangeNotifier {
 
   // Método para crear un ícono personalizado para el marcador de ubicación actual
   Future<BitmapDescriptor> _createCustomMarkerIcon() async {
-    return await BitmapDescriptor.asset(
-      const ImageConfiguration(size: Size(30, 30)),
-      'assets/location/location_marker.png',
-    );
+    try {
+      debugPrint('Intentando cargar marcador personalizado...');
+      final marker = await BitmapDescriptor.asset(
+        const ImageConfiguration(devicePixelRatio: 2.5, size: Size(30, 30)),
+        'assets/location/location_marker.png',
+      );
+      debugPrint('Marcador personalizado cargado exitosamente');
+      return marker;
+    } catch (e, stackTrace) {
+      debugPrint('Error loading custom marker: $e');
+      debugPrint('Stack trace: $stackTrace');
+      debugPrint('Usando marcador por defecto como fallback');
+      return BitmapDescriptor.defaultMarker;
+    }
   }
 
   // Método para actualizar el círculo de cobertura
