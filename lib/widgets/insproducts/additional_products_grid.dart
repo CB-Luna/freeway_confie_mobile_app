@@ -1,3 +1,4 @@
+import 'package:acceptance_app/data/constants.dart';
 import 'package:acceptance_app/data/services/web_dialog_service.dart';
 import 'package:acceptance_app/models/user_model.dart';
 import 'package:acceptance_app/providers/auth_provider.dart';
@@ -118,11 +119,6 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
                   ),
                   _buildInsuranceItem(
                     context,
-                    context.translate('additionalProducts.vrrOnlineCalifornia'),
-                    'vrr_online_california',
-                  ),
-                  _buildInsuranceItem(
-                    context,
                     context
                         .translate('additionalProducts.tireHazardProtection'),
                     'tire_hazard_protection',
@@ -131,26 +127,6 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
                     context,
                     context.translate('additionalProducts.dentRepair'),
                     'dent_repair',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('additionalProducts.petHealth'),
-                    'pet_health',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('additionalProducts.autoLoan'),
-                    'auto_loan',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('additionalProducts.taxPreparation'),
-                    'tax_preparation',
-                  ),
-                  _buildInsuranceItem(
-                    context,
-                    context.translate('additionalProducts.oneStopDui'),
-                    'one_stop_dui',
                   ),
                 ],
               ),
@@ -214,26 +190,11 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
               context.translate('additionalProducts.windshieldRepair')) {
             _handleWindshieldRepair(context);
           } else if (title ==
-              context.translate('additionalProducts.vrrOnlineCalifornia')) {
-            _handleVrrOnlineCalifornia(context);
-          } else if (title ==
               context.translate('additionalProducts.tireHazardProtection')) {
             _handleTireHazardProtection(context);
           } else if (title ==
               context.translate('additionalProducts.dentRepair')) {
             _handleDentRepair(context);
-          } else if (title ==
-              context.translate('additionalProducts.petHealth')) {
-            _handlePetHealth(context);
-          } else if (title ==
-              context.translate('additionalProducts.autoLoan')) {
-            _handleAutoLoan(context);
-          } else if (title ==
-              context.translate('additionalProducts.taxPreparation')) {
-            _handleTaxPreparation(context);
-          } else if (title ==
-              context.translate('additionalProducts.oneStopDui')) {
-            _handleOneStopDui(context);
           } else {
             // Para cualquier otro tipo no reconocido
             _showNotAvailableMessage(context, title);
@@ -367,32 +328,12 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
     await _handleInsurance(context, 'windshield_repair');
   }
 
-  Future<void> _handleVrrOnlineCalifornia(BuildContext context) async {
-    await _handleInsurance(context, 'vrr_online_california');
-  }
-
   Future<void> _handleTireHazardProtection(BuildContext context) async {
     await _handleInsurance(context, 'tire_hazard_protection');
   }
 
   Future<void> _handleDentRepair(BuildContext context) async {
     await _handleInsurance(context, 'dent_repair');
-  }
-
-  Future<void> _handlePetHealth(BuildContext context) async {
-    await _handleInsurance(context, 'pet_health');
-  }
-
-  Future<void> _handleAutoLoan(BuildContext context) async {
-    await _handleInsurance(context, 'auto_loan');
-  }
-
-  Future<void> _handleTaxPreparation(BuildContext context) async {
-    await _handleInsurance(context, 'tax_preparation');
-  }
-
-  Future<void> _handleOneStopDui(BuildContext context) async {
-    await _handleInsurance(context, 'one_stop_dui');
   }
 
   // Método para mostrar mensaje cuando un seguro no está disponible
@@ -527,51 +468,23 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
 
       switch (insuranceType) {
         case 'auto_club':
-          urlString = 'https://www.freeway.com/insurance-options/auto-club/';
+          urlString = '${urlBaseEmbed}our-products/auto-club/';
           title = context.translate('additionalProducts.autoClub');
           break;
         case 'windshield_repair':
-          urlString =
-              'https://buy.freeway.com/product/windshield-repair/step-1?';
+          urlString = '${urlBaseEmbed}our-products/windshield-repair/';
           title = context.translate('additionalProducts.windshieldRepair');
           break;
-        case 'vrr_online_california':
-          urlString =
-              'https://www.carregistration.com/freeway?affid=FWAY&cid=web&utm=&utm_source=FreeWay-Insurance&utm_medium=web&utm_campaign=Freeway&utm_id=Freeway+Insurance&utm_term=web';
-          title = context.translate('additionalProducts.vrrOnlineCalifornia');
-          break;
         case 'tire_hazard_protection':
-          urlString =
-              'https://buy.freeway.com/product/paintless-dent-repair/step-1';
+          urlString = '${urlBaseEmbed}our-products/tire-hazard-repair/';
           title = context.translate('additionalProducts.tireHazardProtection');
           break;
         case 'dent_repair':
-          urlString =
-              'https://buy.freeway.com/product/paintless-dent-repair/step-1';
+          urlString = '${urlBaseEmbed}our-products/paintless-dent-repair/';
           title = context.translate('additionalProducts.dentRepair');
           break;
-        case 'pet_health':
-          urlString =
-              'https://www.freeway.com/insurance-options/pet-health-and-discount-services/';
-          title = context.translate('additionalProducts.petHealth');
-          break;
-        case 'auto_loan':
-          urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&?zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = context.translate('additionalProducts.autoLoan');
-          break;
-        case 'tax_preparation':
-          urlString =
-              'https://www.taxmax.com/TaxCalculation/ExtLand.aspx?type=confie&id=97265a19-8630-44e4-a427-d476ef0d33cd';
-          title = context.translate('additionalProducts.taxPreparation');
-          break;
-        case 'one_stop_dui':
-          urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zipcode=$zipCode&state=$stateAbbreviation&city=${Uri.encodeComponent(placeName)}';
-          title = context.translate('additionalProducts.oneStopDui');
-          break;
         default:
-          urlString = 'https://www.freeway.com/';
+          urlString = urlBaseEmbed;
           title = context.translate('additionalProducts.title');
       }
 

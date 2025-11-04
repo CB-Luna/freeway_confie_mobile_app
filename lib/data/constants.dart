@@ -11,6 +11,9 @@ const String urlBaseEmbedCarRegistration = 'https://www.carregistration.com/';
 
 const String urlBaseEmbedTriton = 'https://triton.acceptance.com/';
 
+const String urlBaseEmbedTritonInsurance =
+    'https://triton.acceptanceinsurance.com/';
+
 const String urlBaseEmbedTaxmax = 'https://www.taxmax.com/';
 
 const String urlBaseEmbedRate = 'https://rate.acceptance.com/';

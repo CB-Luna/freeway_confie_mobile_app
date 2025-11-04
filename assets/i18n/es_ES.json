@@ -439,6 +439,7 @@
     "snowmobile": "Motonieve",
     "sr22Insurance": "Seguro\nSR-22",
     "classicCar": "Auto Clásico",
+    "boatInsurance": "Seguro de Bote",
     "location": {
       "gettingLocation": "Obteniendo tu ubicación...",
       "zipCodeDialogTitle": "Ingresa tu código postal",

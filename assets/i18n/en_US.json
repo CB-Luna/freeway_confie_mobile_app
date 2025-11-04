@@ -506,6 +506,7 @@
     "snowmobile": "Snowmobile",
     "sr22Insurance": "SR-22\nInsurance",
     "classicCar": "Classic Car",
+    "boatInsurance": "Boat Insurance",
     "location": {
       "gettingLocation": "Getting your location...",
       "zipCodeDialogTitle": "Enter your ZIP code",

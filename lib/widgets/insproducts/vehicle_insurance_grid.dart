@@ -126,6 +126,26 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
                     context.translate('vehicleInsurance.snowmobile'),
                     'snowmobile',
                   ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.rvMotorhome'),
+                    'rv_motorhome',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.boatInsurance'),
+                    'boat',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.sr22Insurance'),
+                    'sr22Insurance',
+                  ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('vehicleInsurance.classicCar'),
+                    'classic_car',
+                  ),
                 ],
               ),
             ],
@@ -187,8 +207,6 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           } else if (title ==
               context.translate('vehicleInsurance.motorcycle')) {
             _handleMotorcycleInsurance(context);
-          } else if (title == context.translate('vehicleInsurance.motorhome')) {
-            _handleMotorhomeInsurance(context);
           } else if (title ==
               context.translate('vehicleInsurance.rvMotorhome')) {
             _handleRVMotorhomeInsurance(context);
@@ -202,8 +220,10 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
               context.translate('vehicleInsurance.sr22Insurance')) {
             _handleSR22Insurance(context);
           } else if (title == context.translate('vehicleInsurance.atv')) {
-            // Mostrar mensaje de que no está disponible actualmente
-            _showNotAvailableMessage(context, title);
+            _handleAtvInsurance(context);
+          } else if (title ==
+              context.translate('vehicleInsurance.boatInsurance')) {
+            _handleBoatInsurance(context);
           } else {
             // Para cualquier otro tipo no reconocido
             _showNotAvailableMessage(context, title);
@@ -337,10 +357,6 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
     await _handleInsurance(context, 'motorcycle');
   }
 
-  Future<void> _handleMotorhomeInsurance(BuildContext context) async {
-    await _handleInsurance(context, 'motorhome');
-  }
-
   Future<void> _handleRVMotorhomeInsurance(BuildContext context) async {
     await _handleInsurance(context, 'rv_motorhome');
   }
@@ -355,6 +371,14 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
 
   Future<void> _handleSR22Insurance(BuildContext context) async {
     await _handleInsurance(context, 'sr22');
+  }
+
+  Future<void> _handleBoatInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'boat');
+  }
+
+  Future<void> _handleAtvInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'atv');
   }
 
   // Método para mostrar mensaje cuando un seguro no está disponible
@@ -512,39 +536,41 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           title =
               '${context.translate('vehicleInsurance.motorcycle')} - $placeName, $stateAbbreviation';
           break;
-        case 'motorhome':
-          urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-casa-rodante/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
-          title =
-              '${context.translate('vehicleInsurance.motorhome')} - $placeName, $stateAbbreviation';
-          break;
         case 'rv_motorhome':
           urlString =
-              'https://www.freewayseguros.com/cotizacion-seguro-de-casa-movil-y-casa-prefabricada/?zipCodeForm=$zipCode&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '${urlBaseEmbed}motorhome-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.rvMotorhome')} - $placeName, $stateAbbreviation';
           break;
         case 'snowmobile':
           urlString =
-              '$urlBaseEmbedTriton?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '${urlBaseEmbed}snowmobile-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title =
               '${context.translate('vehicleInsurance.snowmobile')} - $placeName, $stateAbbreviation';
           break;
         case 'classic_car':
           urlString =
-              'https://triton.freeway.com/?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '$urlBaseEmbedTritonInsurance?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title = context.translate('vehicleInsurance.classicCar');
           break;
         case 'sr22':
           urlString =
-              'https://triton.freeway.com/?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+              '${urlBaseEmbed}sr22-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title = context.translate('vehicleInsurance.sr22Insurance');
           break;
-        default:
+        case 'boat':
           urlString =
-              'https://triton.freeway.com/?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
-          title =
-              '${context.translate('vehicleInsurance.auto')} - $placeName, $stateAbbreviation';
+              '${urlBaseEmbed}boat-insurance-quote-form/?zipcode=$zipCode&state=$stateAbbreviation&city=$placeName&first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
+          title = context.translate('vehicleInsurance.boatInsurance');
+          break;
+        case 'atv':
+          urlString =
+              '$urlBaseEmbedTriton?media_code=FWYCA-A-WW-WS-E-05884&phone=877-699-2436&zip_code=$zipCode&city=$placeName&state=$stateAbbreviation&system=atalaya&first_name=$firstName&last_name=$lastName&email=$email&phone_number=$phone';
+          title = context.translate('vehicleInsurance.atv');
+          break;
+        default:
+          urlString = urlBaseEmbed;
+          title = context.translate('vehicleInsurance.title');
       }
 
       // Abrir la URL en un WebView embebido en lugar de un navegador externo
