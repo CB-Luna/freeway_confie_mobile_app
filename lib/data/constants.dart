@@ -48,7 +48,7 @@ const String apiKeyWallet = 'GfhGdjdx3rfGBBFkf';
 
 const String envOffice = String.fromEnvironment(
   'env',
-  defaultValue: 'https://inquiry.confie.com',
+  defaultValue: 'https://stg-inquiry.confie.com',
 );
 
 const String apiKeyOffice = 'fjzzkOuCefd8-Z86i9HMGWQ=';
