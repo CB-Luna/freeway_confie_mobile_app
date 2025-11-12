@@ -81,3 +81,8 @@ Usuario 5
 
 user: mobapp@yopmail.com
 password: Today_2025!
+
+## Acceptance
+
+user: uzzielpalmarodriguez@gmail..com
+password: Cbluna2025$
