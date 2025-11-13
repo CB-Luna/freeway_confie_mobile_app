@@ -155,9 +155,22 @@ class SignUpPageState extends State<SignUpPage> {
         }
       } catch (e) {
         if (mounted) {
+          // Detectar errores de conexión
+          String errorMessage;
+          final errorString = e.toString().toLowerCase();
+          if (errorString.contains('socketexception') ||
+              errorString.contains('failed host lookup') ||
+              errorString.contains('connection error') ||
+              errorString.contains('network is unreachable') ||
+              errorString.contains('dioexception')) {
+            errorMessage = context.translate('auth.noInternetConnection');
+          } else {
+            errorMessage = '${context.translate('auth.error')}: $e';
+          }
+          
           showAppSnackBar(
             context,
-            '${context.translate('auth.error')}: $e',
+            errorMessage,
             const Duration(seconds: 2),
             backgroundColor: AppTheme.getRedColor(context),
           );

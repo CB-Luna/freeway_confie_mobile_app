@@ -82,7 +82,9 @@
     "twoFactorHint": "Ingresa el código de 6 dígitos enviado a tu teléfono vía SMS",
     "verify": "Verificar",
     "invalidTwoFactorCode": "Código de verificación inválido. Por favor, intenta de nuevo.",
-    "sessionExpired": "Sesión expirada. Por favor, inicia sesión nuevamente."
+    "sessionExpired": "Sesión expirada. Por favor, inicia sesión nuevamente.",
+    "noInternetConnection": "Sin conexión a internet. Por favor, verifica tu conexión e intenta de nuevo.",
+    "connectionError": "Error de conexión. Por favor, verifica tu conexión a internet."
   },
   "home": {
     "welcome": "Bienvenido",
