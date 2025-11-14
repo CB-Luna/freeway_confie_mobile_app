@@ -124,7 +124,7 @@ class _ProductListState extends State<ProductList> {
         context,
         MaterialPageRoute(
           builder: (context) => WebViewPage(
-            url: '${urlBaseEmbedBuyProduct}auto-club',
+            url: '${urlBaseEmbedBuyProduct}auto-club?utm_medium=app',
             title: 'Freeway Auto Club',
             userData: userData,
             formType: 'auto_club',

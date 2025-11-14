@@ -5,7 +5,7 @@ library;
 // ///
 // const String urlBaseEmbed = 'https://www.freeway.com/';
 
-// const String urlBaseEmbedBuyProduct = 'https://buy.freeway.com/product/';
+// const String urlBaseEmbedBuyProduct = 'https://buy.freeway.com/app/';
 
 // const String urlBaseEmbedCarRegistration = 'https://www.carregistration.com/';
 
@@ -65,7 +65,7 @@ library;
 ///
 const String urlBaseEmbed = 'https://www.freeway.com/';
 
-const String urlBaseEmbedBuyProduct = 'https://buy.freeway.com/product/';
+const String urlBaseEmbedBuyProduct = 'https://buy.freeway.com/app/';
 
 const String urlBaseEmbedCarRegistration = 'https://www.carregistration.com/';
 

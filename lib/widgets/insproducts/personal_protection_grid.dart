@@ -542,8 +542,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               '${context.translate('personalProtection.dental')} - $placeName, $stateAbbreviation';
           break;
         case 'telemedicine':
-          urlString =
-              '$urlBaseEmbedBuyProduct/telemedicine/step-2#form__step_2';
+          urlString = '${urlBaseEmbedBuyProduct}telemedicine?utm_medium=app';
           title = context.translate('personalProtection.telemedicine');
           break;
         case 'pet_insurance':
@@ -559,12 +558,11 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
               '${context.translate('personalProtection.life')} - $placeName, $stateAbbreviation';
           break;
         case 'travel_club_add':
-          urlString = '$urlBaseEmbedBuyProduct/ad-d/step-2?#form__step_2';
+          urlString = '${urlBaseEmbedBuyProduct}ad-d?utm_medium=app';
           title = context.translate('personalProtection.accidentalDeath');
           break;
         case 'identity_theft_protection':
-          urlString =
-              '$urlBaseEmbedBuyProduct/identity-theft/step-2#form__step_2';
+          urlString = '${urlBaseEmbedBuyProduct}identity-theft?utm_medium=app';
           title = context.translate('personalProtection.identityTheft');
           break;
         case 'mexican_car_insurance':
@@ -573,7 +571,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
           break;
         case 'hospital_indemnity':
           urlString =
-              '$urlBaseEmbedBuyProduct/hospital-indemnity/step-2?#form__step_2';
+              '${urlBaseEmbedBuyProduct}hospital-indemnity?utm_medium=app';
           title = context.translate('personalProtection.hospitalIndemnity');
           break;
         default:

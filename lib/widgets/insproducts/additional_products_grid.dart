@@ -535,7 +535,7 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
           break;
         case 'windshield_repair':
           urlString =
-              '${urlBaseEmbedBuyProduct}product/windshield-repair/step-1?';
+              '${urlBaseEmbedBuyProduct}windshield-repair?utm_medium=app';
           title = context.translate('additionalProducts.windshieldRepair');
           break;
         case 'vrr_online_california':
@@ -544,13 +544,12 @@ class _AdditionalProductsGridState extends State<AdditionalProductsGrid> {
           title = context.translate('additionalProducts.vrrOnlineCalifornia');
           break;
         case 'tire_hazard_protection':
-          urlString =
-              '${urlBaseEmbedBuyProduct}product/paintless-dent-repair/step-1';
+          urlString = '${urlBaseEmbedBuyProduct}tire-hazard?utm_medium=app';
           title = context.translate('additionalProducts.tireHazardProtection');
           break;
         case 'dent_repair':
           urlString =
-              '${urlBaseEmbedBuyProduct}product/paintless-dent-repair/step-1';
+              '${urlBaseEmbedBuyProduct}paintless-dent-repair?utm_medium=app';
           title = context.translate('additionalProducts.dentRepair');
           break;
         case 'pet_health':
