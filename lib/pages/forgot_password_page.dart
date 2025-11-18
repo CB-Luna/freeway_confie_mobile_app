@@ -1,9 +1,9 @@
 // ignore_for_file: use_build_context_synchronously
 
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-import 'package:freeway_app/data/services/auth_service.dart';
+import 'package:flutter/material.dart';
 import 'package:freeway_app/data/constants.dart';
+import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/pages/login_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
@@ -26,13 +26,17 @@ class ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _codeController = TextEditingController();
   final _newPasswordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _authService = AuthService(Dio(BaseOptions(
-    baseUrl: envLogin,
-    headers: {
-      'X-API-KEY': apiKeyLogin,
-      'Content-Type': 'application/json',
-    },
-  )));
+  final _authService = AuthService(
+    Dio(
+      BaseOptions(
+        baseUrl: envLogin,
+        headers: {
+          'X-API-KEY': apiKeyLogin,
+          'Content-Type': 'application/json',
+        },
+      ),
+    ),
+  );
 
   bool _isLoading = false;
   bool _codeSent = false;

@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
@@ -160,10 +160,10 @@ class _UserDataPageState extends State<UserDataPage> {
 
       if (currentUser != null) {
         // Obtener el servicio de autenticación
-        final _authService = AuthService(Dio());
+        final authService = AuthService(Dio());
 
         // Llamar al método updateUserData del AuthService con solo el número de teléfono
-        final Map<String, dynamic> response = await _authService.updateUserData(
+        final Map<String, dynamic> response = await authService.updateUserData(
           username: currentUser.email ?? '',
           firstName: currentUser.firstName,
           lastName: currentUser.lastName,
