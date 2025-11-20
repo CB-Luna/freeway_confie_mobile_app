@@ -145,22 +145,9 @@ class _HeaderSectionState extends State<HeaderSection> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           // Logo con GestureDetector para navegar a login
-          GestureDetector(
-            onTap: () {
-              debugPrint('HeaderSection - Clic en logo de Freeway');
-              // Limpiar estado de autenticación
-              final authProvider =
-                  Provider.of<AuthProvider>(context, listen: false);
-              authProvider.logout();
-
-              // Navegar a la pantalla de login
-              Navigator.of(context)
-                  .pushNamedAndRemoveUntil('/login', (route) => false);
-            },
-            child: Image.asset(
-              AppTheme.getFreewayLogoType(context),
-              height: 32,
-            ),
+          Image.asset(
+            AppTheme.getFreewayLogoType(context),
+            height: 32,
           ),
           // Right side icons
           Row(
