@@ -59,6 +59,8 @@ onPressed: () {
 
 ## Credenciales
 
+DEVELOPMENT
+
 Usuario 1
 
 - user: jorge.cacho-sousa@freeway.com
@@ -74,6 +76,8 @@ Usuario 3
 - user: omar.neftali.rocha.gallaga@confie.com
 - password: Today2025!
 
+PRODUCCIÓN
+
 Usuario 4
 
 - user: jorge.cacho-sousa@confie.com
@@ -83,3 +87,8 @@ Usuario 5
 
 - user: mobapp@yopmail.com
 - password: Today_2025!
+
+Usuario 6
+
+- user: hectorslop1@gmail.com
+- password: Cbluna2025!
