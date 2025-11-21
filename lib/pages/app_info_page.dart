@@ -8,6 +8,7 @@ import 'package:freeway_app/pages/webview_page.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class AppInfoPage extends StatefulWidget {
   const AppInfoPage({super.key});
@@ -20,6 +21,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
   bool _isLoading = true;
   String _deviceModel = '';
   String _osVersion = '';
+  String _appVersion = '';
+  String _buildNumber = '';
 
   @override
   void initState() {
@@ -29,8 +32,14 @@ class _AppInfoPageState extends State<AppInfoPage> {
 
   Future<void> _loadDeviceInfo() async {
     final deviceInfo = DeviceInfoPlugin();
+    final packageInfo = await PackageInfo.fromPlatform();
 
     try {
+      // Obtener información de la versión de la app
+      _appVersion = packageInfo.version;
+      _buildNumber = packageInfo.buildNumber;
+
+      // Obtener información del dispositivo
       if (Platform.isAndroid) {
         final androidInfo = await deviceInfo.androidInfo;
         _deviceModel = '${androidInfo.manufacturer} ${androidInfo.model}';
@@ -43,6 +52,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
     } catch (e) {
       _deviceModel = 'Desconocido';
       _osVersion = 'Desconocido';
+      _appVersion = 'Desconocido';
+      _buildNumber = 'Desconocido';
     } finally {
       if (mounted) {
         setState(() {
@@ -104,10 +115,8 @@ class _AppInfoPageState extends State<AppInfoPage> {
   }
 
   Widget _buildAppInfoCard(BuildContext context) {
-    // Información de la aplicación
-    const appVersion = '1.0.1';
-    const buildNumber = '3';
-    final buildDate = '11/19/2025';
+    // La versión y build number ahora se obtienen automáticamente
+    final buildDate = '11/21/2025';
 
     return Card(
       elevation: 2,
@@ -141,12 +150,12 @@ class _AppInfoPageState extends State<AppInfoPage> {
             _buildInfoRow(
               context,
               context.translate('profile.appInfoPage.version'),
-              appVersion,
+              _appVersion,
             ),
             _buildInfoRow(
               context,
               context.translate('profile.appInfoPage.build'),
-              buildNumber,
+              _buildNumber,
             ),
             _buildInfoRow(
               context,
