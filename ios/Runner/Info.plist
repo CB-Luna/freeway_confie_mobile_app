@@ -34,6 +34,8 @@
 	<string>This app uses Face ID to securely authenticate your identity and provide faster access to your account.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>This app requires access to your location while it is open to show nearby offices and provide directions.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app requires access to your location to show nearby offices and provide directions.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app requires access to your location while it is open to show nearby offices and provide directions.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
