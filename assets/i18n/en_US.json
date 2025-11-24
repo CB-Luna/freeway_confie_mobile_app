@@ -306,6 +306,7 @@
       "userData": "Personal Information",
       "fullName": "Full Name",
       "firstName": "First Name",
+      "requiredField": "Required Field",
       "lastName": "Last Name",
       "email": "Email",
       "phone": "Phone",

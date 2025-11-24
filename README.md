@@ -91,4 +91,4 @@ Usuario 5
 Usuario 6
 
 - user: hectorslop1@gmail.com
-- password: Cbluna2025!
+- password: Cbluna2025$

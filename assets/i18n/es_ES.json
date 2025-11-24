@@ -306,6 +306,7 @@
       "userData": "Datos Personales",
       "fullName": "Nombre Completo",
       "firstName": "Nombre",
+      "requiredField": "Campo Requerido",
       "lastName": "Apellido",
       "email": "Correo Electrónico",
       "phone": "Teléfono",

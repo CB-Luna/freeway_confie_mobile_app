@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:freeway_app/core/network/api_client.dart';
 import 'package:freeway_app/data/services/auth_service.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/models/country_phone_model.dart';
@@ -159,8 +159,8 @@ class _UserDataPageState extends State<UserDataPage> {
       final currentUser = authProvider.currentUser;
 
       if (currentUser != null) {
-        // Obtener el servicio de autenticación
-        final authService = AuthService(Dio());
+        // Obtener el servicio de autenticación con configuración correcta
+        final authService = AuthService(ApiClient.createDio());
 
         // Llamar al método updateUserData del AuthService con solo el número de teléfono
         final Map<String, dynamic> response = await authService.updateUserData(
@@ -342,8 +342,8 @@ class _UserDataPageState extends State<UserDataPage> {
           final String formattedBirthDate =
               DateFormat('yyyy-MM-dd').format(_birthDate);
 
-          // Obtener el servicio de autenticación
-          final authService = AuthService(Dio());
+          // Obtener el servicio de autenticación con configuración correcta
+          final authService = AuthService(ApiClient.createDio());
 
           // Llamar al método updateUserData del AuthService
           await authService.updateUserData(
@@ -352,7 +352,9 @@ class _UserDataPageState extends State<UserDataPage> {
             lastName: _lastNameController.text,
             phoneNumber: _completePhoneNumber,
             birthDate: formattedBirthDate,
-            policyNumber: _policyNumberController.text,
+            policyNumber: _policyNumberController.text.trim().isEmpty
+                ? ''
+                : _policyNumberController.text.trim(),
           );
 
           // Continuamos con el flujo normal ya que estamos guardando todos los cambios
@@ -373,16 +375,6 @@ class _UserDataPageState extends State<UserDataPage> {
 
             // Nota: El método updateUserData ya maneja la actualización del fullName y la notificación a los listeners
 
-            // Cerrar el LoadingView
-            if (mounted && Navigator.canPop(context)) {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ProfilePage(),
-                ),
-              );
-            }
-
             if (!mounted) return;
 
             // Mostrar mensaje de éxito
@@ -392,6 +384,16 @@ class _UserDataPageState extends State<UserDataPage> {
               const Duration(seconds: 2),
               backgroundColor: AppTheme.getGreenColor(context),
             );
+
+            // Cerrar el LoadingView
+            if (mounted && Navigator.canPop(context)) {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ProfilePage(),
+                ),
+              );
+            }
 
             // Resetear el estado de cambios
             setState(() {
@@ -595,7 +597,8 @@ class _UserDataPageState extends State<UserDataPage> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return context.translate('validation.requiredField');
+                  return context
+                      .translate('profile.userDataPage.requiredField');
                 }
                 return null;
               },
@@ -612,7 +615,8 @@ class _UserDataPageState extends State<UserDataPage> {
               ),
               validator: (value) {
                 if (value == null || value.isEmpty) {
-                  return context.translate('validation.requiredField');
+                  return context
+                      .translate('profile.userDataPage.requiredField');
                 }
                 return null;
               },
@@ -663,7 +667,7 @@ class _UserDataPageState extends State<UserDataPage> {
               ),
             ),
             const SizedBox(height: 16),
-            // Campo de número de póliza
+            // Campo de número de póliza (opcional)
             TextFormField(
               controller: _policyNumberController,
               decoration: AppTheme.inputDecoration(
@@ -674,12 +678,7 @@ class _UserDataPageState extends State<UserDataPage> {
               style: TextStyle(
                 fontSize: responsiveFontSizes.bodyMedium(context),
               ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return context.translate('validation.requiredField');
-                }
-                return null;
-              },
+              // Sin validador - campo opcional
             ),
           ],
         ),
