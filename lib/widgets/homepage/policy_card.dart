@@ -94,11 +94,7 @@ class _PolicyCardState extends State<PolicyCard>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Primera fila: Información de la póliza y estado
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              runSpacing: 12,
+            Row(
               children: [
                 // Icono del tipo de póliza - Verificar si existe un icono específico
                 PolicyTypeIconUtils.getPolicyTypeIcon(
@@ -106,9 +102,9 @@ class _PolicyCardState extends State<PolicyCard>
                   width: screenWidth * 0.15,
                   height: screenWidth * 0.15,
                 ),
-                // Información de la póliza
-                SizedBox(
-                  width: screenWidth * 0.35,
+                const SizedBox(width: 8),
+                // Información de la póliza - Usar Expanded para que tome el espacio disponible
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -121,7 +117,7 @@ class _PolicyCardState extends State<PolicyCard>
                           color: AppTheme.getPrimaryColor(context),
                         ),
                         overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
+                        maxLines: 2,
                       ),
                       Text(
                         policyNumber,
@@ -133,13 +129,13 @@ class _PolicyCardState extends State<PolicyCard>
                           fontWeight: FontWeight.w600,
                           color: AppTheme.getPrimaryColor(context),
                         ),
-                        maxLines: 3,
+                        maxLines: 5,
                       ),
                     ],
                   ),
                 ),
                 const SizedBox(width: 8),
-                // Indicador de estado (Active/Inactive)
+                // Indicador de estado (Active/Inactive) - Siempre visible
                 Container(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
@@ -155,7 +151,7 @@ class _PolicyCardState extends State<PolicyCard>
                         color: isActive
                             ? AppTheme.getGreenColor(context)
                             : AppTheme.getRedColor(context),
-                        size: 14, // Reducido ligeramente
+                        size: 14,
                       ),
                       const SizedBox(width: 4),
                       Text(
@@ -165,7 +161,7 @@ class _PolicyCardState extends State<PolicyCard>
                         style: TextStyle(
                           fontSize: responsiveFontSizes.button(
                             context,
-                          ), // Reducido para asegurar que quepa
+                          ),
                           color: isActive
                               ? AppTheme.getGreenColor(context)
                               : AppTheme.getRedColor(context),

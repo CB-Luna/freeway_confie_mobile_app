@@ -29,10 +29,10 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
   int currentIndex = 0;
   bool _isDisposed = false;
   PageController? _pageController;
-  
+
   // Número muy grande para simular un carrusel infinito
   static const int _infinitePageCount = 10000;
-  
+
   // Método para obtener la página inicial que siempre comience en la primera tarjeta
   int _getInitialPage(int cardCount) {
     if (cardCount == 0) return _infinitePageCount ~/ 2;
@@ -300,21 +300,28 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                             _pageController = PageController(
                               initialPage: initialPage,
                             );
-                            debugPrint('PageController inicializado con página: $initialPage');
+                            debugPrint(
+                              'PageController inicializado con página: $initialPage',
+                            );
                             debugPrint('Total de tarjetas: ${cards.length}');
-                            debugPrint('Índice inicial calculado: ${initialPage % cards.length}');
+                            debugPrint(
+                              'Índice inicial calculado: ${initialPage % cards.length}',
+                            );
                           }
-                          
+
                           return PageView.builder(
                             controller: _pageController!,
                             // Usar un número muy grande para simular infinito
                             itemCount: _infinitePageCount,
                             onPageChanged: (virtualIndex) {
-                              final int newActualIndex = virtualIndex % cards.length;
+                              final int newActualIndex =
+                                  virtualIndex % cards.length;
                               debugPrint('\n==== PAGE CHANGED ====');
                               debugPrint('Índice virtual: $virtualIndex');
                               debugPrint('Total de tarjetas: ${cards.length}');
-                              debugPrint('Índice real calculado: $newActualIndex');
+                              debugPrint(
+                                'Índice real calculado: $newActualIndex',
+                              );
                               debugPrint('Índice anterior: $currentIndex');
                               setState(() {
                                 // Calcular el índice real usando módulo
@@ -324,8 +331,11 @@ class _CardSwiperSectionState extends State<CardSwiperSection> {
                             },
                             itemBuilder: (context, virtualIndex) {
                               // Calcular el índice real de la tarjeta usando módulo
-                              final int actualIndex = virtualIndex % cards.length;
-                              debugPrint('Building card - Virtual index: $virtualIndex, Actual index: $actualIndex');
+                              final int actualIndex =
+                                  virtualIndex % cards.length;
+                              debugPrint(
+                                'Building card - Virtual index: $virtualIndex, Actual index: $actualIndex',
+                              );
                               return Padding(
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 8.0,
