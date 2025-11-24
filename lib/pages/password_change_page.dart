@@ -117,6 +117,10 @@ class _PasswordChangePageState extends State<PasswordChangePage> {
       if (!mounted) return;
 
       if (success) {
+        // Limpiar cookies antiguas para evitar conflictos en el próximo login
+        await authService.clearAuthCookies();
+        debugPrint('Cookies antiguas limpiadas después de cambio de contraseña');
+        
         // Actualizar las credenciales guardadas si los biométricos están activados
         if (await authProvider.hasCredentials()) {
           await authProvider.saveCredentials(

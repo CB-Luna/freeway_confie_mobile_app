@@ -331,4 +331,14 @@ class AuthService {
       );
     }
   }
+
+  // Método para limpiar las cookies de autenticación
+  Future<void> clearAuthCookies() async {
+    try {
+      await _storageService.clearAuthCookies();
+      debugPrint('Cookies de autenticación limpiadas correctamente');
+    } catch (e) {
+      debugPrint('Error al limpiar cookies: $e');
+    }
+  }
 }
