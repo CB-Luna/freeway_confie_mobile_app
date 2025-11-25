@@ -58,6 +58,11 @@ android {
 
         minSdkVersion 23  // Actualizado para Firebase
         targetSdkVersion 35
+        
+        // Soporte para 16 KB page size (requerido por Google Play)
+        ndk {
+            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86_64'
+        }
     }
 
     signingConfigs {
@@ -72,9 +77,9 @@ android {
     buildTypes {
         release {
             signingConfig signingConfigs.release
-            minifyEnabled false  // Deshabilitamos temporalmente
-            shrinkResources false  // Deshabilitamos temporalmente
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            minifyEnabled true  // Habilitado para generar mapping file
+            shrinkResources true  // Habilitado para reducir tamaño
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             ndk {
                 debugSymbolLevel 'FULL'
             }
