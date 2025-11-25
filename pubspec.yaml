@@ -2,7 +2,7 @@ name: freeway_app
 description: "Freeway Application"
 publish_to: "none"
 
-version: 1.0.8+11
+version: 1.0.8+13
 
 environment:
   sdk: ">=3.0.6 <4.0.0"
@@ -39,7 +39,7 @@ dependencies:
   package_info_plus: ^8.0.0
   provider: ^6.1.1
   retrofit: ^4.0.3
-  rive_animated_icon: ^2.0.3
+  # rive_animated_icon: ^2.0.3  # Removido por incompatibilidad con 16KB page size
   shared_preferences: ^2.2.2
   smooth_page_indicator: ^1.1.0
   toggle_switch: ^2.3.0
