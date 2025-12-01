@@ -442,10 +442,10 @@ class _IdCardPageState extends State<IdCardPage> {
       _isProcessingRequest = true;
     });
 
-    // Mostrar un indicador de progreso
+    // Mostrar mensaje de apertura
     showAppSnackBar(
       context,
-      context.translate('idCard.addedToGoogleWallet'),
+      context.translate('idCard.openingGoogleWallet'),
       const Duration(seconds: 2),
       backgroundColor: AppTheme.getBlueColor(context),
     );
@@ -460,13 +460,7 @@ class _IdCardPageState extends State<IdCardPage> {
           setState(() {
             _isProcessingRequest = false;
           });
-
-          showAppSnackBar(
-            context,
-            context.translate('idCard.addedToGoogleWallet'),
-            const Duration(seconds: 2),
-            backgroundColor: Colors.green,
-          );
+          // No mostramos mensaje porque no sabemos si realmente lo agregó
         }
       },
       onCanceled: () {
@@ -474,13 +468,7 @@ class _IdCardPageState extends State<IdCardPage> {
           setState(() {
             _isProcessingRequest = false;
           });
-
-          showAppSnackBar(
-            context,
-            context.translate('idCard.cancelToGoogleWallet'),
-            const Duration(seconds: 2),
-            backgroundColor: Colors.red,
-          );
+          // No mostramos mensaje de cancelación porque el usuario ya lo sabe
         }
       },
       onError: (error) {
@@ -506,15 +494,15 @@ class _IdCardPageState extends State<IdCardPage> {
       _isProcessingRequest = true;
     });
 
-    // Mostrar un indicador de progreso
+    // Mostrar mensaje de apertura
     showAppSnackBar(
       context,
-      context.translate('idCard.addedToAppleWallet'),
+      context.translate('idCard.openingAppleWallet'),
       const Duration(seconds: 2),
       backgroundColor: AppTheme.getBlueColor(context),
     );
 
-    // Usar el servicio de Google Wallet
+    // Usar el servicio de Apple Wallet
     _appleWalletService.addInsuranceCardToAppleWallet(
       context: context,
       user: user,
@@ -524,13 +512,7 @@ class _IdCardPageState extends State<IdCardPage> {
           setState(() {
             _isProcessingRequest = false;
           });
-
-          showAppSnackBar(
-            context,
-            context.translate('idCard.addedToAppleWallet'),
-            const Duration(seconds: 2),
-            backgroundColor: Colors.green,
-          );
+          // No mostramos mensaje porque no sabemos si realmente lo agregó
         }
       },
       onCanceled: () {
@@ -538,13 +520,7 @@ class _IdCardPageState extends State<IdCardPage> {
           setState(() {
             _isProcessingRequest = false;
           });
-
-          showAppSnackBar(
-            context,
-            context.translate('idCard.cancelToAppleWallet'),
-            const Duration(seconds: 2),
-            backgroundColor: Colors.red,
-          );
+          // No mostramos mensaje de cancelación porque el usuario ya lo sabe
         }
       },
       onError: (error) {
@@ -555,7 +531,7 @@ class _IdCardPageState extends State<IdCardPage> {
 
           showAppSnackBar(
             context,
-            'Error: $error',
+            '$error',
             const Duration(seconds: 3),
             backgroundColor: Colors.red,
           );
