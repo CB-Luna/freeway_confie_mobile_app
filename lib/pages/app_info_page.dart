@@ -116,7 +116,7 @@ class _AppInfoPageState extends State<AppInfoPage> {
 
   Widget _buildAppInfoCard(BuildContext context) {
     // La versión y build number ahora se obtienen automáticamente
-    final buildDate = '11/24/2025';
+    final buildDate = '12/01/2025';
 
     return Card(
       elevation: 2,
