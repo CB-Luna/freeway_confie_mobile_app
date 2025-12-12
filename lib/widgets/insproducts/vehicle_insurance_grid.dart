@@ -146,6 +146,11 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
                     context.translate('vehicleInsurance.classicCar'),
                     'classic_car',
                   ),
+                  _buildInsuranceItem(
+                    context,
+                    context.translate('personalProtection.mexicanCar'),
+                    'mexican_car_insurance',
+                  ),
                 ],
               ),
             ],
@@ -221,6 +226,9 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           } else if (title ==
               context.translate('vehicleInsurance.sr22Insurance')) {
             _handleSR22Insurance(context);
+          } else if (title ==
+              context.translate('personalProtection.mexicanCar')) {
+            _handleMexicanCarInsurance(context);
           } else if (title == context.translate('vehicleInsurance.atv')) {
             // Mostrar mensaje de que no está disponible actualmente
             _showNotAvailableMessage(context, title);
@@ -375,6 +383,10 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
 
   Future<void> _handleSR22Insurance(BuildContext context) async {
     await _handleInsurance(context, 'sr22');
+  }
+
+  Future<void> _handleMexicanCarInsurance(BuildContext context) async {
+    await _handleInsurance(context, 'mexican_car_insurance');
   }
 
   // Método para mostrar mensaje cuando un seguro no está disponible
@@ -558,6 +570,10 @@ class _VehicleInsuranceGridState extends State<VehicleInsuranceGrid> {
           urlString =
               '$urlBaseEmbedTriton?first_name=$firstName&last_name=$lastName&email=$email&phone=$phone';
           title = context.translate('vehicleInsurance.sr22Insurance');
+          break;
+        case 'mexican_car_insurance':
+          urlString = '${urlBaseEmbedQuote}guest/fastquote/77001';
+          title = context.translate('personalProtection.mexicanCar');
           break;
         default:
           urlString =

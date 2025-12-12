@@ -566,7 +566,7 @@ class _PersonalProtectionGridState extends State<PersonalProtectionGrid> {
           title = context.translate('personalProtection.identityTheft');
           break;
         case 'mexican_car_insurance':
-          urlString = '$urlBaseEmbedQuote/guest/fastquote/77001';
+          urlString = '${urlBaseEmbedQuote}guest/fastquote/77001';
           title = context.translate('personalProtection.mexicanCar');
           break;
         case 'hospital_indemnity':
