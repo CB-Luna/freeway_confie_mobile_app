@@ -57,12 +57,8 @@ class _PolicyCardState extends State<PolicyCard>
   @override
   Widget build(BuildContext context) {
     final String policyNumber = widget.policy.policyNumber;
-    // Determinar si la póliza está activa basándose en la fecha de expiración
-    bool isActive = true;
-    if (widget.policy.expirationDate.isNotEmpty) {
-      final expirationDate = DateTime.tryParse(widget.policy.expirationDate);
-      isActive = expirationDate?.isAfter(DateTime.now()) ?? true;
-    }
+    // Determinar si la póliza está activa basándose en la fecha de expiración y el estado
+    final bool isActive = _isPolicyActive(widget.policy);
     String? nextPaymentDate;
     // Usar la fecha de expiración como fecha del próximo pago si está disponible
     if (widget.policy.nextPaymentDate != null) {
@@ -502,5 +498,55 @@ class _PolicyCardState extends State<PolicyCard>
       // En caso de error, devolver la cadena original
       return dateStr;
     }
+  }
+
+  /// Determina si una póliza está activa según las reglas del negocio:
+  /// - La fecha de expiración debe ser mayor que hoy
+  /// - El policyStatus debe ser uno de los siguientes:
+  ///   * Active
+  ///   * Renewed
+  ///   * Pending Cancel UW
+  ///   * Pending cancel non-pay
+  ///   * Reinstated
+  bool _isPolicyActive(PolicyModel policy) {
+    // Verificar fecha de expiración
+    if (policy.expirationDate.isEmpty) {
+      return false;
+    }
+
+    final expirationDate = DateTime.tryParse(policy.expirationDate);
+    if (expirationDate == null) {
+      return false;
+    }
+
+    // La fecha de expiración debe ser mayor que hoy
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final expDate = DateTime(expirationDate.year, expirationDate.month, expirationDate.day);
+    
+    if (!expDate.isAfter(today)) {
+      return false;
+    }
+
+    // Verificar el estado de la póliza
+    final status = policy.policyStatus?.trim();
+    if (status == null || status.isEmpty) {
+      // Si no hay estado, usar solo la fecha (comportamiento legacy)
+      return true;
+    }
+
+    // Lista de estados que se consideran activos
+    const activeStatuses = [
+      'Active',
+      'Renewed',
+      'Pending Cancel UW',
+      'Pending cancel non-pay',
+      'Reinstated',
+    ];
+
+    // Comparación case-insensitive
+    return activeStatuses.any(
+      (activeStatus) => activeStatus.toLowerCase() == status.toLowerCase(),
+    );
   }
 }

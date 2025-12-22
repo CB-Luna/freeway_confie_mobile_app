@@ -19,6 +19,7 @@ class PolicyModel {
   final String organizationName;
   final String organizationCode;
   final String? nextPaymentDate;
+  final String? policyStatus;
 
   PolicyModel({
     required this.policyId,
@@ -36,6 +37,7 @@ class PolicyModel {
     this.carrierClaimUrl,
     this.carrierClaimPhone,
     this.nextPaymentDate,
+    this.policyStatus,
   });
 
   factory PolicyModel.fromJson(Map<String, dynamic> json) =>
