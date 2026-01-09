@@ -80,7 +80,7 @@ PRODUCCIÓN
 
 Usuario 4
 
-- user: jorge.cacho-sousa@confie.com
+- user: jorge.sousa@confie.com
 - password: Freeway1!
 
 Usuario 5
