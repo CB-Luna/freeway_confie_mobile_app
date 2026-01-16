@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:freeway_app/data/constants.dart';
+import 'package:freeway_app/main.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
@@ -81,8 +83,84 @@ class _OfficeListState extends State<OfficeList> {
       backgroundColor: AppTheme.getBlueColor(context),
     );
 
-    // Llamar al método de búsqueda por código postal
-    locationController.searchByZipCode(zipCode, context);
+    debugPrint('🚀 Iniciando búsqueda por código postal: $zipCode');
+    locationController.searchByZipCode(zipCode, context).then((_) {
+      debugPrint('✅ searchByZipCode completado');
+      // Después de que termine la búsqueda, verificar si hay un mensaje de error
+      final errorMessage = locationController.state.errorMessage;
+      debugPrint('📝 Error message: $errorMessage');
+
+      if (errorMessage != null && errorMessage.startsWith('noOfficesFound:')) {
+        debugPrint('🔔 Detectado mensaje de no oficinas encontradas');
+        final searchedZipCode = errorMessage.split(':')[1];
+
+        // Usar SchedulerBinding para mostrar el dialog en el siguiente frame
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          // Usar el navigatorKey global para obtener un context válido
+          final navContext = navigatorKey.currentContext;
+          if (navContext != null) {
+            try {
+              debugPrint('📱 Intentando mostrar dialog...');
+              showDialog(
+                context: navContext,
+                barrierDismissible: true,
+                builder: (BuildContext dialogContext) {
+                  return AlertDialog(
+                    title: Row(
+                      children: [
+                        Icon(
+                          Icons.info_outline,
+                          color: AppTheme.getOrangeColor(navContext),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: Text(
+                            navContext.translate('office.zipCode.search'),
+                            style: TextStyle(
+                              color: AppTheme.getOrangeColor(navContext),
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    content: Text(
+                      navContext.translateWithArgs(
+                        'office.zipCode.noOfficesFound',
+                        args: [searchedZipCode],
+                      ),
+                      style: const TextStyle(fontSize: 16),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.of(dialogContext).pop(),
+                        child: Text(
+                          navContext.translate('common.ok'),
+                          style: TextStyle(
+                            color: AppTheme.getPrimaryColor(navContext),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+              debugPrint('✅ Dialog mostrado exitosamente');
+            } catch (e) {
+              debugPrint('❌ Error al mostrar dialog: $e');
+            }
+          } else {
+            debugPrint('⚠️ navigatorKey.currentContext es null');
+          }
+        });
+      } else {
+        debugPrint('ℹ️ No hay mensaje de error o no coincide con el patrón');
+      }
+    }).catchError((error) {
+      debugPrint('❌ Error en searchByZipCode: $error');
+    });
   }
 
   @override

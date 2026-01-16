@@ -221,6 +221,60 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
     );
 
     // Llamar al método de búsqueda por código postal
-    locationController.searchByZipCode(zipCode, context);
+    locationController.searchByZipCode(zipCode, context).then((_) {
+      // Después de que termine la búsqueda, verificar si hay un mensaje de error
+      final errorMessage = locationController.state.errorMessage;
+      if (errorMessage != null && errorMessage.startsWith('noOfficesFound:')) {
+        final searchedZipCode = errorMessage.split(':')[1];
+        // Mostrar dialog con el mensaje
+        if (mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext dialogContext) {
+              return AlertDialog(
+                title: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline,
+                      color: AppTheme.getOrangeColor(context),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        context.translate('office.zipCode.search'),
+                        style: TextStyle(
+                          color: AppTheme.getOrangeColor(context),
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                content: Text(
+                  context.translateWithArgs(
+                    'office.zipCode.noOfficesFound',
+                    args: [searchedZipCode],
+                  ),
+                  style: const TextStyle(fontSize: 16),
+                ),
+                actions: [
+                  TextButton(
+                    onPressed: () => Navigator.of(dialogContext).pop(),
+                    child: Text(
+                      context.translate('common.ok'),
+                      style: TextStyle(
+                        color: AppTheme.getPrimaryColor(context),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      }
+    });
   }
 }

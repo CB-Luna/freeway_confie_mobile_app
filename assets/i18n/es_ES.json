@@ -419,6 +419,7 @@
       "searchingNear": "Buscando oficinas cerca del código postal: {0}",
       "mapError": "Error al cargar el mapa",
       "errorSearchingByZipCode": "Error buscando oficinas por código postal: {0}",
+      "noOfficesFound": "No se encontraron oficinas cerca del código postal: {0}",
       "searchOfficeByZipcode": "Buscar Oficina por Código Postal"
     },
     "error": "Error: Faltan dependencias"

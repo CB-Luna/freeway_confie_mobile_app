@@ -694,13 +694,16 @@ class LocationController extends ChangeNotifier {
           await officeService.getNearbyOfficesByZipCode(zipCode);
 
       if (nearbyOffices.isEmpty) {
+        // No borrar las oficinas anteriores, solo mostrar el mensaje de error
+        // y mantener la lista previa para evitar confusión con los marcadores en el mapa
+        debugPrint(
+          '🔍 No se encontraron oficinas para el código postal: $zipCode',
+        );
+
         _updateState(
-          offices: [],
-          nearbyOffices: [],
           isLoading: false,
-          hasSearchedByZipCode: false,
           errorMessage:
-              'No se encontraron oficinas cercanas al código postal: $zipCode',
+              'noOfficesFound:$zipCode', // Formato especial para que el widget lo detecte
         );
         return;
       }
@@ -720,13 +723,23 @@ class LocationController extends ChangeNotifier {
         headingAccuracy: 0,
       );
 
-      _updateState(
+      debugPrint('✅ Oficinas encontradas, limpiando errorMessage');
+      // Primero limpiar el estado completamente creando uno nuevo
+      _state = LocationState(
         currentPosition: newPosition,
         isLoading: false,
         offices: nearbyOffices,
         nearbyOffices: nearbyOffices,
         hasSearchedByZipCode: true,
+        errorMessage: null, // Limpiar explícitamente
+        markers: _state.markers,
+        circles: _state.circles,
+        hasLocationPermission: _state.hasLocationPermission,
+        searchRadiusInMiles: _state.searchRadiusInMiles,
+        showAllOffices: _state.showAllOffices,
+        selectedOfficeId: _state.selectedOfficeId,
       );
+      notifyListeners();
 
       // Actualizar posición del mapa y marcar oficinas
       updateMapPosition();
