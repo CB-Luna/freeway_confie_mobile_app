@@ -44,7 +44,14 @@ class OfficeService {
           return [];
         }
 
-        return jsonResponse.map((office) => Office.fromJson(office)).toList();
+        final List<Office> offices =
+            jsonResponse.map((office) => Office.fromJson(office)).toList();
+
+        // Ordenar las oficinas por distancia (más cercana primero)
+        offices
+            .sort((a, b) => a.distanceObj.value.compareTo(b.distanceObj.value));
+
+        return offices;
       } else {
         debugPrint('Error al buscar oficinas: ${response.statusCode}');
         debugPrint('Respuesta: ${response.body}');
