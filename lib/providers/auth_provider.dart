@@ -84,7 +84,10 @@ class AuthProvider with ChangeNotifier {
       }
 
       // Si no requiere 2FA, completar el login directamente
-      return await _completeLogin(response, context);
+      if (context.mounted) {
+        return await _completeLogin(response, context);
+      }
+      return false;
     } on ApiError catch (e) {
       debugPrint('ApiError en loginStep1: ${e.message}');
       // Detectar errores de conexión primero
@@ -127,8 +130,8 @@ class AuthProvider with ChangeNotifier {
         }
       } else {
         if (context.mounted) {
-          _errorMessage =
-              context.translateWithArgs('auth.loginError', args: [e.toString()]);
+          _errorMessage = context
+              .translateWithArgs('auth.loginError', args: [e.toString()]);
         }
       }
       notifyListeners();
@@ -181,7 +184,10 @@ class AuthProvider with ChangeNotifier {
       }
 
       // Completar el login con la respuesta del paso 2
-      return await _completeLogin(response, context);
+      if (context.mounted) {
+        return await _completeLogin(response, context);
+      }
+      return false;
     } on ApiError catch (e) {
       // Mejorar el mensaje de error para credenciales incorrectas
       if (e.statusCode == 401 ||
@@ -461,7 +467,13 @@ class AuthProvider with ChangeNotifier {
 
       debugPrint('Registro exitoso, intentando login automático');
       // Si el registro fue exitoso, iniciar sesión automáticamente
-      final loginSuccess = await login(email, password, context);
+
+      bool loginSuccess;
+      if (context.mounted) {
+        loginSuccess = await login(email, password, context);
+      } else {
+        loginSuccess = false;
+      }
 
       if (!loginSuccess) {
         debugPrint('Login automático después del registro falló');
@@ -506,8 +518,8 @@ class AuthProvider with ChangeNotifier {
         }
       } else {
         if (context.mounted) {
-          _errorMessage =
-              context.translateWithArgs('auth.signUpError', args: [e.toString()]);
+          _errorMessage = context
+              .translateWithArgs('auth.signUpError', args: [e.toString()]);
         }
       }
       notifyListeners();
@@ -644,7 +656,13 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
 
-      return await login(username, password, context);
+      bool loginSuccess;
+      if (context.mounted) {
+        loginSuccess = await login(username, password, context);
+      } else {
+        loginSuccess = false;
+      }
+      return loginSuccess;
     } catch (e) {
       if (context.mounted) {
         _errorMessage =

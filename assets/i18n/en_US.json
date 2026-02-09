@@ -470,6 +470,15 @@
       "noOfficesFound": "No offices found near zip code: {0}",
       "searchOfficeByZipcode": "Search Office by Zipcode"
     },
+    "locationPermissionDenied": "Location permission denied. Please enable location access to use this feature.",
+    "locationPermissionGranted": "Location permission granted! Loading nearby offices...",
+    "locationPermissionError": "Error requesting location permission: {0}",
+    "locationServicesDisabled": "Location Services Disabled",
+    "locationServicesDisabledMessage": "Location services are currently disabled on your device. Please enable them in your device settings to use location-based features.",
+    "locationPermissionRequired": "Location Permission Required",
+    "locationPermissionRequiredMessage": "This app needs location permission to show nearby offices. Please enable location access in your app settings.",
+    "openSettings": "Open Settings",
+    "cancel": "Cancel",
     "error": "Error: Missing dependencies"
   },
   "common": {

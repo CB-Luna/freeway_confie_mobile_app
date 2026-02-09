@@ -120,7 +120,57 @@ class LoginPageState extends State<LoginPage> {
           return false;
         }
 
-        // Si el login fue exitoso, navegar a la pantalla de inicio
+        // Verificar si se requiere autenticación de dos factores
+        if (loginSuccess && authProvider.requiresTwoFactor && mounted) {
+          debugPrint('Login con biométricos requiere 2FA - mostrando popup');
+
+          setState(() {
+            _isLoading = false;
+          });
+
+          // Mostrar diálogo para ingresar código 2FA
+          final twoFactorCode = await TwoFactorDialog.show(context: context);
+
+          // Si el usuario canceló el diálogo, salir
+          if (twoFactorCode == null || !mounted) {
+            return false;
+          }
+
+          // Paso 2: Enviar código 2FA
+          setState(() {
+            _isLoading = true;
+          });
+
+          final step2Success =
+              await authProvider.loginStep2(twoFactorCode, context);
+
+          setState(() {
+            _isLoading = false;
+          });
+
+          if (!step2Success && mounted) {
+            // Si el paso 2 falló, mostrar mensaje de error
+            showAppSnackBar(
+              context,
+              authProvider.errorMessage ?? context.translate('auth.authError'),
+              const Duration(seconds: 2),
+              backgroundColor: AppTheme.getRedColor(context),
+            );
+            return false;
+          }
+
+          // Si el paso 2 fue exitoso, navegar al home
+          if (step2Success && mounted) {
+            await Navigator.of(context).pushNamedAndRemoveUntil(
+              '/home',
+              (route) => false,
+            );
+          }
+
+          return step2Success;
+        }
+
+        // Si el login fue exitoso y no requiere 2FA, navegar a la pantalla de inicio
         if (loginSuccess && mounted) {
           await Navigator.of(context).pushNamedAndRemoveUntil(
             '/home',

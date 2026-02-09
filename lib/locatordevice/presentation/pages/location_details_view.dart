@@ -177,7 +177,7 @@ class _LocationDetailsViewContentState
         ZipCodeInputView(
           onUseCurrentLocation: () {
             // Intentar solicitar permisos de ubicación nuevamente
-            controller.requestLocationPermission();
+            controller.requestLocationPermission(context);
           },
         ),
       ],

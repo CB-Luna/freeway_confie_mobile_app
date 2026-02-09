@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/utils/menu/snackbar_help.dart';
+import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -200,10 +201,11 @@ class LocationController extends ChangeNotifier {
   }
 
   /// Solicita permisos de ubicación y actualiza el estado
-  Future<void> requestLocationPermission() async {
+  Future<void> requestLocationPermission(BuildContext context) async {
     try {
       _updateState(isLoading: true, errorMessage: null);
 
+      // Verificar si los servicios de ubicación están habilitados
       final bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         _updateState(
@@ -211,24 +213,78 @@ class LocationController extends ChangeNotifier {
           hasLocationPermission: false,
           errorMessage: 'Location services are disabled',
         );
+
+        if (context.mounted) {
+          // Mostrar diálogo para que el usuario habilite los servicios de ubicación
+          _showLocationServicesDialog(context);
+        }
         return;
       }
 
+      // Verificar el estado actual de los permisos
+      final LocationPermission currentPermission =
+          await Geolocator.checkPermission();
+
+      // Si ya fue denegado permanentemente, mostrar diálogo para ir a configuración
+      if (currentPermission == LocationPermission.deniedForever) {
+        _updateState(
+          isLoading: false,
+          hasLocationPermission: false,
+          errorMessage: 'Location permissions are permanently denied',
+        );
+
+        if (context.mounted) {
+          _showOpenSettingsDialog(context);
+        }
+        return;
+      }
+
+      // Solicitar permisos
       final LocationPermission permission =
           await Geolocator.requestPermission();
 
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
+      if (permission == LocationPermission.denied) {
         _updateState(
           isLoading: false,
           hasLocationPermission: false,
           errorMessage: 'Location permissions are denied',
         );
+
+        if (context.mounted) {
+          showAppSnackBar(
+            context,
+            context.translate('office.locationPermissionDenied'),
+            const Duration(seconds: 3),
+            backgroundColor: AppTheme.getOrangeColor(context),
+          );
+        }
+        return;
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        _updateState(
+          isLoading: false,
+          hasLocationPermission: false,
+          errorMessage: 'Location permissions are permanently denied',
+        );
+
+        if (context.mounted) {
+          _showOpenSettingsDialog(context);
+        }
         return;
       }
 
       // Si llegamos aquí, tenemos permisos
       _updateState(hasLocationPermission: true);
+
+      if (context.mounted) {
+        showAppSnackBar(
+          context,
+          context.translate('office.locationPermissionGranted'),
+          const Duration(seconds: 2),
+          backgroundColor: AppTheme.getGreenColor(context),
+        );
+      }
 
       // Reiniciar la inicialización
       await initialize();
@@ -238,7 +294,119 @@ class LocationController extends ChangeNotifier {
         hasLocationPermission: false,
         errorMessage: 'Error requesting location permission: ${e.toString()}',
       );
+
+      if (context.mounted) {
+        showAppSnackBar(
+          context,
+          context.translateWithArgs(
+            'office.locationPermissionError',
+            args: [e.toString()],
+          ),
+          const Duration(seconds: 3),
+          backgroundColor: AppTheme.getRedColor(context),
+        );
+      }
     }
+  }
+
+  /// Muestra un diálogo para que el usuario habilite los servicios de ubicación
+  void _showLocationServicesDialog(BuildContext context) {
+    final fontSizes = ResponsiveFontSizes();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            context.translate('office.locationServicesDisabled'),
+            style: TextStyle(
+              fontSize: fontSizes.bodyLarge(context),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            context.translate('office.locationServicesDisabledMessage'),
+            style: TextStyle(
+              fontSize: fontSizes.bodyMedium(context),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                context.translate('office.cancel'),
+                style: TextStyle(
+                  fontSize: fontSizes.bodyMedium(context),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Abrir configuración del sistema
+                await Geolocator.openLocationSettings();
+              },
+              child: Text(
+                context.translate('office.openSettings'),
+                style: TextStyle(
+                  fontSize: fontSizes.bodyMedium(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// Muestra un diálogo para que el usuario abra la configuración de la app
+  void _showOpenSettingsDialog(BuildContext context) {
+    final fontSizes = ResponsiveFontSizes();
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            context.translate('office.locationPermissionRequired'),
+            style: TextStyle(
+              fontSize: fontSizes.bodyLarge(context),
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            context.translate('office.locationPermissionRequiredMessage'),
+            style: TextStyle(
+              fontSize: fontSizes.bodyMedium(context),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                context.translate('office.cancel'),
+                style: TextStyle(
+                  fontSize: fontSizes.bodyMedium(context),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Abrir configuración de la app
+                await Geolocator.openAppSettings();
+              },
+              child: Text(
+                context.translate('office.openSettings'),
+                style: TextStyle(
+                  fontSize: fontSizes.bodyMedium(context),
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _loadCurrentLocation() async {
@@ -724,18 +892,50 @@ class LocationController extends ChangeNotifier {
       );
 
       debugPrint('✅ Oficinas encontradas, limpiando errorMessage');
+
+      // Filtrar oficinas dentro de un radio razonable (15 millas)
+      const double maxReasonableRadius = 15.0;
+      final List<Office> reasonableOffices = nearbyOffices
+          .where((office) => office.distanceObj.value <= maxReasonableRadius)
+          .toList();
+
+      // Si no hay oficinas dentro del radio razonable, usar las 3 más cercanas
+      final List<Office> officesToShow = reasonableOffices.isNotEmpty
+          ? reasonableOffices
+          : (nearbyOffices.length > 3
+              ? nearbyOffices.sublist(0, 3)
+              : nearbyOffices);
+
+      // Calcular el radio apropiado basado en las oficinas filtradas
+      double maxDistance = 1.0; // Mínimo 1 milla
+      for (var office in officesToShow) {
+        if (office.distanceObj.value > maxDistance) {
+          maxDistance = office.distanceObj.value;
+        }
+      }
+      // Redondear hacia arriba y agregar 1 milla de margen, con límite de 15 millas
+      final appropriateRadius =
+          (maxDistance.ceil() + 1.0).toDouble().clamp(1.0, maxReasonableRadius);
+
+      debugPrint(
+        '📍 Radio apropiado para ZIP code: $appropriateRadius millas (máx distancia: $maxDistance)',
+      );
+      debugPrint(
+        '📊 Oficinas totales: ${nearbyOffices.length}, Oficinas mostradas: ${officesToShow.length}',
+      );
+
       // Primero limpiar el estado completamente creando uno nuevo
       _state = LocationState(
         currentPosition: newPosition,
         isLoading: false,
-        offices: nearbyOffices,
-        nearbyOffices: nearbyOffices,
+        offices: officesToShow,
+        nearbyOffices: officesToShow,
         hasSearchedByZipCode: true,
         errorMessage: null, // Limpiar explícitamente
         markers: _state.markers,
         circles: _state.circles,
         hasLocationPermission: _state.hasLocationPermission,
-        searchRadiusInMiles: _state.searchRadiusInMiles,
+        searchRadiusInMiles: appropriateRadius, // Usar radio apropiado
         showAllOffices: _state.showAllOffices,
         selectedOfficeId: _state.selectedOfficeId,
       );
@@ -761,8 +961,8 @@ class LocationController extends ChangeNotifier {
     // Incrementar el radio de búsqueda en 1 milla cada vez
     final newRadius = state.searchRadiusInMiles + 1.0;
 
-    // Verificar si el nuevo radio excede el límite máximo de 10 millas
-    if (newRadius > 10.0) {
+    // Verificar si el nuevo radio excede el límite máximo de 15 millas
+    if (newRadius > 15.0) {
       // Mostrar un mensaje al usuario indicando que se ha alcanzado el límite
       showAppSnackBar(
         context,
