@@ -390,7 +390,7 @@
   "office": {
     "findNearby": "Encontrar Oficinas Cercanas",
     "searchRadius": "Radio de búsqueda ampliado a {0} millas",
-    "maxRadius": "Se alcanzó el radio máximo de búsqueda de 10 millas",
+    "maxRadius": "Se alcanzó el radio máximo de búsqueda de 80 millas",
     "viewInMaps": "Ver en Mapas",
     "findOtherOffices": "Encontrar otras oficinas",
     "couldNotOpenMaps": "No se pudo abrir la aplicación de mapas",

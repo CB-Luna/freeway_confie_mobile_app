@@ -437,7 +437,7 @@
   "office": {
     "findNearby": "Find Nearby Offices",
     "searchRadius": "Search radius expanded to {0} miles",
-    "maxRadius": "Maximum search radius of 10 miles reached",
+    "maxRadius": "Maximum search radius of 80 miles reached",
     "viewInMaps": "View in Maps",
     "findOtherOffices": "Find other offices",
     "couldNotOpenMaps": "Could not open maps application",

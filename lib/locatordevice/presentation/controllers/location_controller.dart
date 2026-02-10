@@ -38,7 +38,7 @@ class LocationState {
     this.circles = const {},
     this.hasLocationPermission = true,
     this.hasSearchedByZipCode = false,
-    this.searchRadiusInMiles = 1.0, // Por defecto, 1 milla
+    this.searchRadiusInMiles = 15.0, // Por defecto, 15 millas
     this.showAllOffices = false,
     this.selectedOfficeId,
   });
@@ -893,8 +893,8 @@ class LocationController extends ChangeNotifier {
 
       debugPrint('✅ Oficinas encontradas, limpiando errorMessage');
 
-      // Filtrar oficinas dentro de un radio razonable (15 millas)
-      const double maxReasonableRadius = 15.0;
+      // Filtrar oficinas dentro de un radio razonable (80 millas)
+      const double maxReasonableRadius = 80.0;
       final List<Office> reasonableOffices = nearbyOffices
           .where((office) => office.distanceObj.value <= maxReasonableRadius)
           .toList();
@@ -913,9 +913,10 @@ class LocationController extends ChangeNotifier {
           maxDistance = office.distanceObj.value;
         }
       }
-      // Redondear hacia arriba y agregar 1 milla de margen, con límite de 15 millas
-      final appropriateRadius =
-          (maxDistance.ceil() + 1.0).toDouble().clamp(1.0, maxReasonableRadius);
+      // Redondear hacia arriba y agregar 5 millas de margen, con límite de 80 millas
+      final appropriateRadius = (maxDistance.ceil() + 5.0)
+          .toDouble()
+          .clamp(15.0, maxReasonableRadius);
 
       debugPrint(
         '📍 Radio apropiado para ZIP code: $appropriateRadius millas (máx distancia: $maxDistance)',
@@ -958,11 +959,11 @@ class LocationController extends ChangeNotifier {
 
   // Método para expandir el radio de búsqueda
   Future<void> expandSearchRadius(BuildContext context) async {
-    // Incrementar el radio de búsqueda en 1 milla cada vez
-    final newRadius = state.searchRadiusInMiles + 1.0;
+    // Incrementar el radio de búsqueda en 5 millas cada vez
+    final newRadius = state.searchRadiusInMiles + 5.0;
 
-    // Verificar si el nuevo radio excede el límite máximo de 15 millas
-    if (newRadius > 15.0) {
+    // Verificar si el nuevo radio excede el límite máximo de 80 millas
+    if (newRadius > 80.0) {
       // Mostrar un mensaje al usuario indicando que se ha alcanzado el límite
       showAppSnackBar(
         context,
