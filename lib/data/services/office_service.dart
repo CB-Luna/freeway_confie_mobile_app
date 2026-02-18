@@ -116,4 +116,119 @@ class OfficeService {
       throw Exception('Error al buscar oficinas por ubicación: $e');
     }
   }
+
+  /// Busca oficinas con llamados incrementales hasta encontrar al menos una
+  /// Empieza con el radio inicial y va incrementando de 500 en 500 millas
+  /// hasta encontrar oficinas o alcanzar el límite de 5500 millas (11 intentos)
+  Future<List<Office>> getNearbyOfficesWithIncrementalRadius(
+    String zipCode, {
+    int initialRadius = 100,
+  }) async {
+    const int radiusIncrement = 500; // Incremento de 500 millas
+    const int maxRadius = 6000; // Límite máximo de 6000 millas
+    const int maxAttempts = 15; // Máximo 15 intentos
+
+    int currentRadius = initialRadius;
+    int attempts = 0;
+
+    debugPrint(
+      '🔍 Iniciando búsqueda incremental para ZIP code: $zipCode (radio inicial: $initialRadius millas)',
+    );
+
+    while (attempts < maxAttempts && currentRadius <= maxRadius) {
+      attempts++;
+      debugPrint(
+        '📡 Intento $attempts/$maxAttempts - Buscando con radio: $currentRadius millas',
+      );
+
+      try {
+        final offices = await getNearbyOfficesByZipCode(
+          zipCode,
+          radius: currentRadius,
+        );
+
+        if (offices.isNotEmpty) {
+          debugPrint(
+            '✅ ¡Oficinas encontradas! Total: ${offices.length} oficinas con radio de $currentRadius millas',
+          );
+          debugPrint(
+            '📍 Oficina más cercana: ${offices.first.distanceObj.value} millas',
+          );
+          return offices;
+        }
+
+        debugPrint(
+          '❌ No se encontraron oficinas con radio de $currentRadius millas',
+        );
+
+        // Incrementar el radio para el siguiente intento
+        currentRadius += radiusIncrement;
+      } catch (e) {
+        debugPrint('⚠️ Error en intento $attempts: $e');
+        // Continuar con el siguiente intento
+        currentRadius += radiusIncrement;
+      }
+    }
+
+    debugPrint(
+      '❌ No se encontraron oficinas después de $attempts intentos (radio máximo: ${currentRadius - radiusIncrement} millas)',
+    );
+    return [];
+  }
+
+  /// Busca oficinas por ubicación con llamados incrementales
+  Future<List<Office>> getNearbyOfficesByLocationWithIncrementalRadius(
+    double latitude,
+    double longitude, {
+    int initialRadius = 100,
+  }) async {
+    const int radiusIncrement = 500; // Incremento de 500 millas
+    const int maxRadius = 6000; // Límite máximo de 6000 millas
+    const int maxAttempts = 15; // Máximo 15 intentos
+
+    int currentRadius = initialRadius;
+    int attempts = 0;
+
+    debugPrint(
+      '🔍 Iniciando búsqueda incremental para ubicación: $latitude, $longitude (radio inicial: $initialRadius millas)',
+    );
+
+    while (attempts < maxAttempts && currentRadius <= maxRadius) {
+      attempts++;
+      debugPrint(
+        '📡 Intento $attempts/$maxAttempts - Buscando con radio: $currentRadius millas',
+      );
+
+      try {
+        final offices = await getNearbyOfficesByLocation(
+          latitude,
+          longitude,
+          radius: currentRadius,
+        );
+
+        if (offices.isNotEmpty) {
+          debugPrint(
+            '✅ ¡Oficinas encontradas! Total: ${offices.length} oficinas con radio de $currentRadius millas',
+          );
+          return offices;
+        }
+
+        debugPrint(
+          '❌ No se encontraron oficinas con radio de $currentRadius millas',
+        );
+
+        // Incrementar el radio para el siguiente intento
+        currentRadius += radiusIncrement;
+      } catch (e) {
+        debugPrint('⚠️ Error en intento $attempts: $e');
+        // Continuar con el siguiente intento
+        currentRadius += radiusIncrement;
+      }
+    }
+
+    debugPrint(
+      '❌ No se encontraron oficinas después de $attempts intentos (radio máximo: ${currentRadius - radiusIncrement} millas)',
+    );
+    return [];
+  }
 }

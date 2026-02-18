@@ -857,15 +857,18 @@ class LocationController extends ChangeNotifier {
       // Crear una instancia del servicio de oficinas
       final officeService = OfficeService();
 
-      // Obtener las oficinas cercanas al código postal
+      // Obtener las oficinas cercanas al código postal usando búsqueda incremental
+      // Esto garantiza que siempre encontremos oficinas (hasta 5500 millas)
       final List<Office> nearbyOffices =
-          await officeService.getNearbyOfficesByZipCode(zipCode);
+          await officeService.getNearbyOfficesWithIncrementalRadius(
+        zipCode,
+        initialRadius: 100, // Empezar con 100 millas
+      );
 
       if (nearbyOffices.isEmpty) {
-        // No borrar las oficinas anteriores, solo mostrar el mensaje de error
-        // y mantener la lista previa para evitar confusión con los marcadores en el mapa
+        // Solo llegará aquí si después de 11 intentos (hasta 5500 millas) no se encontró nada
         debugPrint(
-          '🔍 No se encontraron oficinas para el código postal: $zipCode',
+          '🔍 No se encontraron oficinas para el código postal: $zipCode (incluso después de buscar hasta 5500 millas)',
         );
 
         _updateState(
@@ -893,37 +896,41 @@ class LocationController extends ChangeNotifier {
 
       debugPrint('✅ Oficinas encontradas, limpiando errorMessage');
 
-      // Filtrar oficinas dentro de un radio razonable (80 millas)
-      const double maxReasonableRadius = 80.0;
-      final List<Office> reasonableOffices = nearbyOffices
-          .where((office) => office.distanceObj.value <= maxReasonableRadius)
-          .toList();
+      // IMPORTANTE: Mostrar TODAS las oficinas en el listado (sin filtrar por distancia)
+      // El cliente quiere ver todas las oficinas disponibles, sin importar la distancia
+      final List<Office> officesToShow = nearbyOffices;
 
-      // Si no hay oficinas dentro del radio razonable, usar las 3 más cercanas
-      final List<Office> officesToShow = reasonableOffices.isNotEmpty
-          ? reasonableOffices
-          : (nearbyOffices.length > 3
-              ? nearbyOffices.sublist(0, 3)
-              : nearbyOffices);
+      // Calcular el radio para el círculo azul del mapa (limitado a 80 millas)
+      // El círculo visual se limita a 80 millas, pero el listado muestra todas las oficinas
+      const double maxVisualRadius = 80.0;
 
-      // Calcular el radio apropiado basado en las oficinas filtradas
-      double maxDistance = 1.0; // Mínimo 1 milla
-      for (var office in officesToShow) {
-        if (office.distanceObj.value > maxDistance) {
-          maxDistance = office.distanceObj.value;
-        }
+      // Encontrar la oficina más cercana para calcular el radio visual
+      final double closestOfficeDistance =
+          nearbyOffices.first.distanceObj.value;
+
+      // Si la oficina más cercana está dentro de 80 millas, usar su distancia + margen
+      // Si está más lejos, usar el máximo de 80 millas para el círculo
+      final appropriateRadius = closestOfficeDistance <= maxVisualRadius
+          ? (closestOfficeDistance.ceil() + 5.0)
+              .toDouble()
+              .clamp(15.0, maxVisualRadius)
+          : maxVisualRadius;
+
+      debugPrint(
+        '📍 Radio visual del mapa (círculo azul): $appropriateRadius millas',
+      );
+      debugPrint(
+        '📊 Total de oficinas mostradas en el listado: ${officesToShow.length}',
+      );
+      debugPrint(
+        '📍 Oficina más cercana: $closestOfficeDistance millas',
+      );
+      if (nearbyOffices.isNotEmpty &&
+          nearbyOffices.last.distanceObj.value > maxVisualRadius) {
+        debugPrint(
+          '📍 Oficina más lejana: ${nearbyOffices.last.distanceObj.value} millas (fuera del círculo visual)',
+        );
       }
-      // Redondear hacia arriba y agregar 5 millas de margen, con límite de 80 millas
-      final appropriateRadius = (maxDistance.ceil() + 5.0)
-          .toDouble()
-          .clamp(15.0, maxReasonableRadius);
-
-      debugPrint(
-        '📍 Radio apropiado para ZIP code: $appropriateRadius millas (máx distancia: $maxDistance)',
-      );
-      debugPrint(
-        '📊 Oficinas totales: ${nearbyOffices.length}, Oficinas mostradas: ${officesToShow.length}',
-      );
 
       // Primero limpiar el estado completamente creando uno nuevo
       _state = LocationState(
