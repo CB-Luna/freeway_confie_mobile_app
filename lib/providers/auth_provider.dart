@@ -733,4 +733,141 @@ class AuthProvider with ChangeNotifier {
       return false;
     }
   }
+
+  /// Verifica el estado de autenticación al iniciar la aplicación
+  /// Intenta restaurar la sesión si hay credenciales guardadas
+  Future<bool> checkAuthStatus() async {
+    try {
+      debugPrint('🔍 Verificando estado de autenticación al iniciar app...');
+
+      // Verificar si hay un token guardado
+      final savedToken = await _secureStorage.read(key: _tokenKey);
+      if (savedToken != null && savedToken.isNotEmpty) {
+        debugPrint('✅ Token encontrado en almacenamiento seguro');
+
+        // Verificar si hay credenciales guardadas para restaurar la sesión
+        final hasCreds = await hasCredentials();
+        if (hasCreds) {
+          debugPrint(
+            '🔐 Credenciales guardadas encontradas, intentando restaurar sesión...',
+          );
+
+          // Intentar iniciar sesión con credenciales guardadas
+          final username = await _secureStorage.read(key: _usernameKey);
+          final password = await _secureStorage.read(key: _passwordKey);
+
+          if (username != null && password != null) {
+            // Intentar login silencioso (sin contexto de UI)
+            final loginSuccess = await _silentLogin(username, password);
+
+            if (loginSuccess) {
+              debugPrint('✅ Sesión restaurada exitosamente para: $username');
+              _isAuthenticated = true;
+              _authToken = savedToken;
+              notifyListeners();
+              return true;
+            } else {
+              debugPrint(
+                '❌ No se pudo restaurar la sesión, token inválido o expirado',
+              );
+              // Limpiar datos inválidos
+              await _clearStoredData();
+              return false;
+            }
+          } else {
+            // Caso inesperado: hay credenciales guardadas pero username o password son null
+            debugPrint(
+              '⚠️ Error: credenciales guardadas pero username/password son null',
+            );
+            await _clearStoredData();
+            return false;
+          }
+        } else {
+          debugPrint('⚠️ Token encontrado pero no hay credenciales guardadas');
+          // Limpiar token inconsistente
+          await _secureStorage.delete(key: _tokenKey);
+          return false;
+        }
+      } else {
+        debugPrint('ℹ️ No hay token guardado, usuario no autenticado');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Error al verificar estado de autenticación: $e');
+      // Limpiar cualquier dato corrupto
+      await _clearStoredData();
+      return false;
+    }
+  }
+
+  /// Login silencioso sin contexto de UI para restaurar sesión
+  Future<bool> _silentLogin(String username, String password) async {
+    try {
+      debugPrint('🔐 Intentando login silencioso para: $username');
+
+      final response = await _authService.loginStep1(username, password);
+
+      if (!response.hasErrors &&
+          !response.requiresTwoFactor &&
+          response.customer != null) {
+        // Login exitoso sin 2FA
+        final customer = response.customer!;
+
+        _currentUser = User(
+          username: username,
+          fullName: customer.fullName,
+          firstName: customer.firstName,
+          lastName: customer.lastName,
+          customerId: customer.customerId ?? '',
+          email: customer.email,
+          phone: customer.primaryPhone?.phoneNumber,
+          birthDate: DateTime.tryParse(customer.birthDate) ?? DateTime.now(),
+          gender: customer.gender ?? '',
+          street: customer.primaryAddress?.street ?? '',
+          zipCode: customer.primaryAddress?.zip ?? '',
+          city: customer.primaryAddress?.city ?? '',
+          state: customer.primaryAddress?.state ?? '',
+          customerData: customer,
+          policies: response.policies,
+        );
+
+        _authToken = response.token ?? '';
+        _lastUsername = username;
+        _lastPassword = password;
+        _requiresTwoFactor = false;
+
+        debugPrint('✅ Login silencioso exitoso');
+        return true;
+      } else if (response.requiresTwoFactor) {
+        debugPrint(
+          '⚠️ Login requiere 2FA, no se puede restaurar automáticamente',
+        );
+        return false;
+      } else {
+        debugPrint('❌ Login silencioso fallido: ${response.errorMessage}');
+        return false;
+      }
+    } catch (e) {
+      debugPrint('❌ Excepción en login silencioso: $e');
+      return false;
+    }
+  }
+
+  /// Limpia todos los datos almacenados
+  Future<void> _clearStoredData() async {
+    try {
+      debugPrint('🧹 Limpiando datos almacenados...');
+      await _secureStorage.deleteAll();
+      _currentUser = null;
+      _isAuthenticated = false;
+      _authToken = null;
+      _lastUsername = null;
+      _lastPassword = null;
+      _requiresTwoFactor = false;
+      _errorMessage = null;
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Error al limpiar datos almacenados: $e');
+    }
+  }
 }

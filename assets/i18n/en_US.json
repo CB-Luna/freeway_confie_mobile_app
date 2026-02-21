@@ -85,7 +85,11 @@
     "invalidTwoFactorCode": "Invalid verification code. Please try again.",
     "sessionExpired": "Session expired. Please login again.",
     "noInternetConnection": "No internet connection. Please check your connection and try again.",
-    "connectionError": "Connection error. Please check your internet connection."
+    "connectionError": "Connection error. Please check your internet connection.",
+    "splashScreen": {
+      "error": "Error loading app",
+      "retry": "Retry"
+    }
   },
   "home": {
     "welcome": "Welcome",

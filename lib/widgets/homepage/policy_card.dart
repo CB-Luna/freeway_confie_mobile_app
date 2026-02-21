@@ -84,364 +84,371 @@ class _PolicyCardState extends State<PolicyCard>
       color: AppTheme.getCardColor(context),
       child: Container(
         width: screenWidth - 48, // Ancho adaptable
-        // Altura adaptable en lugar de fija
+        // Altura máxima adaptable para evitar overflow
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height *
+              0.4, // 40% de la altura de pantalla
+        ),
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Primera fila: Información de la póliza y estado
-            Row(
-              children: [
-                // Icono del tipo de póliza - Verificar si existe un icono específico
-                PolicyTypeIconUtils.getPolicyTypeIcon(
-                  policyLineOfBusiness,
-                  width: screenWidth * 0.15,
-                  height: screenWidth * 0.15,
-                ),
-                const SizedBox(width: 8),
-                // Información de la póliza - Usar Expanded para que tome el espacio disponible
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        policyLineOfBusiness,
-                        style: TextStyle(
-                          fontSize:
-                              responsiveFontSizes.policyCardTitle(context),
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.getPrimaryColor(context),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 2,
-                      ),
-                      Text(
-                        policyNumber,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontSize:
-                              responsiveFontSizes.policyCardSubtitle(context),
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.getPrimaryColor(context),
-                        ),
-                        maxLines: 5,
-                      ),
-                    ],
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Primera fila: Información de la póliza y estado
+              Row(
+                children: [
+                  // Icono del tipo de póliza - Verificar si existe un icono específico
+                  PolicyTypeIconUtils.getPolicyTypeIcon(
+                    policyLineOfBusiness,
+                    width: screenWidth * 0.15,
+                    height: screenWidth * 0.15,
                   ),
-                ),
-                const SizedBox(width: 8),
-                // Indicador de estado (Active/Inactive) - Siempre visible
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppTheme.getBackgroundGreenColor(context),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.check_circle,
-                        color: isActive
-                            ? AppTheme.getGreenColor(context)
-                            : AppTheme.getRedColor(context),
-                        size: 14,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        isActive
-                            ? context.translate('home.policyCard.active')
-                            : context.translate('home.policyCard.inactive'),
-                        style: TextStyle(
-                          fontSize: responsiveFontSizes.button(
-                            context,
+                  const SizedBox(width: 8),
+                  // Información de la póliza - Usar Expanded para que tome el espacio disponible
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          policyLineOfBusiness,
+                          style: TextStyle(
+                            fontSize:
+                                responsiveFontSizes.policyCardTitle(context),
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.getPrimaryColor(context),
                           ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 2,
+                        ),
+                        Text(
+                          policyNumber,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontSize:
+                                responsiveFontSizes.policyCardSubtitle(context),
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.getPrimaryColor(context),
+                          ),
+                          maxLines: 5,
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  // Indicador de estado (Active/Inactive) - Siempre visible
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    decoration: BoxDecoration(
+                      color: AppTheme.getBackgroundGreenColor(context),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.check_circle,
                           color: isActive
                               ? AppTheme.getGreenColor(context)
                               : AppTheme.getRedColor(context),
-                          fontWeight: FontWeight.w500,
+                          size: 14,
                         ),
-                      ),
-                    ],
+                        const SizedBox(width: 4),
+                        Text(
+                          isActive
+                              ? context.translate('home.policyCard.active')
+                              : context.translate('home.policyCard.inactive'),
+                          style: TextStyle(
+                            fontSize: responsiveFontSizes.button(
+                              context,
+                            ),
+                            color: isActive
+                                ? AppTheme.getGreenColor(context)
+                                : AppTheme.getRedColor(context),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            // Segunda fila: Logo y próximo pago
-            Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                // Logo - Verificar si existe un logo específico para la póliza
-                PolicyLogoUtils.getPolicyLogo(
-                  context,
-                  widget.policy.carrierLogoUrl,
-                  width: screenWidth * 0.2,
-                  height: freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,
-                ),
-                const SizedBox(width: 8),
-                // Información de próximo pago
-                Visibility(
-                  visible: nextPaymentDate != null,
-                  child: Wrap(
-                    direction: Axis.horizontal,
+                ],
+              ),
+              const SizedBox(height: 12),
+              // Segunda fila: Logo y próximo pago
+              Wrap(
+                alignment: WrapAlignment.spaceBetween,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  // Logo - Verificar si existe un logo específico para la póliza
+                  PolicyLogoUtils.getPolicyLogo(
+                    context,
+                    widget.policy.carrierLogoUrl,
+                    width: screenWidth * 0.2,
+                    height:
+                        freewayLogo ? screenWidth * 0.1 : screenWidth * 0.05,
+                  ),
+                  const SizedBox(width: 8),
+                  // Información de próximo pago
+                  Visibility(
+                    visible: nextPaymentDate != null,
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      children: [
+                        Icon(
+                          Icons.credit_card,
+                          color: AppTheme.getGreenColor(context),
+                          size: screenWidth * 0.05, // Reducido ligeramente
+                        ),
+                        const SizedBox(width: 4),
+                        // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
+                        Text(
+                          context.translate('home.policyCard.nextPayment'),
+                          style: TextStyle(
+                            fontSize: responsiveFontSizes.bodyMedium(
+                              context,
+                            ), // Reducido para asegurar que quepa
+                            color: AppTheme.getTextGreyColor(context),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                        ),
+                        const SizedBox(width: 8),
+                        // Fecha del próximo pago
+                        Text(
+                          nextPaymentDate ?? 'N/A',
+                          style: TextStyle(
+                            fontFamily: 'Open Sans',
+                            fontSize: responsiveFontSizes.bodyMedium(
+                              context,
+                            ), // Reducido para asegurar que quepa
+                            fontWeight: FontWeight.w600,
+                            color: AppTheme.getTextGreyColor(context),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 3,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Tercera fila: Botones de acción
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  // Calcular el ancho disponible para los botones
+                  final availableWidth = constraints.maxWidth;
+                  // Determinar si estamos en una pantalla muy pequeña
+                  final isVerySmallScreen = availableWidth < 360;
+
+                  return Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    alignment: WrapAlignment.spaceBetween,
+                    spacing: 4,
+                    runSpacing: 8,
                     children: [
-                      Icon(
-                        Icons.credit_card,
-                        color: AppTheme.getGreenColor(context),
-                        size: screenWidth * 0.05, // Reducido ligeramente
-                      ),
-                      const SizedBox(width: 4),
-                      // Texto "Next Payment" que se puede ocultar en pantallas muy pequeñas
-                      Text(
-                        context.translate('home.policyCard.nextPayment'),
-                        style: TextStyle(
-                          fontSize: responsiveFontSizes.bodyMedium(
-                            context,
-                          ), // Reducido para asegurar que quepa
-                          color: AppTheme.getTextGreyColor(context),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                      ),
-                      const SizedBox(width: 8),
-                      // Fecha del próximo pago
-                      Text(
-                        nextPaymentDate ?? 'N/A',
-                        style: TextStyle(
-                          fontFamily: 'Open Sans',
-                          fontSize: responsiveFontSizes.bodyMedium(
-                            context,
-                          ), // Reducido para asegurar que quepa
-                          fontWeight: FontWeight.w600,
-                          color: AppTheme.getTextGreyColor(context),
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 3,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            // Tercera fila: Botones de acción
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // Calcular el ancho disponible para los botones
-                final availableWidth = constraints.maxWidth;
-                // Determinar si estamos en una pantalla muy pequeña
-                final isVerySmallScreen = availableWidth < 360;
-
-                return Wrap(
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  alignment: WrapAlignment.spaceBetween,
-                  spacing: 4,
-                  runSpacing: 8,
-                  children: [
-                    // Botón ID
-                    SizedBox(
-                      width: isVerySmallScreen
-                          ? (availableWidth * 0.28)
-                          : (availableWidth * 0.28),
-                      child: OutlinedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => IdCardPage(
-                                policy: widget.policy,
-                              ),
-                            ),
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(
-                            color: AppTheme.getOrangeColor(context),
-                            width: 1,
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isVerySmallScreen ? 4 : 8,
-                            vertical: 0,
-                          ),
-                        ),
-                        child: Text(
-                          context.translate('home.policyCard.idCard'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize:
-                                responsiveFontSizes.policyCardButton(context),
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.getOrangeColor(context),
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-
-                    // Botón Submit
-                    SizedBox(
-                      width: isVerySmallScreen
-                          ? (availableWidth * 0.33)
-                          : (availableWidth * 0.33),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubmitClaimPage(
-                                policy: widget.policy,
-                              ),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppTheme.getPrimaryColor(context),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          padding: EdgeInsets.symmetric(
-                            horizontal: isVerySmallScreen ? 4 : 8,
-                            vertical: 0,
-                          ),
-                        ),
-                        child: Text(
-                          context.translate('home.policyCard.submitClaim'),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Open Sans',
-                            fontSize:
-                                responsiveFontSizes.policyCardButton(context),
-                            fontWeight: FontWeight.w700,
-                            color: AppTheme.white,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ),
-
-                    // Botón Pay Now - Destacado
-                    SizedBox(
-                      width: isVerySmallScreen
-                          ? (availableWidth * 0.33)
-                          : (availableWidth * 0.33),
-                      child: AnimatedBuilder(
-                        animation: _shimmerAnimation,
-                        builder: (context, child) {
-                          return DecoratedBox(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              gradient: LinearGradient(
-                                colors: [
-                                  AppTheme.getGreenColor(context),
-                                  AppTheme.getGreenColor(context)
-                                      .withValues(alpha: 0.5),
-                                  AppTheme.getGreenColor(context),
-                                ],
-                                stops: [
-                                  0.0,
-                                  _shimmerAnimation.value,
-                                  1.0,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppTheme.getGreenColor(context)
-                                      .withValues(alpha: 0.5),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
+                      // Botón ID
+                      SizedBox(
+                        width: isVerySmallScreen
+                            ? (availableWidth * 0.28)
+                            : (availableWidth * 0.28),
+                        child: OutlinedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => IdCardPage(
+                                  policy: widget.policy,
                                 ),
-                              ],
+                              ),
+                            );
+                          },
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(
+                              color: AppTheme.getOrangeColor(context),
+                              width: 1,
                             ),
-                            child: ElevatedButton(
-                              onPressed: () async {
-                                if (context.mounted) {
-                                  // Usar una única URL con número de póliza y código postal
-                                  final String policyNumber =
-                                      widget.policy.policyNumber;
-                                  final zipCode = widget.user.zipCode;
-                                  final String urlString =
-                                      '${urlBaseEmbedQuickPay}PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
-                                  final String title =
-                                      context.translate('payment.title');
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isVerySmallScreen ? 4 : 8,
+                              vertical: 0,
+                            ),
+                          ),
+                          child: Text(
+                            context.translate('home.policyCard.idCard'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Open Sans',
+                              fontSize:
+                                  responsiveFontSizes.policyCardButton(context),
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.getOrangeColor(context),
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
 
+                      // Botón Submit
+                      SizedBox(
+                        width: isVerySmallScreen
+                            ? (availableWidth * 0.33)
+                            : (availableWidth * 0.33),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SubmitClaimPage(
+                                  policy: widget.policy,
+                                ),
+                              ),
+                            );
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppTheme.getPrimaryColor(context),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isVerySmallScreen ? 4 : 8,
+                              vertical: 0,
+                            ),
+                          ),
+                          child: Text(
+                            context.translate('home.policyCard.submitClaim'),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontFamily: 'Open Sans',
+                              fontSize:
+                                  responsiveFontSizes.policyCardButton(context),
+                              fontWeight: FontWeight.w700,
+                              color: AppTheme.white,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ),
+
+                      // Botón Pay Now - Destacado
+                      SizedBox(
+                        width: isVerySmallScreen
+                            ? (availableWidth * 0.33)
+                            : (availableWidth * 0.33),
+                        child: AnimatedBuilder(
+                          animation: _shimmerAnimation,
+                          builder: (context, child) {
+                            return DecoratedBox(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                gradient: LinearGradient(
+                                  colors: [
+                                    AppTheme.getGreenColor(context),
+                                    AppTheme.getGreenColor(context)
+                                        .withValues(alpha: 0.5),
+                                    AppTheme.getGreenColor(context),
+                                  ],
+                                  stops: [
+                                    0.0,
+                                    _shimmerAnimation.value,
+                                    1.0,
+                                  ],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: AppTheme.getGreenColor(context)
+                                        .withValues(alpha: 0.5),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: ElevatedButton(
+                                onPressed: () async {
                                   if (context.mounted) {
-                                    await Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => WebViewPage(
-                                          url: urlString,
-                                          title: title,
+                                    // Usar una única URL con número de póliza y código postal
+                                    final String policyNumber =
+                                        widget.policy.policyNumber;
+                                    final zipCode = widget.user.zipCode;
+                                    final String urlString =
+                                        '${urlBaseEmbedQuickPay}PolicySearch?policyNumber=$policyNumber&zipCode=$zipCode&source=Web';
+                                    final String title =
+                                        context.translate('payment.title');
+
+                                    if (context.mounted) {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => WebViewPage(
+                                            url: urlString,
+                                            title: title,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.transparent,
+                                  shadowColor: Colors.transparent,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isVerySmallScreen ? 6 : 10,
+                                    vertical: 0,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Añadir un icono para hacerlo más llamativo
+                                    Icon(
+                                      Icons.payment_rounded,
+                                      color: AppTheme.white,
+                                      size: screenWidth * 0.05,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Flexible(
+                                      child: Text(
+                                        context.translate(
+                                          'home.policyCard.payNow',
+                                        ),
+                                        textAlign: TextAlign.center,
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: TextStyle(
+                                          fontFamily: 'Open Sans',
+                                          fontSize: responsiveFontSizes
+                                              .policyCardButtonBig(context),
+                                          fontWeight: FontWeight.w700,
+                                          color: AppTheme.white,
                                         ),
                                       ),
-                                    );
-                                  }
-                                }
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.transparent,
-                                shadowColor: Colors.transparent,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: isVerySmallScreen ? 6 : 10,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  // Añadir un icono para hacerlo más llamativo
-                                  Icon(
-                                    Icons.payment_rounded,
-                                    color: AppTheme.white,
-                                    size: screenWidth * 0.05,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Flexible(
-                                    child: Text(
-                                      context.translate(
-                                        'home.policyCard.payNow',
-                                      ),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: 'Open Sans',
-                                        fontSize: responsiveFontSizes
-                                            .policyCardButtonBig(context),
-                                        fontWeight: FontWeight.w700,
-                                        color: AppTheme.white,
-                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
-                );
-              },
-            ),
-            const SizedBox(height: 4),
-          ],
+                    ],
+                  );
+                },
+              ),
+              const SizedBox(height: 4),
+            ],
+          ),
         ),
       ),
     );
@@ -522,8 +529,9 @@ class _PolicyCardState extends State<PolicyCard>
     // La fecha de expiración debe ser mayor que hoy
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
-    final expDate = DateTime(expirationDate.year, expirationDate.month, expirationDate.day);
-    
+    final expDate =
+        DateTime(expirationDate.year, expirationDate.month, expirationDate.day);
+
     if (!expDate.isAfter(today)) {
       return false;
     }
