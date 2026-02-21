@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/locator_device_module.dart';
 import 'package:freeway_app/pages/add_insurance.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
-import 'package:freeway_app/utils/menu/snackbar_help.dart';
+import 'package:freeway_app/utils/phone_call_helper.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../utils/menu/circle_nav_bar.dart';
 
@@ -25,24 +24,8 @@ class _RequestCallPageState extends State<RequestCallPage> {
 
   // Método para abrir directamente la aplicación de llamadas del dispositivo
   Future<void> _openPhoneDialer(String phoneNumber) async {
-    try {
-      // Eliminar cualquier carácter no numérico del número de teléfono
-      final cleanedNumber = phoneNumber.replaceAll(RegExp(r'[^0-9]'), '');
-
-      // Crear la URI para abrir la aplicación de llamadas sin iniciar la llamada
-      final Uri launchUri = Uri.parse('tel:$cleanedNumber');
-
-      // Abrir la aplicación de llamadas
-      await launchUrl(launchUri, mode: LaunchMode.externalApplication);
-    } catch (e) {
-      // Mostrar mensaje de error si no se puede abrir la aplicación de llamadas
-      if (!mounted) return;
-      showAppSnackBar(
-        context,
-        context.translate('requestCall.callError'),
-        const Duration(seconds: 2),
-      );
-    }
+    // Usar el helper para llamadas telefónicas
+    await PhoneCallHelper.makePhoneCall(context, phoneNumber);
   }
 
   @override

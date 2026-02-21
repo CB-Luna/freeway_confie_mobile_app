@@ -503,7 +503,12 @@
     "tryAgain": "Try Again",
     "language_changed_to": "Language changed to {0}",
     "loadingGif": "Loading...",
-    "errorOpeningPhone": "Could not open phone app. Please try manually."
+    "errorOpeningPhone": "Could not open phone app. Please try manually.",
+    "phoneCallNotSupported": "Phone Calls Not Available",
+    "phoneCallNotSupportedMessage": "This device cannot make phone calls. Please use a phone to call the number shown.",
+    "emergencyCall": "Emergency Call",
+    "emergencyCallNotSupportedMessage": "This device cannot make emergency calls. Please use a phone and dial 911.",
+    "phoneNumberCopied": "Phone number copied"
   },
   "addInsurance": {
     "addInsurance": "Add Insurance",

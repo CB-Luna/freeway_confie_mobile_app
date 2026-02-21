@@ -167,7 +167,7 @@ class SignUpPageState extends State<SignUpPage> {
           } else {
             errorMessage = '${context.translate('auth.error')}: $e';
           }
-          
+
           showAppSnackBar(
             context,
             errorMessage,
@@ -477,29 +477,33 @@ class SignUpPageState extends State<SignUpPage> {
                           ),
                   ),
                   const SizedBox(height: 16),
-                  Wrap(
-                    children: [
-                      Text(
-                        context.translate('auth.haveAccount'),
-                        style: TextStyle(
-                          color: AppTheme.getTextGreyColor(context),
-                          fontSize: responsiveFontSizes.bodyMedium(context),
-                        ),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          context.translate('auth.loginButton'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Text(
+                          context.translate('auth.haveAccount'),
                           style: TextStyle(
-                            color: AppTheme.getPrimaryColor(context),
+                            color: AppTheme.getTextGreyColor(context),
                             fontSize: responsiveFontSizes.bodyMedium(context),
-                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                      ),
-                    ],
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            context.translate('auth.loginButton'),
+                            style: TextStyle(
+                              color: AppTheme.getPrimaryColor(context),
+                              fontSize: responsiveFontSizes.bodyMedium(context),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 24),
                 ],
