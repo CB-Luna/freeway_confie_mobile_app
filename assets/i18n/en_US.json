@@ -508,7 +508,8 @@
     "phoneCallNotSupportedMessage": "This device cannot make phone calls. Please use a phone to call the number shown.",
     "emergencyCall": "Emergency Call",
     "emergencyCallNotSupportedMessage": "This device cannot make emergency calls. Please use a phone and dial 911.",
-    "phoneNumberCopied": "Phone number copied"
+    "phoneNumberCopied": "Phone number copied",
+    "themeChanged": "Theme changed to {0}"
   },
   "addInsurance": {
     "addInsurance": "Add Insurance",

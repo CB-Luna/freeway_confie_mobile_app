@@ -5,6 +5,7 @@ import 'package:freeway_app/utils/menu/snackbar_help.dart';
 import 'package:freeway_app/utils/responsive_font_sizes.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
 import 'package:provider/provider.dart';
+
 // import 'package:rive_animated_icon/rive_animated_icon.dart'; // Removido por incompatibilidad con 16KB page size
 
 import '../../providers/auth_provider.dart';
@@ -280,7 +281,10 @@ class _HeaderSectionState extends State<HeaderSection> {
                     if (!context.mounted) return;
                     showAppSnackBar(
                       context,
-                      'Theme changed to ${themeProvider.isDarkMode ? 'dark' : 'light'}',
+                      context.translateWithArgs(
+                        'common.themeChanged',
+                        args: [themeProvider.isDarkMode ? 'dark' : 'light'],
+                      ),
                       const Duration(seconds: 2),
                       backgroundColor: themeProvider.isDarkMode
                           ? AppTheme.getBackgroundColor(context)

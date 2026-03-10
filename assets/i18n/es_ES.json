@@ -598,6 +598,7 @@
     "phoneCallNotSupportedMessage": "Este dispositivo no puede realizar llamadas telefónicas. Por favor, usa un teléfono para llamar al número mostrado.",
     "emergencyCall": "Llamada de Emergencia",
     "emergencyCallNotSupportedMessage": "Este dispositivo no puede realizar llamadas de emergencia. Por favor, usa un teléfono y marca el 911.",
-    "phoneNumberCopied": "Número de teléfono copiado"
+    "phoneNumberCopied": "Número de teléfono copiado",
+    "themeChanged": "Tema cambiado a {0}"
   }
 }
