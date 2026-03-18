@@ -97,9 +97,13 @@ class _ZipCodeInputViewState extends State<ZipCodeInputView> {
             maxLength: 5,
             style: TextStyle(
               fontSize: responsiveFontSizes.bodyMedium(context),
+              color: AppTheme.textGreyColor,
             ),
             decoration: InputDecoration(
               hintText: context.translate('office.zipCode.zipCodeHint'),
+              hintStyle: const TextStyle(
+                color: AppTheme.textGreyColor,
+              ),
               counterText: '',
               filled: true,
               fillColor: AppTheme.white,
