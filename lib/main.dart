@@ -32,6 +32,12 @@ void main() {
 
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Bloquear orientación a Portrait
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
   // Configurar modo inmersivo para Android (ocultar controles de navegación del sistema)
   SystemChrome.setEnabledSystemUIMode(
     SystemUiMode.edgeToEdge,
