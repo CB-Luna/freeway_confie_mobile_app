@@ -1,0 +1,45 @@
+flowchart TD
+    A["App start"] --> B["AuthSplashScreen"]
+    B --> C{"checkAuthStatus()"}
+    C -->|Sesion valida| D["HomePage"]
+    C -->|Sin sesion| E["LoginPage"]
+
+    E --> F["POST /api/Mobile/Login"]
+    F --> G{"requiresTwoFactor"}
+    G -->|Si| H["TwoFactorDialog"]
+    H --> I["POST /api/Mobile/Login con 2FA"]
+    G -->|No| D
+    I --> D
+
+    E --> J["SignUpPage"]
+    J --> K["POST /api/Mobile/Register"]
+    K --> L["Login automatico"]
+    L --> D
+
+    E --> M["ForgotPasswordPage"]
+    M --> N["POST /api/Mobile/SendForgotPasswordMessage"]
+    M --> O["POST /api/Mobile/ResetPassword"]
+    O --> E
+
+    D --> P["ProfilePage"]
+    P --> Q["UserDataPage"]
+    Q --> R["POST /api/Mobile/User"]
+    P --> S["PasswordChangePage"]
+    S --> T["POST /api/Mobile/ChangePassword"]
+    P --> U["LanguageSelectionPage"]
+    P --> V["AppInfoPage"]
+
+    D --> W["IdCardPage"]
+    W --> X["POST /DownloadGooglePassTask"]
+    W --> Y["POST //DownloadApplePassTask"]
+
+    D --> Z["SubmitClaimPage"]
+    Z --> ZA["Telefono o URL del carrier"]
+
+    D --> ZB["AddInsurancePage"]
+    ZB --> ZC["Validacion ZIP"]
+    ZC --> ZD["WebViewPage con cotizador / formulario"]
+
+    D --> ZE["LocationDetailsView"]
+    ZE --> ZF["POST /api/StoreLocator"]
+    ZE --> ZG["Google Maps / Apple Maps"]

@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph UI["Location module"]
+        A["LocationDetailsView"]
+        B["LocationController"]
+        C["GoogleMap"]
+        D["Office list"]
+    end
+
+    subgraph Inputs["Entradas"]
+        E["Permiso GPS"]
+        F["ZIP manual"]
+        G["GetCurrentLocation"]
+    end
+
+    subgraph Services["Servicios"]
+        H["GetOffices"]
+        I["OfficeService"]
+        J["POST /api/StoreLocator"]
+        K["Google Maps URL"]
+    end
+
+    subgraph Backend["Backend"]
+        L["inquiry.confie.com"]
+    end
+
+    A --> B
+    B --> E
+    B --> F
+    B --> G
+    B --> H
+    H --> I
+    I --> J
+    J --> L
+    B --> C
+    B --> D
+    D --> K

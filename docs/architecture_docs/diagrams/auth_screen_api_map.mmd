@@ -1,0 +1,38 @@
+flowchart LR
+    subgraph UI["Pantallas Auth"]
+        A["AuthSplashScreen"]
+        B["LoginPage"]
+        C["ForgotPasswordPage"]
+        D["SignUpPage"]
+    end
+
+    subgraph State["Estado local"]
+        E["AuthProvider"]
+        F["SecureStorage<br/>token + credenciales + nombre"]
+        G["BiometricProvider"]
+    end
+
+    subgraph Backend["Backend Auth"]
+        H["confie-customer.azurewebsites.net"]
+        H1["POST /api/Mobile/Login"]
+        H2["POST /api/Mobile/Register"]
+        H3["POST /api/Mobile/SendForgotPasswordMessage"]
+        H4["POST /api/Mobile/ResetPassword"]
+    end
+
+    A --> E
+    E --> F
+    A --> H1
+
+    B --> E
+    B --> G
+    E --> H1
+    D --> H2
+    D --> H1
+    C --> H3
+    C --> H4
+
+    H --> H1
+    H --> H2
+    H --> H3
+    H --> H4

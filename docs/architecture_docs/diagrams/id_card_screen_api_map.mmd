@@ -1,0 +1,34 @@
+flowchart LR
+    subgraph UI["ID Card y claims"]
+        A["IdCardPage"]
+        B["SubmitClaimPage"]
+        C["CustomClaimCard"]
+    end
+
+    subgraph State["Datos disponibles"]
+        D["AuthProvider.currentUser"]
+        E["PolicyModel"]
+    end
+
+    subgraph Wallet["Wallet backend"]
+        F["confie-wallet-api.azurewebsites.net"]
+        F1["POST /DownloadGooglePassTask"]
+        F2["POST //DownloadApplePassTask"]
+    end
+
+    subgraph Carrier["Carrier actions"]
+        G["tel: carrierClaimPhone"]
+        H["carrierClaimUrl"]
+    end
+
+    A --> D
+    A --> E
+    A --> F1
+    A --> F2
+    F --> F1
+    F --> F2
+
+    B --> C
+    C --> E
+    C --> G
+    C --> H

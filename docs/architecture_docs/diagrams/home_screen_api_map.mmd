@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph UI["Home y subflujos"]
+        A["HomePage"]
+        B["PolicyCard"]
+        C["RoadsideHelp"]
+        D["ProductList"]
+        E["ContactAgent"]
+    end
+
+    subgraph State["Estado disponible"]
+        F["AuthProvider.currentUser<br/>customer + policies"]
+        G["NotificationProvider<br/>sin backend activo"]
+        H["WebDialogService"]
+    end
+
+    subgraph Integrations["Integraciones"]
+        I["quickpay.freeway.com"]
+        J["buy.freeway.com/app/auto-club"]
+        K["freeway.com forms"]
+        L["RequestCallPage / tel:"]
+        M["Wallet endpoints"]
+    end
+
+    A --> F
+    A --> G
+    B --> M
+    B --> I
+    C --> H
+    C --> J
+    D --> J
+    D --> K
+    E --> L

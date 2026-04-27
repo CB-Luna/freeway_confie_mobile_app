@@ -1,0 +1,31 @@
+flowchart TD
+    A["UI Flutter<br/>pages + widgets"] --> B["Providers<br/>AuthProvider<br/>NotificationProvider<br/>ThemeProvider<br/>LanguageProvider<br/>BiometricProvider"]
+    A --> C["Feature module<br/>locatordevice"]
+    B --> D["Services"]
+    C --> D
+
+    D --> D1["AuthService<br/>Dio"]
+    D --> D2["OfficeService<br/>http"]
+    D --> D3["LocationService<br/>http + geocoding"]
+    D --> D4["GoogleWalletService<br/>http"]
+    D --> D5["AppleWalletService<br/>http"]
+    D --> D6["NotificationService<br/>http (preparado, no conectado)"]
+    D --> D7["WebDialogService<br/>SharedPreferences"]
+    D --> D8["StorageService / SecureStorage"]
+
+    D1 --> E1["confie-customer.azurewebsites.net"]
+    D2 --> E2["inquiry.confie.com"]
+    D3 --> E3["api.zippopotam.us"]
+    D4 --> E4["confie-wallet-api.azurewebsites.net"]
+    D5 --> E4
+    D6 --> E5["n8n webhook (dev)"]
+
+    A --> F["WebViewPage"]
+    F --> F1["freeway.com"]
+    F --> F2["buy.freeway.com"]
+    F --> F3["triton.freeway.com"]
+    F --> F4["rate.freeway.com"]
+    F --> F5["quote.sanborns.com"]
+    F --> F6["carregistration.com"]
+    F --> F7["taxmax.com"]
+    F --> F8["quickpay.freeway.com"]

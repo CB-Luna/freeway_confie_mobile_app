@@ -1,0 +1,33 @@
+flowchart LR
+    subgraph UI["Profile y ajustes"]
+        A["ProfilePage"]
+        B["UserDataPage"]
+        C["PasswordChangePage"]
+        D["LanguageSelectionPage"]
+        E["AppInfoPage"]
+    end
+
+    subgraph Providers["Estado local"]
+        F["AuthProvider"]
+        G["LanguageProvider"]
+        H["SecureStorage"]
+    end
+
+    subgraph Backend["Backend / Externos"]
+        I["confie-customer.azurewebsites.net"]
+        I1["POST /api/Mobile/User"]
+        I2["POST /api/Mobile/ChangePassword"]
+        J["freeway.com/terms-of-use"]
+        K["freeway.com/privacy-policy"]
+    end
+
+    A --> F
+    B --> F
+    B --> I1
+    C --> I2
+    C --> H
+    D --> G
+    E --> J
+    E --> K
+    I --> I1
+    I --> I2
