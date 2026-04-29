@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:freeway_app/locatordevice/presentation/widgets/loading_view.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 import 'package:freeway_app/widgets/theme/app_theme.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class WebViewPage extends StatefulWidget {
@@ -79,6 +80,10 @@ class _WebViewPageState extends State<WebViewPage> {
             }
           },
           onNavigationRequest: (NavigationRequest request) async {
+            if (await _handleExternalNavigation(request.url)) {
+              return NavigationDecision.prevent;
+            }
+
             // Actualizar el estado de navegación después de cada cambio de URL
             Future.delayed(const Duration(milliseconds: 300), () {
               _updateBackNavigationState();
@@ -87,10 +92,39 @@ class _WebViewPageState extends State<WebViewPage> {
           },
           onWebResourceError: (WebResourceError error) {
             debugPrint('WebView error: ${error.description}');
+            if (mounted) {
+              setState(() {
+                _isLoading = false;
+                _isFormFillingComplete = true;
+              });
+            }
           },
         ),
       )
       ..loadRequest(Uri.parse(widget.url));
+  }
+
+  Future<bool> _handleExternalNavigation(String url) async {
+    final uri = Uri.tryParse(url);
+    if (uri == null) return false;
+
+    final scheme = uri.scheme.toLowerCase();
+    final isWebScheme = scheme == 'http' || scheme == 'https';
+    if (isWebScheme || scheme.isEmpty) return false;
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _isFormFillingComplete = true;
+      });
+    }
+
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (error) {
+      debugPrint('External navigation failed for $url: $error');
+      return false;
+    }
   }
 
   // Método para inyectar JavaScript que rellena automáticamente los formularios
