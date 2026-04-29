@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:freeway_app/data/models/auth/customer_model.dart';
 import 'package:freeway_app/data/models/auth/login_response.dart';
+import 'package:freeway_app/data/models/auth/policy_model.dart';
 import 'package:freeway_app/data/models/auth/register_request.dart';
 import 'package:freeway_app/utils/app_localizations_extension.dart';
 
@@ -16,7 +20,7 @@ class AuthProvider with ChangeNotifier {
     Dio(
       BaseOptions(
         baseUrl: envLogin,
-        headers: {
+        headers: <String, dynamic>{
           'X-API-KEY': apiKeyLogin,
           'Content-Type': 'application/json',
         },
@@ -40,6 +44,7 @@ class AuthProvider with ChangeNotifier {
   static const String _passwordKey = 'auth_password';
   static const String _fullNameKey = 'auth_fullname';
   static const String _tokenKey = 'auth_token';
+  static const String _userSessionKey = 'auth_user_session';
 
   // Getters
   User? get currentUser => _currentUser;
@@ -322,6 +327,8 @@ class AuthProvider with ChangeNotifier {
       if (_currentUser != null && _currentUser!.fullName.isNotEmpty) {
         await saveFullName(_currentUser!.fullName);
       }
+
+      await _persistCurrentUserSession();
 
       notifyListeners();
       return true;
@@ -735,7 +742,8 @@ class AuthProvider with ChangeNotifier {
   }
 
   /// Verifica el estado de autenticación al iniciar la aplicación
-  /// Intenta restaurar la sesión si hay credenciales guardadas
+  /// Nunca dispara login automático con credenciales guardadas para evitar
+  /// enviar OTP/2FA sin acción explícita del usuario.
   Future<bool> checkAuthStatus() async {
     try {
       debugPrint('🔍 Verificando estado de autenticación al iniciar app...');
@@ -745,47 +753,49 @@ class AuthProvider with ChangeNotifier {
       if (savedToken != null && savedToken.isNotEmpty) {
         debugPrint('✅ Token encontrado en almacenamiento seguro');
 
-        // Verificar si hay credenciales guardadas para restaurar la sesión
+        if (_isTokenExpired(savedToken)) {
+          debugPrint('⏰ Token expirado, enviando usuario a login');
+          await _secureStorage.delete(key: _tokenKey);
+          await _secureStorage.delete(key: _userSessionKey);
+          _currentUser = null;
+          _isAuthenticated = false;
+          _authToken = null;
+          notifyListeners();
+          return false;
+        }
+
+        final restoredUser = await _restoreStoredUserSession();
+        if (restoredUser != null) {
+          debugPrint('✅ Sesión local restaurada desde almacenamiento seguro');
+          _currentUser = restoredUser;
+          _isAuthenticated = true;
+          _authToken = savedToken;
+          notifyListeners();
+          return true;
+        }
+
+        // Mantener las credenciales guardadas para login manual o biométrico,
+        // pero no intentar restaurar la sesión automáticamente.
         final hasCreds = await hasCredentials();
         if (hasCreds) {
           debugPrint(
-            '🔐 Credenciales guardadas encontradas, intentando restaurar sesión...',
+            '🔐 Credenciales guardadas encontradas, pero sin sesión cacheada válida; esperando acción explícita del usuario',
           );
-
-          // Intentar iniciar sesión con credenciales guardadas
-          final username = await _secureStorage.read(key: _usernameKey);
-          final password = await _secureStorage.read(key: _passwordKey);
-
-          if (username != null && password != null) {
-            // Intentar login silencioso (sin contexto de UI)
-            final loginSuccess = await _silentLogin(username, password);
-
-            if (loginSuccess) {
-              debugPrint('✅ Sesión restaurada exitosamente para: $username');
-              _isAuthenticated = true;
-              _authToken = savedToken;
-              notifyListeners();
-              return true;
-            } else {
-              debugPrint(
-                '❌ No se pudo restaurar la sesión, token inválido o expirado',
-              );
-              // Limpiar datos inválidos
-              await _clearStoredData();
-              return false;
-            }
-          } else {
-            // Caso inesperado: hay credenciales guardadas pero username o password son null
-            debugPrint(
-              '⚠️ Error: credenciales guardadas pero username/password son null',
-            );
-            await _clearStoredData();
-            return false;
-          }
+          await _secureStorage.delete(key: _tokenKey);
+          _currentUser = null;
+          _isAuthenticated = false;
+          _authToken = null;
+          notifyListeners();
+          return false;
         } else {
           debugPrint('⚠️ Token encontrado pero no hay credenciales guardadas');
           // Limpiar token inconsistente
           await _secureStorage.delete(key: _tokenKey);
+          await _secureStorage.delete(key: _userSessionKey);
+          _currentUser = null;
+          _isAuthenticated = false;
+          _authToken = null;
+          notifyListeners();
           return false;
         }
       } else {
@@ -796,59 +806,6 @@ class AuthProvider with ChangeNotifier {
       debugPrint('❌ Error al verificar estado de autenticación: $e');
       // Limpiar cualquier dato corrupto
       await _clearStoredData();
-      return false;
-    }
-  }
-
-  /// Login silencioso sin contexto de UI para restaurar sesión
-  Future<bool> _silentLogin(String username, String password) async {
-    try {
-      debugPrint('🔐 Intentando login silencioso para: $username');
-
-      final response = await _authService.loginStep1(username, password);
-
-      if (!response.hasErrors &&
-          !response.requiresTwoFactor &&
-          response.customer != null) {
-        // Login exitoso sin 2FA
-        final customer = response.customer!;
-
-        _currentUser = User(
-          username: username,
-          fullName: customer.fullName,
-          firstName: customer.firstName,
-          lastName: customer.lastName,
-          customerId: customer.customerId ?? '',
-          email: customer.email,
-          phone: customer.primaryPhone?.phoneNumber,
-          birthDate: DateTime.tryParse(customer.birthDate) ?? DateTime.now(),
-          gender: customer.gender ?? '',
-          street: customer.primaryAddress?.street ?? '',
-          zipCode: customer.primaryAddress?.zip ?? '',
-          city: customer.primaryAddress?.city ?? '',
-          state: customer.primaryAddress?.state ?? '',
-          customerData: customer,
-          policies: response.policies,
-        );
-
-        _authToken = response.token ?? '';
-        _lastUsername = username;
-        _lastPassword = password;
-        _requiresTwoFactor = false;
-
-        debugPrint('✅ Login silencioso exitoso');
-        return true;
-      } else if (response.requiresTwoFactor) {
-        debugPrint(
-          '⚠️ Login requiere 2FA, no se puede restaurar automáticamente',
-        );
-        return false;
-      } else {
-        debugPrint('❌ Login silencioso fallido: ${response.errorMessage}');
-        return false;
-      }
-    } catch (e) {
-      debugPrint('❌ Excepción en login silencioso: $e');
       return false;
     }
   }
@@ -868,6 +825,117 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
     } catch (e) {
       debugPrint('Error al limpiar datos almacenados: $e');
+    }
+  }
+
+  Future<void> _persistCurrentUserSession() async {
+    final user = _currentUser;
+    if (user == null) return;
+
+    final payload = <String, dynamic>{
+      'username': user.username,
+      'fullName': user.fullName,
+      'firstName': user.firstName,
+      'lastName': user.lastName,
+      'customerId': user.customerId,
+      'email': user.email,
+      'phone': user.phone,
+      'avatar': user.avatar,
+      'birthDate': user.birthDate.toIso8601String(),
+      'languageCode': user.languageCode,
+      'street': user.street,
+      'zipCode': user.zipCode,
+      'city': user.city,
+      'state': user.state,
+      'gender': user.gender,
+      'customerData': user.customerData?.toJson(),
+      'policies': user.policies.map((policy) => policy.toJson()).toList(),
+    };
+
+    await _secureStorage.write(
+      key: _userSessionKey,
+      value: jsonEncode(payload),
+    );
+  }
+
+  Future<User?> _restoreStoredUserSession() async {
+    try {
+      final rawSession = await _secureStorage.read(key: _userSessionKey);
+      if (rawSession == null || rawSession.isEmpty) {
+        return null;
+      }
+
+      final Object? decoded = jsonDecode(rawSession);
+      if (decoded is! Map<String, dynamic>) {
+        return null;
+      }
+
+      final List<dynamic> policiesJson =
+          decoded['policies'] as List<dynamic>? ?? <dynamic>[];
+      final Map<String, dynamic>? customerDataJson =
+          decoded['customerData'] as Map<String, dynamic>?;
+      final List<PolicyModel> restoredPolicies = policiesJson
+          .whereType<Map<String, dynamic>>()
+          .map<PolicyModel>((Map<String, dynamic> policyJson) {
+        return PolicyModel.fromJson(policyJson);
+      }).toList();
+
+      return User(
+        username: decoded['username'] as String? ?? '',
+        fullName: decoded['fullName'] as String? ?? 'Freeway User',
+        firstName: decoded['firstName'] as String? ?? 'Freeway',
+        lastName: decoded['lastName'] as String? ?? 'User',
+        customerId: decoded['customerId'] as String? ?? '',
+        email: decoded['email'] as String?,
+        phone: decoded['phone'] as String?,
+        avatar: decoded['avatar'] as String?,
+        birthDate: DateTime.tryParse(decoded['birthDate'] as String? ?? '') ??
+            DateTime(1970),
+        languageCode: decoded['languageCode'] as String?,
+        street: decoded['street'] as String? ?? '',
+        zipCode: decoded['zipCode'] as String? ?? '',
+        city: decoded['city'] as String? ?? '',
+        state: decoded['state'] as String? ?? '',
+        gender: decoded['gender'] as String? ?? '',
+        customerData: customerDataJson != null
+            ? CustomerModel.fromJson(customerDataJson)
+            : null,
+        policies: restoredPolicies,
+      );
+    } catch (e) {
+      debugPrint('Error al restaurar la sesión local del usuario: $e');
+      await _secureStorage.delete(key: _userSessionKey);
+      return null;
+    }
+  }
+
+  bool _isTokenExpired(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) {
+        return false;
+      }
+
+      final normalized = base64Url.normalize(parts[1]);
+      final payload = utf8.decode(base64Url.decode(normalized));
+      final Object? decoded = jsonDecode(payload);
+      if (decoded is! Map<String, dynamic>) {
+        return false;
+      }
+
+      final Object? exp = decoded['exp'];
+      if (exp is! num) {
+        return false;
+      }
+
+      final expiry = DateTime.fromMillisecondsSinceEpoch(
+        exp.toInt() * 1000,
+        isUtc: true,
+      );
+      return DateTime.now().toUtc().isAfter(expiry);
+    } catch (e) {
+      debugPrint('No se pudo evaluar expiración del token: $e');
+      return false;
     }
   }
 }
